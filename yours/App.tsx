@@ -1,212 +1,59 @@
-import { StatusBar } from "expo-status-bar";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useCallback } from "react";
+import HomeScreen from "./screens/home";
+
+const Stack = createNativeStackNavigator();
+const queryClient = new QueryClient();
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    InterBlack: require("./assets/fonts/Inter/Inter-Black.ttf"),
+    InterBold: require("./assets/fonts/Inter/Inter-Bold.ttf"),
+    InterExtraBold: require("./assets/fonts/Inter/Inter-ExtraBold.ttf"),
+    InterExtraLight: require("./assets/fonts/Inter/Inter-ExtraLight.ttf"),
+    InterLight: require("./assets/fonts/Inter/Inter-Light.ttf"),
+    InterMedum: require("./assets/fonts/Inter/Inter-Medium.ttf"),
+    InterRegular: require("./assets/fonts/Inter/Inter-Regular.ttf"),
+    InterSemiBold: require("./assets/fonts/Inter/Inter-SemiBold.ttf"),
+    InterThin: require("./assets/fonts/Inter/Inter-Thin.ttf"),
+  });
+
+  const isLoading = !fontsLoaded;
+
+  const onLayoutRootView = useCallback(async () => {
+    if (!isLoading) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `!isLoading`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync();
+    }
+  }, [isLoading]);
+
+  if (isLoading) {
+    return null;
+  }
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.dayHeading}>Today</Text>
-
-      <View style={styles.calories}>
-        <View style={{ display: "flex", flexDirection: "column" }}>
-          <View
-            style={{
-              height: 15,
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <View
-              style={{
-                height: 12,
-                width: "100%",
-                backgroundColor: "rgba(255, 255, 255, 0.5)",
-                opacity: 50,
-                borderRadius: 10,
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer onReady={onLayoutRootView}>
+        <Stack.Navigator>
+          <>
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{
+                headerShown: false,
               }}
-            ></View>
-
-            <Animated.View style={styles.caloriesProgress} />
-          </View>
-
-          <View
-            style={{
-              marginTop: 5,
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-          >
-            <Text
-              style={{
-                color: "#ffffff",
-                fontSize: 23,
-                textAlign: "center",
-              }}
-            >
-              1000 / 2000
-            </Text>
-          </View>
-        </View>
-
-        <View
-          style={{
-            marginTop: 15,
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingLeft: 5,
-            paddingRight: 5,
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            <Text style={{ color: "#FFFFFF", textAlign: "center" }}>
-              Protein
-            </Text>
-            <View
-              style={{
-                marginTop: 5,
-                height: 5,
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  height: 3,
-                  width: "100%",
-                  backgroundColor: "rgba(255, 255, 255, 0.5)",
-                  opacity: 50,
-                  borderRadius: 4,
-                }}
-              ></View>
-
-              <Animated.View style={styles.caloriesProgress} />
-            </View>
-            <Text
-              style={{
-                color: "#ffffff",
-                textAlign: "center",
-                fontSize: 11,
-                marginTop: 5,
-              }}
-            >
-              90 / 180 g
-            </Text>
-          </View>
-
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={{ color: "#FFFFFF", textAlign: "center" }}>Carbs</Text>
-            <View
-              style={{
-                marginTop: 5,
-                height: 5,
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  height: 3,
-                  width: "100%",
-                  backgroundColor: "rgba(255, 255, 255, 0.5)",
-                  opacity: 50,
-                  borderRadius: 4,
-                }}
-              ></View>
-
-              <Animated.View style={styles.caloriesProgress} />
-            </View>
-            <Text
-              style={{
-                color: "#ffffff",
-                textAlign: "center",
-                fontSize: 11,
-                marginTop: 5,
-              }}
-            >
-              90 / 180 g
-            </Text>
-          </View>
-
-          <View style={{ flex: 1, marginLeft: 15 }}>
-            <Text style={{ color: "#FFFFFF", textAlign: "center" }}>Fat</Text>
-            <View
-              style={{
-                marginTop: 5,
-                height: 5,
-                width: "100%",
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  height: 3,
-                  width: "100%",
-                  backgroundColor: "rgba(255, 255, 255, 0.5)",
-                  opacity: 50,
-                  borderRadius: 4,
-                }}
-              ></View>
-
-              <Animated.View style={styles.caloriesProgress} />
-            </View>
-            <Text
-              style={{
-                color: "#ffffff",
-                textAlign: "center",
-                fontSize: 11,
-                marginTop: 5,
-              }}
-            >
-              90 / 180 g
-            </Text>
-          </View>
-        </View>
-      </View>
-
-      <StatusBar style="auto" />
-    </View>
+            />
+          </>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: 60,
-    paddingBottom: 60,
-    paddingRight: 27.5,
-    paddingLeft: 27.5,
-  },
-
-  caloriesProgress: {
-    // @ts-expect-error
-    ...StyleSheet.absoluteFill,
-    backgroundColor: "#FFFFFF",
-    width: "50%",
-    borderRadius: 10,
-  },
-
-  dayHeading: {
-    fontWeight: "bold",
-    fontSize: 28,
-  },
-
-  calories: {
-    backgroundColor: "#FF5D5D",
-    marginTop: 12,
-    borderRadius: 10,
-    paddingLeft: 12,
-    paddingRight: 12,
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-});
