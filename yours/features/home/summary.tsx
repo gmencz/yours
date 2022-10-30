@@ -1,6 +1,5 @@
 import { LinearGradient } from "expo-linear-gradient";
 import { Animated, StyleSheet, Text, View } from "react-native";
-import { PencilSquareIcon } from "react-native-heroicons/solid";
 import { Shadow } from "react-native-shadow-2";
 import Heading from "../../components/heading";
 
@@ -67,12 +66,6 @@ export default function Summary() {
     <View>
       <View style={styles.headingContainer}>
         <Heading>Summary</Heading>
-        <PencilSquareIcon
-          color="#3E75AC"
-          fill="#3E75AC"
-          size={20}
-          style={styles.headingPencilIcon}
-        />
       </View>
 
       <Shadow
