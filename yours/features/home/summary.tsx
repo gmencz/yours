@@ -2,7 +2,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Animated, StyleSheet, Text, View } from "react-native";
 import { PencilIcon } from "react-native-heroicons/solid";
 import { Shadow } from "react-native-shadow-2";
-import Heading from "../../../components/heading";
+import Heading from "../../components/heading";
 
 const gradientColors = {
   red: ["#FF8A8A", "#FF7F7F", "#FF5D5D"],

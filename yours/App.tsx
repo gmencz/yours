@@ -4,7 +4,7 @@ import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCallback } from "react";
-import HomeScreen from "./screens/home";
+import Home from "./features/home";
 
 const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient();
@@ -46,7 +46,7 @@ export default function App() {
           <>
             <Stack.Screen
               name="Home"
-              component={HomeScreen}
+              component={Home}
               options={{
                 headerShown: false,
               }}
