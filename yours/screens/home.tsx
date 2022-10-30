@@ -1,321 +1,233 @@
-import { LinearGradient } from "expo-linear-gradient";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { Shadow } from "react-native-shadow-2";
-import { PencilSquareIcon as PencilIcon } from "react-native-heroicons/solid";
+import Summary from "../features/home/components/summary";
 
 export default function HomeScreen() {
-  const caloriesLeft = "3,150";
-
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          marginBottom: 10,
-          display: "flex",
-          flexDirection: "row",
-          paddingRight: 5,
-          alignItems: "center",
-        }}
-      >
+    <ScrollView style={styles.container}>
+      <Summary />
+
+      <View style={{ marginTop: 30 }}>
         <Text
           style={{
-            fontFamily: "InterSemiBold",
-            color: "#606060",
+            fontFamily: "InterBlack",
             fontSize: 22,
-            marginRight: "auto",
+            marginBottom: 10,
+            color: "#393939",
           }}
         >
-          Summary
+          Meals
         </Text>
-        <PencilIcon
-          color="#3E75AC"
-          fill="#3E75AC"
-          size={20}
-          style={{ marginTop: 3 }}
-        />
-      </View>
 
-      <Shadow
-        distance={8}
-        startColor="rgba(0, 0, 0, 0.27)"
-        offset={[3, 4]}
-        style={{
-          width: "100%",
-        }}
-      >
-        <LinearGradient
-          colors={["#FF8A8A", "#FF7F7F", "#FF5D5D"]}
-          // colors={["#7AFF7E", "#01BE08", "#008604"]}
-          start={[0.0, 0.0]}
-          end={[1.0, 1.0]}
-          style={styles.macrosContainer}
+        <Shadow
+          distance={3}
+          startColor="rgba(0, 0, 0, 0.075)"
+          offset={[3, 4]}
+          style={{
+            width: "100%",
+            borderRadius: 10,
+            marginBottom: 15,
+          }}
         >
-          <Text
-            style={{
-              color: "#FFFFFF",
-              fontFamily: "InterBlack",
-              fontSize: 12,
-              letterSpacing: 1.5,
-            }}
-          >
-            CALORIES LEFT
-          </Text>
-          <Text
-            style={{
-              color: "#FFFFFF",
-              fontFamily: "InterBlack",
-              fontSize: 36,
-              textShadowColor: "rgba(0, 0, 0, 0.25)",
-              textShadowRadius: 4,
-              textShadowOffset: {
-                height: 4,
-                width: 0,
-              },
-            }}
-          >
-            {caloriesLeft}
-          </Text>
-
           <View
             style={{
-              height: 29,
-              width: "100%",
-              marginTop: 10,
-            }}
-          >
-            <View
-              style={{
-                height: 28,
-                width: "100%",
-                backgroundColor: "#FA7979",
-                opacity: 50,
-                borderRadius: 10,
-              }}
-            />
-
-            <Animated.View
-              style={{
-                // @ts-expect-error
-                ...StyleSheet.absoluteFill,
-                backgroundColor: "#9FEEA7",
-                width: "40%",
-                borderRadius: 10,
-                zIndex: 3,
-              }}
-            />
-            <Animated.View
-              style={{
-                // @ts-expect-error
-                ...StyleSheet.absoluteFill,
-                left: "30%", // 40% from previous bar -10% offset
-                backgroundColor: "#A19FEE",
-                width: "30%", // 20% + 10% from above -10%
-                borderRadius: 10,
-                zIndex: 2,
-              }}
-            />
-            <Animated.View
-              style={{
-                // @ts-expect-error
-                ...StyleSheet.absoluteFill,
-                left: "50%",
-                backgroundColor: "#EEE19F",
-                width: "20%", // 10% + 10% from previous bar offset 10%
-                borderRadius: 10,
-                zIndex: 1,
-              }}
-            />
-          </View>
-
-          <View
-            style={{
+              borderRadius: 10,
+              backgroundColor: "#FFFFFF",
               display: "flex",
-              marginTop: 20,
               flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 15,
+              paddingHorizontal: 20,
             }}
           >
-            <View
+            <Image
               style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                flex: 1,
-                alignItems: "center",
-                marginRight: 20,
+                width: 40,
+                height: 40,
+              }}
+              source={require("../assets/images/meals/breakfast.png")}
+            />
+            <Text
+              style={{
+                fontFamily: "InterBold",
+                fontSize: 16,
+                color: "#606060",
+                marginLeft: 10,
               }}
             >
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontFamily: "InterBold",
-                  fontSize: 12,
-                  marginBottom: 5,
-                }}
-              >
-                Carbs
-              </Text>
-              <View
-                style={{
-                  height: 15,
-                  width: "100%",
-                }}
-              >
-                <View
-                  style={{
-                    height: 14,
-                    width: "100%",
-                    backgroundColor: "rgba(159, 238, 167, 0.2)",
-                    opacity: 50,
-                    borderRadius: 10,
-                  }}
-                />
-
-                <Animated.View
-                  style={{
-                    // @ts-expect-error
-                    ...StyleSheet.absoluteFill,
-                    backgroundColor: "#9FEEA7",
-                    width: "70%",
-                    borderRadius: 10,
-                  }}
-                />
-              </View>
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontFamily: "InterBold",
-                  fontSize: 11,
-                  marginTop: 5,
-                }}
-              >
-                400 / 500 g
-              </Text>
-            </View>
-
-            <View
+              Breakfast
+            </Text>
+            <Text
               style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                flex: 1,
-                marginRight: 20,
+                fontFamily: "InterBold",
+                fontSize: 16,
+                marginLeft: "auto",
+                color: "#606060",
               }}
             >
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontFamily: "InterBold",
-                  fontSize: 12,
-                  marginBottom: 5,
-                }}
-              >
-                Protein
-              </Text>
-              <View
-                style={{
-                  height: 15,
-                  width: "100%",
-                }}
-              >
-                <View
-                  style={{
-                    height: 14,
-                    width: "100%",
-                    backgroundColor: "rgba(161, 159, 238, 0.2)",
-                    opacity: 50,
-                    borderRadius: 10,
-                  }}
-                />
-
-                <Animated.View
-                  style={{
-                    // @ts-expect-error
-                    ...StyleSheet.absoluteFill,
-                    backgroundColor: "rgba(161, 159, 238, 1)",
-                    width: "45%",
-                    borderRadius: 10,
-                  }}
-                />
-              </View>
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontFamily: "InterBold",
-                  fontSize: 11,
-                  marginTop: 5,
-                }}
-              >
-                90 / 200 g
-              </Text>
-            </View>
-
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                flex: 1,
-              }}
-            >
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontFamily: "InterBold",
-                  fontSize: 12,
-                  marginBottom: 5,
-                }}
-              >
-                Fat
-              </Text>
-              <View
-                style={{
-                  height: 15,
-                  width: "100%",
-                }}
-              >
-                <View
-                  style={{
-                    height: 14,
-                    width: "100%",
-                    backgroundColor: "rgba(238, 225, 159, 0.2)",
-                    opacity: 50,
-                    borderRadius: 10,
-                  }}
-                />
-
-                <Animated.View
-                  style={{
-                    // @ts-expect-error
-                    ...StyleSheet.absoluteFill,
-                    backgroundColor: "rgba(238, 225, 159, 1)",
-                    width: "20%",
-                    borderRadius: 10,
-                  }}
-                />
-              </View>
-              <Text
-                style={{
-                  color: "#FFFFFF",
-                  fontFamily: "InterBold",
-                  fontSize: 11,
-                  marginTop: 5,
-                }}
-              >
-                20 / 100 g
-              </Text>
-            </View>
+              900 cal
+            </Text>
           </View>
-        </LinearGradient>
-      </Shadow>
-    </View>
+        </Shadow>
+
+        <Shadow
+          distance={3}
+          startColor="rgba(0, 0, 0, 0.075)"
+          offset={[3, 4]}
+          style={{
+            width: "100%",
+            borderRadius: 10,
+            marginBottom: 15,
+          }}
+        >
+          <View
+            style={{
+              borderRadius: 10,
+              backgroundColor: "#FFFFFF",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 15,
+              paddingHorizontal: 20,
+            }}
+          >
+            <Image
+              style={{
+                width: 40,
+                height: 40,
+              }}
+              source={require("../assets/images/meals/lunch.png")}
+            />
+            <Text
+              style={{
+                fontFamily: "InterBold",
+                fontSize: 16,
+                color: "#606060",
+                marginLeft: 10,
+              }}
+            >
+              Lunch
+            </Text>
+            <Text
+              style={{
+                fontFamily: "InterBold",
+                fontSize: 16,
+                marginLeft: "auto",
+                color: "#606060",
+              }}
+            >
+              1100 cal
+            </Text>
+          </View>
+        </Shadow>
+
+        <Shadow
+          distance={3}
+          startColor="rgba(0, 0, 0, 0.075)"
+          offset={[3, 4]}
+          style={{
+            width: "100%",
+            marginBottom: 15,
+            borderRadius: 10,
+          }}
+        >
+          <View
+            style={{
+              borderRadius: 10,
+              backgroundColor: "#FFFFFF",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 15,
+              paddingHorizontal: 20,
+            }}
+          >
+            <Image
+              style={{
+                width: 40,
+                height: 40,
+              }}
+              source={require("../assets/images/meals/dinner.png")}
+            />
+            <Text
+              style={{
+                fontFamily: "InterBold",
+                fontSize: 16,
+                color: "#606060",
+                marginLeft: 10,
+              }}
+            >
+              Dinner
+            </Text>
+            <Text
+              style={{
+                fontFamily: "InterBold",
+                fontSize: 16,
+                marginLeft: "auto",
+                color: "#606060",
+              }}
+            >
+              600 cal
+            </Text>
+          </View>
+        </Shadow>
+
+        <Shadow
+          distance={3}
+          startColor="rgba(0, 0, 0, 0.075)"
+          offset={[3, 4]}
+          style={{
+            width: "100%",
+            borderRadius: 10,
+          }}
+        >
+          <View
+            style={{
+              borderRadius: 10,
+              backgroundColor: "#FFFFFF",
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              paddingVertical: 15,
+              paddingHorizontal: 20,
+            }}
+          >
+            <Image
+              style={{
+                width: 40,
+                height: 40,
+              }}
+              source={require("../assets/images/meals/snacks.png")}
+            />
+            <Text
+              style={{
+                fontFamily: "InterBold",
+                fontSize: 16,
+                color: "#606060",
+                marginLeft: 10,
+              }}
+            >
+              Snacks
+            </Text>
+            <Text
+              style={{
+                fontFamily: "InterBold",
+                fontSize: 16,
+                marginLeft: "auto",
+                color: "#606060",
+              }}
+            >
+              400 cal
+            </Text>
+          </View>
+        </Shadow>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 70,
     paddingLeft: 30,
     paddingRight: 30,
