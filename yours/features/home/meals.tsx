@@ -5,6 +5,21 @@ import Heading from "../../components/heading";
 const mealShadowStartColor = "rgba(0, 0, 0, 0.075)";
 
 export default function Meals() {
+  const meals = {
+    breakfast: {
+      calories: 400,
+    },
+    lunch: {
+      calories: 408,
+    },
+    dinner: {
+      calories: 400,
+    },
+    snacks: {
+      calories: 400,
+    },
+  };
+
   return (
     <View style={{ marginTop: 30 }}>
       <Heading style={{ marginBottom: 10 }}>Meals</Heading>
@@ -21,7 +36,9 @@ export default function Meals() {
             source={require("../../assets/images/meals/breakfast.png")}
           />
           <Text style={styles.mealName}>Breakfast</Text>
-          <Text style={styles.mealCalories}>900 cal</Text>
+          <Text style={styles.mealCalories}>
+            {meals.breakfast.calories} cal
+          </Text>
         </View>
       </Shadow>
 
@@ -37,7 +54,7 @@ export default function Meals() {
             source={require("../../assets/images/meals/lunch.png")}
           />
           <Text style={styles.mealName}>Lunch</Text>
-          <Text style={styles.mealCalories}>1100 cal</Text>
+          <Text style={styles.mealCalories}>{meals.lunch.calories} cal</Text>
         </View>
       </Shadow>
 
@@ -53,7 +70,7 @@ export default function Meals() {
             source={require("../../assets/images/meals/dinner.png")}
           />
           <Text style={styles.mealName}>Dinner</Text>
-          <Text style={styles.mealCalories}>600 cal</Text>
+          <Text style={styles.mealCalories}>{meals.dinner.calories} cal</Text>
         </View>
       </Shadow>
 
@@ -69,7 +86,7 @@ export default function Meals() {
             source={require("../../assets/images/meals/snacks.png")}
           />
           <Text style={styles.mealName}>Snacks</Text>
-          <Text style={styles.mealCalories}>400 cal</Text>
+          <Text style={styles.mealCalories}>{meals.snacks.calories} cal</Text>
         </View>
       </Shadow>
     </View>
