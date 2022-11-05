@@ -1,12 +1,13 @@
-import * as SplashScreen from "expo-splash-screen";
-import { useFonts } from "expo-font";
-import { useCallback } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { LoginView } from "./views/Login";
-import { RootStackParamList } from "./types";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useCallback } from "react";
+import Home from "./features/home";
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator();
+const queryClient = new QueryClient();
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -39,14 +40,20 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <RootStack.Navigator>
-        <RootStack.Screen
-          name="Login"
-          component={LoginView}
-          options={{ title: "Read it Later - Maybe" }}
-        />
-      </RootStack.Navigator>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer onReady={onLayoutRootView}>
+        <Stack.Navigator>
+          <>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
