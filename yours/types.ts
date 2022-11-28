@@ -1,3 +1,7 @@
 export type RootStackParamList = {
-  Login: undefined;
+  // Screens without session
+  Welcome: undefined;
+
+  // Screens with session
+  Dashboard: undefined;
 };
