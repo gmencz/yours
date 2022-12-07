@@ -1,6 +1,7 @@
 import "react-native-url-polyfill/auto";
+import { Buffer } from "buffer";
 import * as SplashScreen from "expo-splash-screen";
-import { NavigationContainer } from "@react-navigation/native";
+import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect, useState } from "react";
@@ -10,7 +11,11 @@ import { WelcomeScreen } from "./welcome";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
 import { useColorScheme } from "react-native";
-import { useThemeMode } from "@rneui/themed";
+import { useTheme, useThemeMode } from "@rneui/themed";
+import { LinkSignInScreen } from "./link-sign-in";
+import { EmailSignInScreen } from "./email-sign-in";
+
+global.Buffer = global.Buffer || Buffer;
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -22,14 +27,15 @@ export function Screens() {
     InterExtraBold: require("../assets/fonts/Inter/Inter-ExtraBold.ttf"),
     InterExtraLight: require("../assets/fonts/Inter/Inter-ExtraLight.ttf"),
     InterLight: require("../assets/fonts/Inter/Inter-Light.ttf"),
-    InterMedum: require("../assets/fonts/Inter/Inter-Medium.ttf"),
+    InterMedium: require("../assets/fonts/Inter/Inter-Medium.ttf"),
     InterRegular: require("../assets/fonts/Inter/Inter-Regular.ttf"),
     InterSemiBold: require("../assets/fonts/Inter/Inter-SemiBold.ttf"),
     InterThin: require("../assets/fonts/Inter/Inter-Thin.ttf"),
   });
 
   const colorMode = useColorScheme();
-  const { setMode } = useThemeMode();
+  const { theme } = useTheme();
+  const { setMode, mode } = useThemeMode();
 
   useEffect(() => {
     setMode(colorMode as "light" | "dark");
@@ -68,6 +74,9 @@ export function Screens() {
         {session?.user ? (
           <>
             <RootStack.Screen name="Dashboard" component={DashboardScreen} />
+          </>
+        ) : (
+          <>
             <RootStack.Screen
               name="Welcome"
               component={WelcomeScreen}
@@ -75,12 +84,16 @@ export function Screens() {
                 headerShown: false,
               }}
             />
-          </>
-        ) : (
-          <>
             <RootStack.Screen
-              name="Welcome"
-              component={WelcomeScreen}
+              name="LinkSignIn"
+              component={LinkSignInScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <RootStack.Screen
+              name="EmailSignIn"
+              component={EmailSignInScreen}
               options={{
                 headerShown: false,
               }}

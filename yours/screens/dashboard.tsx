@@ -7,7 +7,7 @@ type Props = NativeStackScreenProps<RootStackParamList, "Dashboard">;
 
 export function DashboardScreen({ navigation }: Props) {
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "red" }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <Text>Dashboard</Text>
     </SafeAreaView>
   );
