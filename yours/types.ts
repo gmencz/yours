@@ -1,10 +1,11 @@
-export type RootStackParamList = {
-  // Screens without session
+export type UnauthorizedStackParamList = {
   Welcome: undefined;
   CreateAccount: undefined;
   LinkSignIn: undefined;
   EmailSignIn: undefined;
+};
 
-  // Screens with session
-  Dashboard: undefined;
+export type AuthorizedStackParamList = {
+  Home: undefined;
+  Food: undefined;
 };

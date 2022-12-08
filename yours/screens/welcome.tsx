@@ -4,11 +4,11 @@ import { Text, useThemeMode } from "@rneui/themed";
 import { useTheme } from "@rneui/themed";
 import { View } from "react-native";
 
-import { RootStackParamList } from "../types";
+import { UnauthorizedStackParamList } from "../types";
 import { Logo } from "../components/Logo";
 import { AuthButton } from "../components/AuthButton";
 
-type Props = NativeStackScreenProps<RootStackParamList, "Welcome">;
+type Props = NativeStackScreenProps<UnauthorizedStackParamList, "Welcome">;
 
 export function WelcomeScreen({ navigation }: Props) {
   const { theme } = useTheme();

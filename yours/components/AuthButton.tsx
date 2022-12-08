@@ -5,7 +5,7 @@ import { StyleProp, ViewStyle } from "react-native";
 import { AtSymbolIcon, LinkIcon } from "react-native-heroicons/outline";
 
 import { supabase, supabaseUrl } from "../lib/supabase";
-import { RootStackParamList } from "../types";
+import { UnauthorizedStackParamList } from "../types";
 import { Button } from "./Button";
 
 const externalProvidersIcons = {
@@ -17,7 +17,7 @@ interface AuthButtonExternalProviderProps {
   provider: "Discord" | "Google";
   style?: StyleProp<ViewStyle>;
   navigation: NativeStackNavigationProp<
-    RootStackParamList,
+    UnauthorizedStackParamList,
     "Welcome",
     undefined
   >;
@@ -76,7 +76,7 @@ interface AuthButtonLocalProviderProps {
   provider: "Link" | "Email";
   style?: StyleProp<ViewStyle>;
   navigation: NativeStackNavigationProp<
-    RootStackParamList,
+    UnauthorizedStackParamList,
     "Welcome",
     undefined
   >;
@@ -130,7 +130,7 @@ interface AuthButtonProps {
   provider: "Discord" | "Google" | "Link" | "Email";
   style?: StyleProp<ViewStyle>;
   navigation: NativeStackNavigationProp<
-    RootStackParamList,
+    UnauthorizedStackParamList,
     "Welcome",
     undefined
   >;

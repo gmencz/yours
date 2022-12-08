@@ -6,19 +6,25 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
-import { useColorScheme } from "react-native";
+import { StatusBar, useColorScheme } from "react-native";
 import { useTheme, useThemeMode } from "@rneui/themed";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { RootStackParamList } from "../types";
-import { DashboardScreen } from "./dashboard";
+import { AuthorizedStackParamList, UnauthorizedStackParamList } from "../types";
+import { HomeScreen } from "./home";
 import { WelcomeScreen } from "./welcome";
 import { supabase } from "../lib/supabase";
 import { LinkSignInScreen } from "./link-sign-in";
 import { EmailSignInScreen } from "./email-sign-in";
+import { TabBar } from "../components/TabBar";
+import { FoodScreen } from "./food";
 
 global.Buffer = global.Buffer || Buffer;
 
-const RootStack = createNativeStackNavigator<RootStackParamList>();
+const UnauthorizedStack =
+  createNativeStackNavigator<UnauthorizedStackParamList>();
+
+const AuthorizedStack = createBottomTabNavigator<AuthorizedStackParamList>();
 
 export function Screens() {
   const [session, setSession] = useState<Session | null>(null);
@@ -71,37 +77,53 @@ export function Screens() {
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>
-      <RootStack.Navigator>
-        {session?.user ? (
-          <>
-            <RootStack.Screen name="Dashboard" component={DashboardScreen} />
-          </>
-        ) : (
-          <>
-            <RootStack.Screen
-              name="Welcome"
-              component={WelcomeScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <RootStack.Screen
-              name="LinkSignIn"
-              component={LinkSignInScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <RootStack.Screen
-              name="EmailSignIn"
-              component={EmailSignInScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-          </>
-        )}
-      </RootStack.Navigator>
+      <StatusBar backgroundColor="transparent" translucent={true} />
+
+      {session?.user ? (
+        <AuthorizedStack.Navigator
+          initialRouteName="Home"
+          tabBar={(props) => <TabBar {...props} />}
+        >
+          <AuthorizedStack.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <AuthorizedStack.Screen
+            name="Food"
+            component={FoodScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </AuthorizedStack.Navigator>
+      ) : (
+        <UnauthorizedStack.Navigator initialRouteName="Welcome">
+          <UnauthorizedStack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <UnauthorizedStack.Screen
+            name="LinkSignIn"
+            component={LinkSignInScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <UnauthorizedStack.Screen
+            name="EmailSignIn"
+            component={EmailSignInScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </UnauthorizedStack.Navigator>
+      )}
     </NavigationContainer>
   );
 }
