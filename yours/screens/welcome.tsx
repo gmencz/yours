@@ -1,9 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useThemeMode } from "@rneui/themed";
-import { RootStackParamList } from "../types";
 import { useTheme } from "@rneui/themed";
 import { View } from "react-native";
+
+import { RootStackParamList } from "../types";
 import { Logo } from "../components/Logo";
 import { AuthButton } from "../components/AuthButton";
 

@@ -1,17 +1,17 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { RootStackParamList } from "../types";
 import { Text, useTheme } from "@rneui/themed";
-import { Logo } from "../components/Logo";
 import { AtSymbolIcon } from "react-native-heroicons/outline";
-import { TextInput, TouchableOpacity, View } from "react-native";
-import { useForm } from "react-hook-form";
+import { TextInput, View } from "react-native";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { supabase } from "../lib/supabase";
 import { makeRedirectUri } from "expo-auth-session";
-import { useEffect, useState } from "react";
-import * as Linking from "expo-linking";
+import { useState } from "react";
+
+import { Logo } from "../components/Logo";
+import { supabase } from "../lib/supabase";
+import { Button } from "../components/Button";
+import { useSessionListener } from "../lib/auth";
 
 type FormValues = {
   email: string;
@@ -32,11 +32,13 @@ const schema = yup
   .required();
 
 export function LinkSignInScreen() {
+  useSessionListener();
+
   const { theme } = useTheme();
   const {
-    setValue,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm<FormValues>({
     resolver: yupResolver(schema),
   });
@@ -74,45 +76,6 @@ export function LinkSignInScreen() {
     }
   };
 
-  const extractSessionFromLink = async (link: string) => {
-    const parsedURL = Linking.parse(link.replace("#", "?")!);
-
-    if (
-      parsedURL.queryParams?.access_token &&
-      parsedURL.queryParams.refresh_token
-    ) {
-      supabase.auth.setSession({
-        access_token: parsedURL.queryParams.access_token as string,
-        refresh_token: parsedURL.queryParams.refresh_token as string,
-      });
-    } else if (parsedURL.queryParams?.error_code) {
-      // TODO: Handle error
-      console.log(
-        `Error extracting session from link: ${parsedURL.queryParams.error_code}`
-      );
-    }
-  };
-
-  useEffect(() => {
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        extractSessionFromLink(url!);
-      }
-    });
-
-    function handler(res: { url: string }) {
-      if (res.url) {
-        extractSessionFromLink(res.url);
-      }
-    }
-
-    const listener = Linking.addEventListener("url", handler);
-
-    return () => {
-      listener.remove();
-    };
-  }, []);
-
   return (
     <SafeAreaView
       style={{
@@ -149,16 +112,24 @@ export function LinkSignInScreen() {
       >
         <AtSymbolIcon size={24} color={theme.colors.black} />
 
-        <TextInput
-          placeholder="Email"
-          onChangeText={(text) => setValue("email", text)}
-          placeholderTextColor={theme.colors.grey2}
-          style={{
-            marginLeft: theme.spacing.md,
-            color: theme.colors.black,
-            flex: 1,
-            fontFamily: "InterRegular",
-          }}
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              placeholder="Email"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              placeholderTextColor={theme.colors.grey2}
+              style={{
+                marginLeft: theme.spacing.md,
+                color: theme.colors.black,
+                flex: 1,
+                fontFamily: "InterRegular",
+              }}
+            />
+          )}
         />
       </View>
 
@@ -186,28 +157,12 @@ export function LinkSignInScreen() {
         </Text>
       ) : null}
 
-      <TouchableOpacity
+      <Button
+        variant="1"
+        title="Send magic link"
         onPress={handleSubmit(sendMagicLink)}
-        style={{
-          backgroundColor: theme.colors.black,
-          paddingVertical: 10,
-          borderRadius: 5,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: theme.spacing.xl,
-        }}
-      >
-        <Text
-          style={{
-            color: theme.colors.white,
-            fontFamily: "InterBlack",
-          }}
-        >
-          Send magic link
-        </Text>
-      </TouchableOpacity>
+        style={{ marginTop: theme.spacing.xl }}
+      />
     </SafeAreaView>
   );
 }

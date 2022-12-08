@@ -1,10 +1,12 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { Image, Text, useTheme, useThemeMode } from "@rneui/themed";
+import { Image, useTheme, useThemeMode } from "@rneui/themed";
 import { makeRedirectUri, startAsync } from "expo-auth-session";
-import { StyleProp, TouchableOpacity, ViewStyle } from "react-native";
+import { StyleProp, ViewStyle } from "react-native";
 import { AtSymbolIcon, LinkIcon } from "react-native-heroicons/outline";
+
 import { supabase, supabaseUrl } from "../lib/supabase";
 import { RootStackParamList } from "../types";
+import { Button } from "./Button";
 
 const externalProvidersIcons = {
   Discord: require("../assets/images/discord.png"),
@@ -47,43 +49,26 @@ function AuthButtonExternalProvider({
   };
 
   return (
-    <TouchableOpacity
+    <Button
+      title={`Continue with ${provider}`}
+      variant="1"
       onPress={onPress}
-      style={[
-        {
-          backgroundColor: theme.colors.black,
-          paddingVertical: 10,
-          borderRadius: 5,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          paddingLeft: 25,
-        },
-        style,
-      ]}
-    >
-      <Image
-        source={
-          externalProvidersIcons[
-            provider as keyof typeof externalProvidersIcons
-          ]
-        }
-        style={{
-          height: 25,
-          width: 25,
-          marginRight: 30,
-        }}
-      />
-
-      <Text
-        style={{
-          color: theme.colors.white,
-          fontFamily: "InterBlack",
-        }}
-      >
-        Continue with {provider}
-      </Text>
-    </TouchableOpacity>
+      style={style}
+      icon={
+        <Image
+          source={
+            externalProvidersIcons[
+              provider as keyof typeof externalProvidersIcons
+            ]
+          }
+          style={{
+            height: 25,
+            width: 25,
+            marginRight: 30,
+          }}
+        />
+      }
+    />
   );
 }
 
@@ -117,45 +102,27 @@ function AuthButtonLocalProvider({
   };
 
   return (
-    <TouchableOpacity
+    <Button
+      title={`Continue with ${provider}`}
+      variant="2"
       onPress={onPress}
-      style={[
-        {
-          backgroundColor:
-            mode === "dark" ? "rgba(25, 25, 25, 1)" : "rgba(230, 230, 230, 1)",
-          paddingVertical: 10,
-          borderRadius: 5,
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          paddingLeft: 25,
-        },
-        style,
-      ]}
-    >
-      {provider === "Link" ? (
-        <LinkIcon
-          size={25}
-          color={theme.colors.black}
-          style={{ marginRight: 30 }}
-        />
-      ) : provider === "Email" ? (
-        <AtSymbolIcon
-          size={25}
-          color={theme.colors.black}
-          style={{ marginRight: 30 }}
-        />
-      ) : null}
-
-      <Text
-        style={{
-          color: theme.colors.black,
-          fontFamily: "InterBlack",
-        }}
-      >
-        Continue with {provider}
-      </Text>
-    </TouchableOpacity>
+      style={style}
+      icon={
+        provider === "Link" ? (
+          <LinkIcon
+            size={25}
+            color={theme.colors.black}
+            style={{ marginRight: 30 }}
+          />
+        ) : provider === "Email" ? (
+          <AtSymbolIcon
+            size={25}
+            color={theme.colors.black}
+            style={{ marginRight: 30 }}
+          />
+        ) : undefined
+      }
+    />
   );
 }
 

@@ -5,13 +5,14 @@ import { DefaultTheme, NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect, useState } from "react";
+import { Session } from "@supabase/supabase-js";
+import { useColorScheme } from "react-native";
+import { useTheme, useThemeMode } from "@rneui/themed";
+
 import { RootStackParamList } from "../types";
 import { DashboardScreen } from "./dashboard";
 import { WelcomeScreen } from "./welcome";
 import { supabase } from "../lib/supabase";
-import { Session } from "@supabase/supabase-js";
-import { useColorScheme } from "react-native";
-import { useTheme, useThemeMode } from "@rneui/themed";
 import { LinkSignInScreen } from "./link-sign-in";
 import { EmailSignInScreen } from "./email-sign-in";
 
