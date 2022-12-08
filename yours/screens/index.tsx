@@ -41,14 +41,14 @@ export function Screens() {
   });
 
   const colorMode = useColorScheme();
-  const { theme } = useTheme();
   const { setMode, mode } = useThemeMode();
+  const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
     setMode(colorMode as "light" | "dark");
   }, [colorMode]);
 
-  const isLoading = !fontsLoaded;
+  const isLoading = !fontsLoaded || loadingAuth;
 
   const onLayoutRootView = useCallback(async () => {
     if (!isLoading) {
@@ -62,14 +62,19 @@ export function Screens() {
   }, [isLoading]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+      })
+      .finally(() => {
+        setLoadingAuth(false);
+      });
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-  }, []);
+  }, [setLoadingAuth]);
 
   if (isLoading) {
     return null;

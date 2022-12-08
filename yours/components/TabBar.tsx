@@ -1,7 +1,6 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Colors, Icon, Text, Theme, useTheme } from "@rneui/themed";
 import { TouchableOpacity, View } from "react-native";
-import { HomeModernIcon } from "react-native-heroicons/outline";
 import { AuthorizedStackParamList } from "../types";
 
 const icons: Record<
@@ -102,7 +101,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
               style={{
                 fontSize: 12,
                 marginTop: 5,
-                fontFamily: "InterMedium",
+                fontFamily: isFocused ? "InterSemiBold" : "InterMedium",
                 color: isFocused ? theme.colors.black : theme.colors.grey4,
               }}
             >
