@@ -21,11 +21,11 @@ const icons: Record<
 
   Food: (theme, isFocused) =>
     isFocused ? (
-      <Icon type="antdesign" name="apple1" size={30} />
+      <Icon type="material-community" name="food-apple" size={30} />
     ) : (
       <Icon
-        type="antdesign"
-        name="apple-o"
+        type="material-community"
+        name="food-apple-outline"
         size={30}
         color={theme.colors.grey4}
       />
@@ -42,6 +42,8 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         backgroundColor: theme.colors.background,
         justifyContent: "center",
         alignItems: "center",
+        borderTopWidth: 1,
+        borderTopColor: theme.colors.grey4,
       }}
     >
       {state.routes.map((route, index) => {
