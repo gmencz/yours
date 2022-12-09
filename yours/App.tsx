@@ -3,6 +3,9 @@ import { ThemeProvider, useTheme } from "@rneui/themed";
 import { theme as appTheme } from "./lib/theme";
 import { Screens } from "./screens";
 import { useEffect } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
   const { theme } = useTheme();
@@ -17,7 +20,9 @@ function App() {
 export default function AppWithTheme() {
   return (
     <ThemeProvider theme={appTheme}>
-      <App />
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
     </ThemeProvider>
   );
 }
