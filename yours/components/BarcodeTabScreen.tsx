@@ -32,8 +32,9 @@ export function BarcodeTabScreen() {
   return (
     <View
       style={{
-        marginTop: theme.spacing.xl,
         flex: 1,
+        paddingVertical: 30,
+        backgroundColor: theme.colors.background,
       }}
     >
       {hasPermission === undefined ? (

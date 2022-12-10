@@ -7,5 +7,18 @@ export type UnauthorizedStackParamList = {
 
 export type AuthorizedStackParamList = {
   Home: undefined;
-  Food: undefined;
+  Food: {
+    screen: keyof FoodTabStackParamList;
+  };
+};
+
+export type QuickAddStackParamList = {
+  RequiredDetails: undefined;
+  NutritionFacts: undefined;
+};
+
+export type FoodTabStackParamList = {
+  Barcode: undefined;
+  Search: undefined;
+  QuickAdd: undefined;
 };

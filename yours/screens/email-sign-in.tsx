@@ -12,6 +12,7 @@ import { Logo } from "../components/Logo";
 import { supabase } from "../lib/supabase";
 import { Button } from "../components/Button";
 import { useSessionListener } from "../lib/auth";
+import { ControlledInput } from "../components/ControlledInput";
 
 type FormValues = {
   email: string;
@@ -160,90 +161,28 @@ export function EmailSignInScreen() {
         Sign in to your account or create a new one.
       </Text>
 
-      <View
-        style={{
-          marginTop: theme.spacing.xl,
-          flexDirection: "row",
-          alignItems: "center",
-          borderWidth: 1,
-          borderColor: theme.colors.grey5,
-          padding: 10,
-          borderRadius: 5,
-        }}
-      >
-        <AtSymbolIcon size={24} color={theme.colors.black} />
-
-        <Controller
+      <View style={{ marginTop: theme.spacing.xl }}>
+        <ControlledInput
           control={control}
+          label="Email"
           name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Email"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholderTextColor={theme.colors.grey2}
-              style={{
-                marginLeft: theme.spacing.md,
-                color: theme.colors.black,
-                flex: 1,
-                fontFamily: "InterRegular",
-              }}
-            />
-          )}
+          placeholder="you@example.com"
+          icon={<AtSymbolIcon size={24} color={theme.colors.black} />}
+          errorMessage={errors.email?.message}
         />
       </View>
 
-      {errors.email ? (
-        <Text
-          style={{ marginTop: theme.spacing.md, color: theme.colors.error }}
-        >
-          {errors.email.message}
-        </Text>
-      ) : null}
-
-      <View
-        style={{
-          marginTop: theme.spacing.lg,
-          flexDirection: "row",
-          alignItems: "center",
-          borderWidth: 1,
-          borderColor: theme.colors.grey5,
-          padding: 10,
-          borderRadius: 5,
-        }}
-      >
-        <KeyIcon size={24} color={theme.colors.black} />
-
-        <Controller
+      <View style={{ marginTop: theme.spacing.xl }}>
+        <ControlledInput
           control={control}
+          secureTextEntry
+          label="Password"
           name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              secureTextEntry
-              placeholder="Password"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholderTextColor={theme.colors.grey2}
-              style={{
-                marginLeft: theme.spacing.md,
-                color: theme.colors.black,
-                flex: 1,
-                fontFamily: "InterRegular",
-              }}
-            />
-          )}
+          placeholder="at least 6 characters"
+          icon={<KeyIcon size={24} color={theme.colors.black} />}
+          errorMessage={errors.password?.message}
         />
       </View>
-
-      {errors.password ? (
-        <Text
-          style={{ marginTop: theme.spacing.md, color: theme.colors.error }}
-        >
-          {errors.password.message}
-        </Text>
-      ) : null}
 
       {state.errorMessage ? (
         <Text

@@ -1,8 +1,10 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AuthorizedStackParamList } from "../types";
+import { AuthorizedStackParamList, FoodTabStackParamList } from "../types";
 import { Icon, Text, useTheme } from "@rneui/themed";
-import { useState } from "react";
 import {
   StyleProp,
   TextStyle,
@@ -13,16 +15,17 @@ import {
 import { BarcodeTabScreen } from "../components/BarcodeTabScreen";
 import { QuickAddTabScreen } from "../components/QuickAddTabScreen";
 import { SearchTabScreen } from "../components/SearchTabScreen";
+import { useState } from "react";
 
 type Props = NativeStackScreenProps<AuthorizedStackParamList, "Food">;
 
-type Tab = "barcode" | "search" | "quick-add";
+const FoodTabStack = createNativeStackNavigator<FoodTabStackParamList>();
 
-export function FoodScreen({ navigation }: Props) {
+export function FoodScreen({ route, navigation }: Props) {
   const { theme } = useTheme();
-  const [selectedTab, setSelectedTab] = useState<Tab>("barcode");
+  const [selectedTab, setSelectedTab] = useState(route.params.screen);
 
-  const getTabStyles = (tab: Tab) => {
+  const getTabStyles = (tab: keyof FoodTabStackParamList) => {
     const isSelected = tab === selectedTab;
 
     const tabStyles: StyleProp<ViewStyle> = {
@@ -51,9 +54,9 @@ export function FoodScreen({ navigation }: Props) {
   };
 
   const [barcodeTabStyles, quickAddTabStyles, searchTabStyles] = [
-    getTabStyles("barcode"),
-    getTabStyles("quick-add"),
-    getTabStyles("search"),
+    getTabStyles("Barcode"),
+    getTabStyles("QuickAdd"),
+    getTabStyles("Search"),
   ];
 
   return (
@@ -61,7 +64,6 @@ export function FoodScreen({ navigation }: Props) {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
-        paddingBottom: 30,
         paddingTop: 30,
       }}
     >
@@ -72,7 +74,9 @@ export function FoodScreen({ navigation }: Props) {
       >
         <TouchableOpacity
           style={[barcodeTabStyles.tab, { paddingLeft: theme.spacing.md }]}
-          onPress={() => setSelectedTab("barcode")}
+          onPress={() => {
+            navigation.navigate("Food", { screen: "Barcode" });
+          }}
         >
           <Icon
             type="material-community"
@@ -85,7 +89,9 @@ export function FoodScreen({ navigation }: Props) {
 
         <TouchableOpacity
           style={searchTabStyles.tab}
-          onPress={() => setSelectedTab("search")}
+          onPress={() => {
+            navigation.navigate("Food", { screen: "Search" });
+          }}
         >
           <Icon
             type="material"
@@ -98,7 +104,9 @@ export function FoodScreen({ navigation }: Props) {
 
         <TouchableOpacity
           style={[quickAddTabStyles.tab, { paddingRight: theme.spacing.md }]}
-          onPress={() => setSelectedTab("quick-add")}
+          onPress={() => {
+            navigation.navigate("Food", { screen: "QuickAdd" });
+          }}
         >
           <Icon
             type="material"
@@ -110,13 +118,41 @@ export function FoodScreen({ navigation }: Props) {
         </TouchableOpacity>
       </View>
 
-      {selectedTab === "barcode" ? (
-        <BarcodeTabScreen />
-      ) : selectedTab === "quick-add" ? (
-        <QuickAddTabScreen />
-      ) : selectedTab === "search" ? (
-        <SearchTabScreen />
-      ) : null}
+      <FoodTabStack.Navigator
+        initialRouteName="Barcode"
+        screenOptions={{ animation: "none" }}
+        screenListeners={{
+          focus: ({ target }) => {
+            if (target) {
+              setSelectedTab(
+                target.split("-")[0] as keyof FoodTabStackParamList
+              );
+            }
+          },
+        }}
+      >
+        <FoodTabStack.Screen
+          name="Barcode"
+          component={BarcodeTabScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <FoodTabStack.Screen
+          name="Search"
+          component={SearchTabScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <FoodTabStack.Screen
+          name="QuickAdd"
+          component={QuickAddTabScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+      </FoodTabStack.Navigator>
     </SafeAreaView>
   );
 }

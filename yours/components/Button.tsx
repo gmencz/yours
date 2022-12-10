@@ -34,10 +34,7 @@ export function Button({
             }
           : variant === "2"
           ? {
-              backgroundColor:
-                mode === "dark"
-                  ? "rgba(25, 25, 25, 1)"
-                  : "rgba(230, 230, 230, 1)",
+              backgroundColor: theme.colors.grey5,
             }
           : undefined,
 

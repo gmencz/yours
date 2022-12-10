@@ -1,8 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme } from "@rneui/themed";
 import { AtSymbolIcon } from "react-native-heroicons/outline";
-import { TextInput, View } from "react-native";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { makeRedirectUri } from "expo-auth-session";
@@ -12,6 +11,7 @@ import { Logo } from "../components/Logo";
 import { supabase } from "../lib/supabase";
 import { Button } from "../components/Button";
 import { useSessionListener } from "../lib/auth";
+import { ControlledInput } from "../components/ControlledInput";
 
 type FormValues = {
   email: string;
@@ -93,53 +93,20 @@ export function LinkSignInScreen() {
           marginTop: theme.spacing.xl,
           color: theme.colors.grey0,
           fontSize: 16,
+          marginBottom: theme.spacing.xl,
         }}
       >
         Tired of passwords? Get a magic link sent to your email that'll sign you
         in instantly!
       </Text>
 
-      <View
-        style={{
-          marginTop: theme.spacing.xl,
-          flexDirection: "row",
-          alignItems: "center",
-          borderWidth: 1,
-          borderColor: theme.colors.grey5,
-          padding: 10,
-          borderRadius: 5,
-        }}
-      >
-        <AtSymbolIcon size={24} color={theme.colors.black} />
-
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              placeholder="Email"
-              onBlur={onBlur}
-              onChangeText={onChange}
-              value={value}
-              placeholderTextColor={theme.colors.grey2}
-              style={{
-                marginLeft: theme.spacing.md,
-                color: theme.colors.black,
-                flex: 1,
-                fontFamily: "InterRegular",
-              }}
-            />
-          )}
-        />
-      </View>
-
-      {errors.email ? (
-        <Text
-          style={{ marginTop: theme.spacing.md, color: theme.colors.error }}
-        >
-          {errors.email.message}
-        </Text>
-      ) : null}
+      <ControlledInput
+        control={control}
+        name="email"
+        placeholder="you@example.com"
+        icon={<AtSymbolIcon size={24} color={theme.colors.black} />}
+        errorMessage={errors.email?.message}
+      />
 
       {state.status === "error" ? (
         <Text

@@ -7,7 +7,7 @@ import { useFonts } from "expo-font";
 import { useCallback, useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { StatusBar, useColorScheme } from "react-native";
-import { useTheme, useThemeMode } from "@rneui/themed";
+import { useThemeMode } from "@rneui/themed";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 import { AuthorizedStackParamList, UnauthorizedStackParamList } from "../types";
@@ -103,6 +103,9 @@ export function Screens() {
           <AuthorizedStack.Screen
             name="Food"
             component={FoodScreen}
+            initialParams={{
+              screen: "Barcode",
+            }}
             options={{
               headerShown: false,
             }}

@@ -1,13 +1,13 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Icon, Text, useTheme, useThemeMode } from "@rneui/themed";
-import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { TextInput, View } from "react-native";
+import { ScrollView, TextInput, View } from "react-native";
 import * as yup from "yup";
 import { useDebounce } from "../lib/use-debounce";
 import { supabase } from "../lib/supabase";
 import { FoodCard, FoodCardProps } from "./FoodCard";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 type FormValues = {
   query: string;
@@ -21,10 +21,8 @@ const schema = yup
 
 export function SearchTabScreen() {
   const { theme } = useTheme();
-  const { mode } = useThemeMode();
-  const [isInputFocused, setIsInputFocused] = useState(false);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const {
-    handleSubmit,
     formState: { errors },
     control,
     watch,
@@ -39,6 +37,7 @@ export function SearchTabScreen() {
     data: foods,
     error,
     isFetching: isSearching,
+    isSuccess,
   } = useQuery({
     queryKey: ["searchResults", debouncedQuery],
     enabled: !!debouncedQuery,
@@ -70,13 +69,11 @@ export function SearchTabScreen() {
     },
   });
 
-  const backgroundColor =
-    mode === "dark" ? "rgba(25, 25, 25, 1)" : "rgba(230, 230, 230, 1)";
-
   return (
-    <View
+    <ScrollView
       style={{
-        marginTop: theme.spacing.xl,
+        paddingVertical: 30,
+        backgroundColor: theme.colors.background,
       }}
     >
       <View
@@ -86,9 +83,11 @@ export function SearchTabScreen() {
           borderRadius: 100,
           paddingVertical: 10,
           paddingHorizontal: 15,
-          backgroundColor,
+          backgroundColor: theme.colors.grey5,
           borderWidth: 1,
-          borderColor: isInputFocused ? theme.colors.grey3 : backgroundColor,
+          borderColor: isSearchFocused
+            ? theme.colors.grey1
+            : theme.colors.grey5,
           marginHorizontal: theme.spacing.lg,
         }}
       >
@@ -96,7 +95,7 @@ export function SearchTabScreen() {
           type="material"
           name="search"
           size={25}
-          color={theme.colors.grey1}
+          color={theme.colors.grey2}
         />
         <Controller
           control={control}
@@ -104,14 +103,16 @@ export function SearchTabScreen() {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               placeholder="Search for a food"
+              onFocus={() => {
+                setIsSearchFocused(true);
+              }}
               onBlur={() => {
                 onBlur();
-                setIsInputFocused(false);
+                setIsSearchFocused(false);
               }}
               onChangeText={onChange}
               value={value}
               placeholderTextColor={theme.colors.grey3}
-              onFocus={() => setIsInputFocused(true)}
               style={{
                 marginLeft: theme.spacing.md,
                 color: theme.colors.black,
@@ -148,23 +149,25 @@ export function SearchTabScreen() {
           >
             Searching...
           </Text>
-        ) : foods?.length ? (
-          <>
-            {foods.map((food) => (
-              <FoodCard key={food.id} food={food} />
-            ))}
-          </>
-        ) : (
-          <Text
-            style={{
-              marginBottom: theme.spacing.xl,
-              paddingHorizontal: theme.spacing.xl,
-            }}
-          >
-            We found no results for your search
-          </Text>
-        )}
+        ) : isSuccess ? (
+          foods?.length ? (
+            <>
+              {foods.map((food) => (
+                <FoodCard key={food.id} food={food} />
+              ))}
+            </>
+          ) : (
+            <Text
+              style={{
+                marginBottom: theme.spacing.xl,
+                paddingHorizontal: theme.spacing.xl,
+              }}
+            >
+              We found no results for your search
+            </Text>
+          )
+        ) : null}
       </View>
-    </View>
+    </ScrollView>
   );
 }
