@@ -82,7 +82,11 @@ export function Screens() {
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>
-      <StatusBar backgroundColor="transparent" translucent={true} />
+      <StatusBar
+        backgroundColor="transparent"
+        barStyle={mode === "light" ? "dark-content" : "light-content"}
+        translucent={true}
+      />
 
       {session?.user ? (
         <AuthorizedStack.Navigator
