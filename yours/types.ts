@@ -15,6 +15,7 @@ export type AuthorizedStackParamList = {
 export type QuickAddStackParamList = {
   RequiredDetails: undefined;
   NutritionFacts: undefined;
+  AdditionalDetails: undefined;
 };
 
 export type FoodTabStackParamList = {

@@ -26,12 +26,11 @@ const schema = yup
     sugar: yup.number(),
     fiber: yup.number(),
     salt: yup.number(),
+    photo: yup.string(),
   })
   .required();
 
 type FormValues = yup.TypeOf<typeof schema>;
-
-type DetailsScreen = "required" | "nutrition-facts" | "additional";
 
 const QuickAddStack = createNativeStackNavigator<QuickAddStackParamList>();
 
@@ -58,26 +57,6 @@ export function QuickAddTabScreen() {
         flex: 1,
       }}
     >
-      <View style={{ paddingHorizontal: theme.spacing.xl }}>
-        <Text
-          style={{
-            fontFamily: "InterBold",
-          }}
-        >
-          Quick Add
-        </Text>
-
-        <Text
-          style={{
-            color: theme.colors.grey1,
-            marginTop: theme.spacing.sm,
-          }}
-        >
-          Add a new food to our database, it will be available to everyone once
-          approved.
-        </Text>
-      </View>
-
       <QuickAddStack.Navigator
         initialRouteName="RequiredDetails"
         screenOptions={{
@@ -107,6 +86,15 @@ export function QuickAddTabScreen() {
             />
           )}
         </QuickAddStack.Screen>
+
+        <QuickAddStack.Screen
+          name="AdditionalDetails"
+          options={{
+            headerShown: false,
+          }}
+        >
+          {(props) => <AdditionalDetailsScreen control={control} {...props} />}
+        </QuickAddStack.Screen>
       </QuickAddStack.Navigator>
     </View>
   );
@@ -128,7 +116,34 @@ function RequiredDetailsScreen({
         paddingHorizontal: theme.spacing.xl,
       }}
     >
-      <View style={{ marginTop: theme.spacing.xl }}>
+      <Text
+        style={{
+          fontFamily: "InterBlack",
+        }}
+      >
+        Quick Add
+      </Text>
+
+      <Text
+        style={{
+          color: theme.colors.grey1,
+          marginTop: theme.spacing.sm,
+        }}
+      >
+        Add a new food to our database, it will be available to everyone once
+        approved.
+      </Text>
+
+      <Text
+        style={{
+          marginTop: theme.spacing.xl,
+          fontFamily: "InterBold",
+        }}
+      >
+        What is the food item?
+      </Text>
+
+      <View style={{ marginTop: theme.spacing.lg }}>
         <ControlledInput
           label="Name"
           name="name"
@@ -139,7 +154,7 @@ function RequiredDetailsScreen({
 
       <View style={{ marginTop: theme.spacing.xl }}>
         <ControlledInput
-          label="Brand"
+          label="Brand (optional)"
           name="brand"
           control={control}
           placeholder="Prozis"
@@ -163,6 +178,11 @@ function RequiredDetailsScreen({
   );
 }
 
+// NOTE TO SELF:
+// Work on the last screen (additional requirements) and probably move these screens
+// into different files so it's cleaner (overall clean stuff).
+// Also add the onPress handlers.
+
 type NutritionFactsDetailsScreenProps = {
   control: Control<FormValues>;
   valuesPer?: string;
@@ -171,6 +191,7 @@ type NutritionFactsDetailsScreenProps = {
 function NutritionFactsDetailsScreen({
   control,
   valuesPer,
+  navigation,
 }: NutritionFactsDetailsScreenProps) {
   const { theme } = useTheme();
 
@@ -181,7 +202,34 @@ function NutritionFactsDetailsScreen({
         paddingHorizontal: theme.spacing.xl,
       }}
     >
-      <View style={{ marginTop: theme.spacing.xl }}>
+      <Text
+        style={{
+          fontFamily: "InterBlack",
+        }}
+      >
+        Quick Add
+      </Text>
+
+      <Text
+        style={{
+          color: theme.colors.grey1,
+          marginTop: theme.spacing.sm,
+        }}
+      >
+        Add a new food to our database, it will be available to everyone once
+        approved.
+      </Text>
+
+      <Text
+        style={{
+          marginTop: theme.spacing.xl,
+          fontFamily: "InterBold",
+        }}
+      >
+        Fill in the nutrition facts
+      </Text>
+
+      <View style={{ marginTop: theme.spacing.lg }}>
         <ControlledPicker
           value={valuesPer}
           label="Values per"
@@ -283,7 +331,78 @@ function NutritionFactsDetailsScreen({
 
       <Button
         title="Next"
-        onPress={() => {}}
+        onPress={() => {
+          navigation.navigate("AdditionalDetails");
+        }}
+        variant="1"
+        style={{
+          marginTop: theme.spacing.xl,
+          width: 100,
+          borderRadius: 100,
+          alignSelf: "center",
+        }}
+      />
+    </ScrollView>
+  );
+}
+
+type AdditionalDetailsScreenProps = {
+  control: Control<FormValues>;
+} & NativeStackScreenProps<QuickAddStackParamList, "AdditionalDetails">;
+
+function AdditionalDetailsScreen({
+  control,
+  navigation,
+}: AdditionalDetailsScreenProps) {
+  const { theme } = useTheme();
+  return (
+    <ScrollView
+      style={{
+        backgroundColor: theme.colors.background,
+        paddingHorizontal: theme.spacing.xl,
+      }}
+    >
+      <Text
+        style={{
+          fontFamily: "InterBold",
+        }}
+      >
+        Quick Add
+      </Text>
+
+      <Text
+        style={{
+          color: theme.colors.grey1,
+          marginTop: theme.spacing.sm,
+        }}
+      >
+        Add a new food to our database, it will be available to everyone once
+        approved.
+      </Text>
+
+      <Text
+        style={{
+          marginTop: theme.spacing.xl,
+          fontFamily: "InterBold",
+        }}
+      >
+        Some extra details
+      </Text>
+
+      <View style={{ marginTop: theme.spacing.lg }}>
+        <ControlledInput
+          label="Photo (optional)"
+          name="photo"
+          control={control}
+          placeholder="Photo"
+        />
+      </View>
+
+      <Button
+        title="Next"
+        onPress={() => {
+          navigation.navigate("NutritionFacts");
+        }}
         variant="1"
         style={{
           marginTop: theme.spacing.xl,
