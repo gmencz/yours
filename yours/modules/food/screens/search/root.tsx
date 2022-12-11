@@ -3,11 +3,11 @@ import { Icon, Text, useTheme, useThemeMode } from "@rneui/themed";
 import { Controller, useForm } from "react-hook-form";
 import { ScrollView, TextInput, View } from "react-native";
 import * as yup from "yup";
-import { useDebounce } from "../lib/use-debounce";
-import { supabase } from "../lib/supabase";
-import { FoodCard, FoodCardProps } from "./FoodCard";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useDebounce } from "../../../common/hooks/use-debounce";
+import { supabase } from "../../../supabase/client";
+import { FoodCard, FoodCardProps } from "../../components/result-card";
 
 type FormValues = {
   query: string;

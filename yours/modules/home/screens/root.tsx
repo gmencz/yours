@@ -1,7 +1,8 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AuthorizedStackParamList } from "../types";
 import { Text, useTheme } from "@rneui/themed";
+
+import { AuthorizedStackParamList } from "../../../types";
 
 type Props = NativeStackScreenProps<AuthorizedStackParamList, "Home">;
 

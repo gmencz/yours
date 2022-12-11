@@ -7,9 +7,10 @@ import {
 } from "expo-barcode-scanner";
 import { View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "../lib/supabase";
-import { Button } from "./Button";
-import { FoodCard, FoodCardProps } from "./FoodCard";
+
+import { supabase } from "../../../supabase/client";
+import { FoodCard, FoodCardProps } from "../../components/result-card";
+import { Button } from "../../../common/components/button";
 
 export function BarcodeTabScreen() {
   const [hasPermission, setHasPermission] = useState<boolean>();

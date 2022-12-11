@@ -1,7 +1,6 @@
 import * as Linking from "expo-linking";
 import { useEffect } from "react";
-
-import { supabase } from "./supabase";
+import { supabase } from "../../supabase/client";
 
 export const useSessionListener = () => {
   const extractSessionFromLink = async (link: string) => {

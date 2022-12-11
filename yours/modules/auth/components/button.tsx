@@ -4,13 +4,13 @@ import { makeRedirectUri, startAsync } from "expo-auth-session";
 import { StyleProp, ViewStyle } from "react-native";
 import { AtSymbolIcon, LinkIcon } from "react-native-heroicons/outline";
 
-import { supabase, supabaseUrl } from "../lib/supabase";
-import { UnauthorizedStackParamList } from "../types";
-import { Button } from "./Button";
+import { UnauthorizedStackParamList } from "../../../types";
+import { Button } from "../../common/components/button";
+import { supabase, supabaseUrl } from "../../supabase/client";
 
 const externalProvidersIcons = {
-  Discord: require("../assets/images/discord.png"),
-  Google: require("../assets/images/google.png"),
+  Discord: require("../../../assets/images/discord.png"),
+  Google: require("../../../assets/images/google.png"),
 };
 
 interface AuthButtonExternalProviderProps {

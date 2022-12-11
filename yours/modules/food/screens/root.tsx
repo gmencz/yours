@@ -3,7 +3,6 @@ import {
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { AuthorizedStackParamList, FoodTabStackParamList } from "../types";
 import { Icon, Text, useTheme } from "@rneui/themed";
 import {
   StyleProp,
@@ -12,10 +11,15 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { BarcodeTabScreen } from "../components/BarcodeTabScreen";
-import { QuickAddTabScreen } from "../components/QuickAddTabScreen";
-import { SearchTabScreen } from "../components/SearchTabScreen";
 import { useState } from "react";
+
+import {
+  AuthorizedStackParamList,
+  FoodTabStackParamList,
+} from "../../../types";
+import { QuickAddRootScreen } from "./quick-add/root";
+import { SearchTabScreen } from "./search/root";
+import { BarcodeTabScreen } from "./barcode/root";
 
 type Props = NativeStackScreenProps<AuthorizedStackParamList, "Food">;
 
@@ -147,7 +151,7 @@ export function FoodScreen({ route, navigation }: Props) {
         />
         <FoodTabStack.Screen
           name="QuickAdd"
-          component={QuickAddTabScreen}
+          component={QuickAddRootScreen}
           options={{
             headerShown: false,
           }}

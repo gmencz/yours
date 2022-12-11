@@ -4,9 +4,9 @@ import { Text, useThemeMode } from "@rneui/themed";
 import { useTheme } from "@rneui/themed";
 import { View } from "react-native";
 
-import { UnauthorizedStackParamList } from "../types";
-import { Logo } from "../components/Logo";
-import { AuthButton } from "../components/AuthButton";
+import { UnauthorizedStackParamList } from "../../../types";
+import { AuthButton } from "../components/button";
+import { Logo } from "../../common/components/logo";
 
 type Props = NativeStackScreenProps<UnauthorizedStackParamList, "Welcome">;
 

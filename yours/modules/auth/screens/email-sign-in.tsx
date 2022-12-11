@@ -1,18 +1,17 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme, useThemeMode } from "@rneui/themed";
-import { TextInput, View } from "react-native";
+import { View } from "react-native";
 import { AtSymbolIcon, KeyIcon } from "react-native-heroicons/outline";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useState } from "react";
 import { makeRedirectUri } from "expo-auth-session";
-
-import { Logo } from "../components/Logo";
-import { supabase } from "../lib/supabase";
-import { Button } from "../components/Button";
-import { useSessionListener } from "../lib/auth";
-import { ControlledInput } from "../components/ControlledInput";
+import { useSessionListener } from "../hooks/use-session-listener";
+import { supabase } from "../../supabase/client";
+import { Button } from "../../common/components/button";
+import { ControlledInput } from "../../common/components/controlled-input";
+import { Logo } from "../../common/components/logo";
 
 type FormValues = {
   email: string;
