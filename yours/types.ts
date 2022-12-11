@@ -16,6 +16,7 @@ export type QuickAddStackParamList = {
   RequiredDetails: undefined;
   NutritionFacts: undefined;
   AdditionalDetails: undefined;
+  Barcode: undefined;
 };
 
 export type FoodTabStackParamList = {

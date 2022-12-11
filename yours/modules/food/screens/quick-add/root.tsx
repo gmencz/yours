@@ -9,6 +9,7 @@ import { QuickAddStackParamList } from "../../../../types";
 import { RequiredDetailsScreen } from "./required-details";
 import { NutritionFactsDetailsScreen } from "./nutrition-facts";
 import { AdditionalDetailsScreen } from "./additional-details";
+import { BarcodeScreen } from "./barcode";
 
 const schema = yup
   .object({
@@ -32,7 +33,8 @@ const schema = yup
     sugar: yup.number(),
     fiber: yup.number(),
     salt: yup.number(),
-    photo: yup.string(),
+    photo: yup.string().url("Enter a valid URL"),
+    barcode: yup.string(),
   })
   .required();
 
@@ -48,6 +50,7 @@ export function QuickAddRootScreen() {
     watch,
     trigger,
     handleSubmit,
+    setValue,
   } = useForm<FormValues>({
     mode: "all",
     resolver: yupResolver(schema),
@@ -113,9 +116,27 @@ export function QuickAddRootScreen() {
         >
           {(props) => (
             <AdditionalDetailsScreen
+              trigger={trigger}
               handleSubmit={handleSubmit}
               errors={errors}
               control={control}
+              {...props}
+            />
+          )}
+        </QuickAddStack.Screen>
+
+        <QuickAddStack.Screen
+          name="Barcode"
+          options={{
+            headerShown: false,
+          }}
+        >
+          {(props) => (
+            <BarcodeScreen
+              handleSubmit={handleSubmit}
+              errors={errors}
+              control={control}
+              setValue={setValue}
               {...props}
             />
           )}

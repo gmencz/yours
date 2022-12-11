@@ -6,12 +6,14 @@ import {
   FieldErrorsImpl,
   useForm,
   UseFormHandleSubmit,
+  UseFormTrigger,
 } from "react-hook-form";
 import { ScrollView, View } from "react-native";
 
 import { QuickAddStackParamList } from "../../../../types";
 import { Button } from "../../../common/components/button";
 import { ControlledInput } from "../../../common/components/controlled-input";
+import { supabase } from "../../../supabase/client";
 import { FormValues } from "./root";
 
 type AdditionalDetailsScreenProps = NativeStackScreenProps<
@@ -21,6 +23,7 @@ type AdditionalDetailsScreenProps = NativeStackScreenProps<
   control: Control<FormValues>;
   errors: Partial<FieldErrorsImpl<FormValues>>;
   handleSubmit: UseFormHandleSubmit<FormValues>;
+  trigger: UseFormTrigger<FormValues>;
 };
 
 export function AdditionalDetailsScreen({
@@ -28,12 +31,16 @@ export function AdditionalDetailsScreen({
   control,
   errors,
   handleSubmit,
+  trigger,
 }: AdditionalDetailsScreenProps) {
   const { theme } = useTheme();
 
-  const createFood = (values: FormValues) => {
-    console.log("LETS CREATE THE FOOD");
-    console.log(values);
+  const goNext = async () => {
+    const canContinue = await trigger(["photo"]);
+
+    if (canContinue) {
+      navigation.navigate("Barcode");
+    }
   };
 
   return (
@@ -68,12 +75,13 @@ export function AdditionalDetailsScreen({
           control={control}
           placeholder="Enter the photo URL"
           errorMessage={errors.photo?.message}
+          keyboardType="url"
         />
       </View>
 
       <Button
-        title="Submit food for approval"
-        onPress={handleSubmit(createFood)}
+        title="Next"
+        onPress={goNext}
         variant="1"
         style={{
           marginTop: theme.spacing.xl,

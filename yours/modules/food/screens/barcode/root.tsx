@@ -5,7 +5,7 @@ import {
   BarCodeScannerResult,
   PermissionStatus,
 } from "expo-barcode-scanner";
-import { View } from "react-native";
+import { Dimensions, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 import { supabase } from "../../../supabase/client";
