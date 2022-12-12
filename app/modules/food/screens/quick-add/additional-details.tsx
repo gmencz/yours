@@ -10,10 +10,10 @@ import {
 } from "react-hook-form";
 import { ScrollView, View } from "react-native";
 
-import { QuickAddStackParamList } from "../../../../types";
-import { Button } from "../../../common/components/button";
-import { ControlledInput } from "../../../common/components/controlled-input";
-import { supabase } from "../../../supabase/client";
+import { QuickAddStackParamList } from "types";
+import { Button } from "modules/common/components/button";
+import { ControlledInput } from "modules/common/components/controlled-input";
+import { supabase } from "modules/supabase/client";
 import { FormValues } from "./root";
 
 type AdditionalDetailsScreenProps = NativeStackScreenProps<

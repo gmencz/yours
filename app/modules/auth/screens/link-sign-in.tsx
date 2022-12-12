@@ -6,11 +6,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { makeRedirectUri } from "expo-auth-session";
 import { useState } from "react";
-import { useSessionListener } from "../hooks/use-session-listener";
-import { supabase } from "../../supabase/client";
-import { Button } from "../../common/components/button";
-import { ControlledInput } from "../../common/components/controlled-input";
-import { Logo } from "../../common/components/logo";
+import { useSessionListener } from "modules/auth/hooks/use-session-listener";
+import { supabase } from "modules/supabase/client";
+import { Button } from "modules/common/components/button";
+import { ControlledInput } from "modules/common/components/controlled-input";
+import { Logo } from "modules/common/components/logo";
 
 type FormValues = {
   email: string;

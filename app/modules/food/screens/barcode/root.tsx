@@ -8,9 +8,9 @@ import {
 import { Dimensions, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
-import { supabase } from "../../../supabase/client";
-import { FoodCard, FoodCardProps } from "../../components/result-card";
-import { Button } from "../../../common/components/button";
+import { supabase } from "modules/supabase/client";
+import { FoodCard, FoodCardProps } from "modules/food/components/result-card";
+import { Button } from "modules/common/components/button";
 
 export function BarcodeTabScreen() {
   const [hasPermission, setHasPermission] = useState<boolean>();

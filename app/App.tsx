@@ -10,17 +10,17 @@ import { StatusBar, useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
 import { theme as appTheme } from "./theme";
-import { supabase } from "./modules/supabase/client";
+import { supabase } from "modules/supabase/client";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthorizedStackParamList, UnauthorizedStackParamList } from "./types";
-import { HomeScreen } from "./modules/home/screens/root";
-import { FoodScreen } from "./modules/food/screens/root";
-import { WelcomeScreen } from "./modules/auth/screens/welcome";
-import { LinkSignInScreen } from "./modules/auth/screens/link-sign-in";
-import { EmailSignInScreen } from "./modules/auth/screens/email-sign-in";
-import { TabBar } from "./modules/common/components/bottom-tab-bar";
+import { HomeScreen } from "modules/home/screens/root";
+import { FoodScreen } from "modules/food/screens/root";
+import { WelcomeScreen } from "modules/auth/screens/welcome";
+import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
+import { EmailSignInScreen } from "modules/auth/screens/email-sign-in";
+import { TabBar } from "modules/common/components/bottom-tab-bar";
 
 global.Buffer = global.Buffer || Buffer;
 
