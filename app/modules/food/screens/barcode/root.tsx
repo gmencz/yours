@@ -81,6 +81,7 @@ function BarcodeSearchResults({
     data: foods,
   } = useQuery({
     queryKey: ["barcodeResults", barcode],
+    staleTime: Infinity,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("foods")
@@ -89,7 +90,6 @@ function BarcodeSearchResults({
           id,
           name,
           brand,
-          photo,
           foods_nutrition_facts (
             values_per,
             calories,

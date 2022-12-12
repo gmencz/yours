@@ -70,7 +70,6 @@ export function BarcodeScreen({
         name: values.name,
         barcode: values.barcode,
         brand: values.brand,
-        photo: values.photo,
         nutrition_facts_id: nutritionFacts.id,
       });
 

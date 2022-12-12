@@ -8,7 +8,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QuickAddStackParamList } from "../../../../types";
 import { RequiredDetailsScreen } from "./required-details";
 import { NutritionFactsDetailsScreen } from "./nutrition-facts";
-import { AdditionalDetailsScreen } from "./additional-details";
 import { BarcodeScreen } from "./barcode";
 
 const schema = yup
@@ -33,7 +32,6 @@ const schema = yup
     sugar: yup.number(),
     fiber: yup.number(),
     salt: yup.number(),
-    photo: yup.string().url("Enter a valid URL"),
     barcode: yup.string(),
   })
   .required();
@@ -101,23 +99,6 @@ export function QuickAddRootScreen() {
             <NutritionFactsDetailsScreen
               trigger={trigger}
               valuesPer={valuesPer!}
-              errors={errors}
-              control={control}
-              {...props}
-            />
-          )}
-        </QuickAddStack.Screen>
-
-        <QuickAddStack.Screen
-          name="AdditionalDetails"
-          options={{
-            headerShown: false,
-          }}
-        >
-          {(props) => (
-            <AdditionalDetailsScreen
-              trigger={trigger}
-              handleSubmit={handleSubmit}
               errors={errors}
               control={control}
               {...props}

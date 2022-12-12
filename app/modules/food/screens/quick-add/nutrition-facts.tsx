@@ -49,7 +49,7 @@ export function NutritionFactsDetailsScreen({
     ]);
 
     if (canContinue) {
-      navigation.navigate("AdditionalDetails");
+      navigation.navigate("Barcode");
     }
   };
 

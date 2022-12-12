@@ -1,4 +1,5 @@
 import { Icon, Image, Text, useTheme } from "@rneui/themed";
+import { formatDecimal } from "modules/common/utils/formatDecimal";
 import { View } from "react-native";
 
 export type FoodCardProps = {
@@ -6,13 +7,12 @@ export type FoodCardProps = {
     id: string;
     name: string;
     brand?: string;
-    photo?: string;
     foods_nutrition_facts: {
       values_per: string;
-      calories: string;
-      total_fat: string;
-      carbs: string;
-      protein: string;
+      calories: number;
+      total_fat: number;
+      carbs: number;
+      protein: number;
     };
   };
 };
@@ -29,18 +29,6 @@ export function FoodCard({ food }: FoodCardProps) {
         marginBottom: theme.spacing.xl,
       }}
     >
-      {food.photo ? (
-        <Image
-          source={{ uri: food.photo }}
-          style={{
-            height: 60,
-            width: 60,
-            marginRight: theme.spacing.lg,
-            borderRadius: 10,
-          }}
-        />
-      ) : null}
-
       <View
         style={{
           flexDirection: "column",
@@ -62,7 +50,7 @@ export function FoodCard({ food }: FoodCardProps) {
               fontSize: 12,
             }}
           >
-            {food.foods_nutrition_facts.calories}
+            {formatDecimal(food.foods_nutrition_facts.calories)}
           </Text>
           <Icon
             type="material-community"
@@ -78,7 +66,7 @@ export function FoodCard({ food }: FoodCardProps) {
               marginLeft: theme.spacing.md,
             }}
           >
-            {food.foods_nutrition_facts.protein}P
+            {formatDecimal(food.foods_nutrition_facts.protein)}P
           </Text>
 
           <Text
@@ -88,7 +76,7 @@ export function FoodCard({ food }: FoodCardProps) {
               marginLeft: theme.spacing.md,
             }}
           >
-            {food.foods_nutrition_facts.total_fat}F
+            {formatDecimal(food.foods_nutrition_facts.total_fat)}F
           </Text>
 
           <Text
@@ -98,7 +86,7 @@ export function FoodCard({ food }: FoodCardProps) {
               marginLeft: theme.spacing.md,
             }}
           >
-            {food.foods_nutrition_facts.carbs}C
+            {formatDecimal(food.foods_nutrition_facts.carbs)}C
           </Text>
 
           <Icon

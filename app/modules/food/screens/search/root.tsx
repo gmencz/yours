@@ -41,6 +41,7 @@ export function SearchTabScreen() {
   } = useQuery({
     queryKey: ["searchResults", debouncedQuery],
     enabled: !!debouncedQuery,
+    staleTime: Infinity,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("foods")
@@ -49,7 +50,6 @@ export function SearchTabScreen() {
         id,
         name,
         brand,
-        photo,
         foods_nutrition_facts (
           values_per,
           calories,
