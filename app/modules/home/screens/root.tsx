@@ -1,15 +1,29 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Icon, Text, useTheme } from "@rneui/themed";
+import { Text, useTheme } from "@rneui/themed";
 
 import { AuthorizedStackParamList } from "types";
-import { Animated, Dimensions, ScrollView, View } from "react-native";
+import { ScrollView, TextInput, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "modules/supabase/client";
-import { add, format, getDay, isToday, startOfWeek, sub } from "date-fns";
+import * as yup from "yup";
+import {
+  add,
+  addWeeks,
+  format,
+  getDay,
+  isSameWeek,
+  isThisWeek,
+  isToday,
+  startOfWeek,
+  sub,
+} from "date-fns";
 import { Profile, useProfileQuery } from "modules/auth/hooks/use-profile-query";
-import { useRef, useState } from "react";
-import { useSwipe } from "modules/common/hooks/use-swipe";
+import Swiper from "react-native-swiper";
+import { PostgrestError } from "@supabase/supabase-js";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useState } from "react";
 
 type Props = NativeStackScreenProps<AuthorizedStackParamList, "Home">;
 
@@ -37,55 +51,47 @@ export function HomeScreen({ navigation }: Props) {
   const todayDate = new Date();
   const { theme } = useTheme();
   const { data: profile } = useProfileQuery();
-  const [startOfWeekToFetch, setStartOfWeekToFetch] = useState(
-    startOfWeek(todayDate, { weekStartsOn: WeekDay.Monday })
-  );
 
-  const { onTouchStart, onTouchEnd } = useSwipe(onSwipeLeft, onSwipeRight);
+  // Get the dates of the first and last registered calories and weights.
+  const {
+    data: firstAndLastDates,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useQuery<[Date | null, Date | null], PostgrestError>({
+    queryKey: ["firstAndLastDatesOfCaloriesAndWeights"],
+    enabled: !!profile,
+    staleTime: Infinity,
+    queryFn: async () => {
+      const [firstQuery, lastQuery] = await Promise.all([
+        supabase
+          .from("profiles_calories_and_weights")
+          .select<string, { created_at: string }>("created_at")
+          .eq("profile_id", profile!.id)
+          .limit(1)
+          .order("created_at", { ascending: true }),
 
-  function onSwipeRight() {
-    Animated.timing(translateXAnim, {
-      toValue: Dimensions.get("screen").width,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      const previousWeek = sub(startOfWeekToFetch, {
-        weeks: 1,
-      });
+        supabase
+          .from("profiles_calories_and_weights")
+          .select<string, { created_at: string }>("created_at")
+          .eq("profile_id", profile!.id)
+          .limit(1)
+          .order("created_at", { ascending: false }),
+      ]);
 
-      setStartOfWeekToFetch(previousWeek);
+      if (firstQuery.error || lastQuery.error) {
+        throw firstQuery.error || lastQuery.error;
+      }
 
-      Animated.timing(translateXAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    });
-  }
+      const firstData = firstQuery.data[0];
+      const lastData = lastQuery.data[0];
 
-  function onSwipeLeft() {
-    Animated.timing(translateXAnim, {
-      toValue: -Dimensions.get("screen").width,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      const nextWeek = add(startOfWeekToFetch, {
-        weeks: 1,
-      });
-
-      setStartOfWeekToFetch(nextWeek);
-
-      Animated.timing(translateXAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
-    });
-  }
-
-  const translateXAnim = useRef(new Animated.Value(0)).current;
-
-  const animate = () => {};
+      return [
+        firstData?.created_at ? new Date(firstData.created_at) : null,
+        lastData?.created_at ? new Date(lastData.created_at) : null,
+      ];
+    },
+  });
 
   return (
     <SafeAreaView
@@ -94,45 +100,97 @@ export function HomeScreen({ navigation }: Props) {
         backgroundColor: theme.colors.background,
       }}
     >
-      <Animated.ScrollView
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-        style={{
-          flex: 1,
-          paddingHorizontal: theme.spacing.xl,
-          paddingVertical: 30,
-          transform: [{ translateX: translateXAnim }],
-        }}
-      >
-        <Text style={{ color: theme.colors.grey1 }}>
-          {format(todayDate, "EEEE', 'MMMM' 'd")}
-        </Text>
-
-        {profile ? (
-          <ThisWeekData
-            startOfWeekToFetch={startOfWeekToFetch}
-            profile={profile}
-            todayDate={todayDate}
-          />
-        ) : null}
-      </Animated.ScrollView>
+      {isLoading ? (
+        <Text>Loading...</Text>
+      ) : isError ? (
+        <Text style={{ color: theme.colors.error }}>Error</Text>
+      ) : isSuccess && profile ? (
+        <SwipableWeeks
+          todayDate={todayDate}
+          profile={profile}
+          firstDate={firstAndLastDates[0]}
+          lastDate={firstAndLastDates[1]}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
 
-type ThisWeekDataProps = {
+type SwipableWeeksProps = {
+  firstDate: Date | null;
+  lastDate: Date | null;
+  profile: Profile;
+  todayDate: Date;
+};
+
+function SwipableWeeks({
+  firstDate,
+  lastDate,
+  profile,
+  todayDate,
+}: SwipableWeeksProps) {
+  const startOfWeeksToFetch: Date[] = [];
+  if (firstDate && lastDate) {
+    const firstDateStartOfWeek = startOfWeek(firstDate, {
+      weekStartsOn: WeekDay.Monday,
+    });
+
+    const lastDateStartOfWeek = startOfWeek(lastDate, {
+      weekStartsOn: WeekDay.Monday,
+    });
+
+    startOfWeeksToFetch.push(firstDateStartOfWeek);
+    if (!isSameWeek(firstDateStartOfWeek, lastDateStartOfWeek)) {
+      // Fetch all the weeks after first date up until last date
+      let reachedEnd = false;
+      while (!reachedEnd) {
+        const lastFetchedWeek =
+          startOfWeeksToFetch[startOfWeeksToFetch.length - 1];
+
+        const nextWeek = addWeeks(lastFetchedWeek, 1);
+        if (isSameWeek(nextWeek, lastDateStartOfWeek)) {
+          reachedEnd = true;
+          startOfWeeksToFetch.push(lastDateStartOfWeek);
+        } else {
+          startOfWeeksToFetch.push(nextWeek);
+        }
+      }
+    }
+  } else {
+    startOfWeeksToFetch.push(
+      startOfWeek(todayDate, { weekStartsOn: WeekDay.Monday })
+    );
+  }
+
+  return (
+    <>
+      <Swiper
+        loop={false}
+        showsPagination={false}
+        index={startOfWeeksToFetch.length - 1}
+      >
+        {startOfWeeksToFetch.map((startOfWeekToFetch) => (
+          <WeekData
+            key={startOfWeekToFetch.toISOString()}
+            profile={profile}
+            startOfWeekToFetch={startOfWeekToFetch}
+            todayDate={todayDate}
+          />
+        ))}
+      </Swiper>
+    </>
+  );
+}
+
+type WeekDataProps = {
   todayDate: Date;
   profile: Profile;
   startOfWeekToFetch: Date;
 };
 
-function ThisWeekData({
-  todayDate,
-  profile,
-  startOfWeekToFetch,
-}: ThisWeekDataProps) {
+function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
   const startOfWeekToFetchString = startOfWeekToFetch.toISOString();
-  const endOfWeekToFetch = add(startOfWeekToFetch, { days: 6 });
+  const endOfWeekToFetch = addWeeks(startOfWeekToFetch, 1);
   const endOfWeekToFetchString = endOfWeekToFetch.toISOString();
   const { theme } = useTheme();
   const { data, isLoading, isError } = useQuery({
@@ -189,13 +247,17 @@ function ThisWeekData({
     ? data.reduce((acc, entry) => acc + entry.weight, 0) / data.length
     : undefined;
 
-  const isThisWeek = data.some((entry) => isToday(new Date(entry.created_at)));
+  const hasSomeDayOfThisWeek = isThisWeek(startOfWeekToFetch, {
+    weekStartsOn: WeekDay.Monday,
+  });
 
   return (
-    <View
+    <ScrollView
       style={{
         flexDirection: "column",
-        marginTop: theme.spacing.sm,
+        flex: 1,
+        paddingHorizontal: theme.spacing.xl,
+        paddingVertical: 30,
       }}
     >
       <Text
@@ -205,13 +267,46 @@ function ThisWeekData({
           marginBottom: theme.spacing.lg,
         }}
       >
-        {isThisWeek
+        {hasSomeDayOfThisWeek
           ? `This Week`
           : `${format(startOfWeekToFetch, "do' 'MMM")} - ${format(
               endOfWeekToFetch,
               "do' 'MMM"
             )}`}
       </Text>
+
+      <View
+        style={{
+          flexDirection: "row",
+          borderRadius: 5,
+          alignItems: "center",
+          marginTop: theme.spacing.sm,
+          paddingHorizontal: 10,
+        }}
+      >
+        <View style={{ width: theme.spacing.xl }} />
+
+        <View
+          style={{
+            flex: 1,
+            marginRight: theme.spacing.lg,
+          }}
+        >
+          <Text style={{ fontFamily: "InterSemiBold", textAlign: "center" }}>
+            Calories
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          <Text style={{ fontFamily: "InterSemiBold", textAlign: "center" }}>
+            Weight
+          </Text>
+        </View>
+      </View>
 
       <View style={{ flexDirection: "column" }}>
         {[
@@ -222,69 +317,16 @@ function ThisWeekData({
           WeekDay.Friday,
           WeekDay.Saturday,
           WeekDay.Sunday,
-        ].map((day) => {
-          const dayData = data?.find((entry) => {
-            if (day === getDay(new Date(entry.created_at))) {
-              return entry;
-            }
-          });
-
-          const isDayToday = dayData
-            ? isToday(new Date(dayData.created_at))
-            : false;
-
-          const weekDayName = weekDaysWithNames[day];
-
-          return (
-            <View
-              key={weekDayName}
-              style={{
-                flexDirection: "row",
-                borderWidth: isDayToday ? 1 : 0,
-                borderColor: theme.colors.black,
-                paddingVertical: 10,
-                paddingHorizontal: isThisWeek ? 10 : 0,
-                borderRadius: 5,
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ width: theme.spacing.xl }}>{weekDayName[0]}</Text>
-
-              <View
-                style={{
-                  backgroundColor: theme.colors.grey5,
-                  padding: 10,
-                  flex: 1,
-                  borderRadius: 5,
-                  marginRight: theme.spacing.lg,
-                }}
-              >
-                <Text style={{ textAlign: "center" }}>
-                  {dayData ? `${dayData.calories} kcal` : null}
-                </Text>
-              </View>
-
-              <View
-                style={{
-                  backgroundColor: theme.colors.grey5,
-                  padding: 10,
-                  flex: 1,
-                  borderRadius: 5,
-                }}
-              >
-                <Text style={{ textAlign: "center" }}>
-                  {dayData
-                    ? `${dayData.weight} ${
-                        profile?.prefered_measurement_system === "imperial"
-                          ? "lbs"
-                          : "kg"
-                      }`
-                    : null}
-                </Text>
-              </View>
-            </View>
-          );
-        })}
+        ].map((day) => (
+          <WeekDayData
+            key={`${day}-${endOfWeekToFetchString}`}
+            profile={profile}
+            data={data}
+            day={day}
+            todayDate={todayDate}
+            hasSomeDayOfThisWeek={hasSomeDayOfThisWeek}
+          />
+        ))}
 
         <View
           style={{
@@ -305,8 +347,10 @@ function ThisWeekData({
           >
             {averageKcal ? (
               <>
-                <Text style={{ fontFamily: "InterBold" }}>{averageKcal}</Text>
-                <Text style={{ color: theme.colors.grey0 }}>Average kcal</Text>
+                <Text>{averageKcal}</Text>
+                <Text style={{ color: theme.colors.grey0, fontSize: 13 }}>
+                  Average calories
+                </Text>
               </>
             ) : null}
           </View>
@@ -319,19 +363,111 @@ function ThisWeekData({
           >
             {averageWeight ? (
               <>
-                <Text style={{ fontFamily: "InterBold" }}>{averageWeight}</Text>
-
-                <Text style={{ color: theme.colors.grey0 }}>
-                  Average{" "}
-                  {profile?.prefered_measurement_system === "imperial"
-                    ? "lbs"
-                    : "kg"}
+                <Text>{averageWeight}</Text>
+                <Text style={{ color: theme.colors.grey0, fontSize: 13 }}>
+                  Average weight
                 </Text>
               </>
             ) : null}
           </View>
         </View>
       </View>
+    </ScrollView>
+  );
+}
+
+type WeekDayDataProps = {
+  profile: Profile;
+  todayDate: Date;
+  hasSomeDayOfThisWeek: boolean;
+  day: WeekDay;
+  data: {
+    id: string;
+    created_at: string;
+    calories: number;
+    weight: number;
+  }[];
+};
+
+function WeekDayData({
+  data,
+  day,
+  hasSomeDayOfThisWeek,
+  todayDate,
+  profile,
+}: WeekDayDataProps) {
+  const { theme } = useTheme();
+
+  const dayData = data.find((entry) => {
+    if (day === getDay(new Date(entry.created_at))) {
+      return entry;
+    }
+  });
+
+  const [calories, setCalories] = useState(dayData?.calories);
+  const [weight, setWeight] = useState(dayData?.weight);
+
+  const isDayToday = dayData
+    ? isToday(new Date(dayData.created_at))
+    : hasSomeDayOfThisWeek
+    ? todayDate.getDay() === day
+    : false;
+
+  const weekDayName = weekDaysWithNames[day];
+
+  return (
+    <View
+      key={weekDayName}
+      style={{
+        flexDirection: "row",
+        borderWidth: isDayToday ? 1 : 0,
+        borderColor: theme.colors.black,
+        paddingVertical: 10,
+        paddingHorizontal: hasSomeDayOfThisWeek ? 10 : 0,
+        borderRadius: 5,
+        alignItems: "center",
+      }}
+    >
+      <Text style={{ width: theme.spacing.xl }}>{weekDayName[0]}</Text>
+
+      <TextInput
+        onBlur={() => {
+          // Update
+        }}
+        onChangeText={(text) => setCalories(Number(text))}
+        value={calories?.toString()}
+        keyboardType="numeric"
+        maxLength={5}
+        style={{
+          backgroundColor: theme.colors.grey5,
+          color: theme.colors.black,
+          flex: 1,
+          fontFamily: "InterRegular",
+          textAlign: "center",
+          padding: 7,
+          borderRadius: 5,
+          marginRight: theme.spacing.lg,
+        }}
+      />
+
+      <TextInput
+        onBlur={() => {
+          // Update
+        }}
+        onChangeText={(text) => setWeight(Number(text))}
+        value={weight?.toString()}
+        keyboardType="numeric"
+        maxLength={6}
+        style={{
+          backgroundColor: theme.colors.grey5,
+          color: theme.colors.black,
+          flex: 1,
+          fontFamily: "InterRegular",
+          textAlign: "center",
+          padding: 7,
+          borderRadius: 5,
+        }}
+      />
     </View>
   );
 }
