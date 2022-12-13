@@ -3,8 +3,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme } from "@rneui/themed";
 
 import { AuthorizedStackParamList } from "types";
-import { ScrollView, TextInput, View } from "react-native";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Pressable,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import {
+  QueryKey,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { supabase } from "modules/supabase/client";
 import * as yup from "yup";
 import {
@@ -15,6 +26,7 @@ import {
   isSameWeek,
   isThisWeek,
   isToday,
+  setDay,
   startOfWeek,
   sub,
 } from "date-fns";
@@ -23,7 +35,8 @@ import Swiper from "react-native-swiper";
 import { PostgrestError } from "@supabase/supabase-js";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { formatDecimal } from "modules/common/utils/formatDecimal";
 
 type Props = NativeStackScreenProps<AuthorizedStackParamList, "Home">;
 
@@ -162,19 +175,28 @@ function SwipableWeeks({
     );
   }
 
+  const [loadedIndexes, setLoadedIndexes] = useState<Set<number>>(
+    new Set([startOfWeeksToFetch.length - 1])
+  );
+
   return (
     <>
       <Swiper
         loop={false}
         showsPagination={false}
         index={startOfWeeksToFetch.length - 1}
+        onIndexChanged={(index) => {
+          setLoadedIndexes((prev) => new Set(prev).add(index));
+        }}
       >
-        {startOfWeeksToFetch.map((startOfWeekToFetch) => (
+        {startOfWeeksToFetch.map((startOfWeekToFetch, index) => (
           <WeekData
             key={startOfWeekToFetch.toISOString()}
             profile={profile}
             startOfWeekToFetch={startOfWeekToFetch}
             todayDate={todayDate}
+            loadedIndexes={loadedIndexes}
+            index={index}
           />
         ))}
       </Swiper>
@@ -186,16 +208,28 @@ type WeekDataProps = {
   todayDate: Date;
   profile: Profile;
   startOfWeekToFetch: Date;
+  loadedIndexes: Set<number>;
+  index: number;
 };
 
-function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
+// TODO: Organize everything this is shit
+
+function WeekData({
+  todayDate,
+  profile,
+  startOfWeekToFetch,
+  loadedIndexes,
+  index,
+}: WeekDataProps) {
   const startOfWeekToFetchString = startOfWeekToFetch.toISOString();
   const endOfWeekToFetch = addWeeks(startOfWeekToFetch, 1);
   const endOfWeekToFetchString = endOfWeekToFetch.toISOString();
   const { theme } = useTheme();
-  const { data, isLoading, isError } = useQuery({
+  const queryKey = ["weeklyCaloriesAndWeights", startOfWeekToFetchString];
+  const { data, isLoading, isError, isSuccess } = useQuery({
+    enabled: loadedIndexes.has(index),
     staleTime: Infinity,
-    queryKey: ["weeklyCaloriesAndWeights", startOfWeekToFetchString],
+    queryKey,
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles_calories_and_weights")
@@ -207,14 +241,7 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
             calories: number;
             weight: number;
           }
-        >(
-          `
-          id,
-          created_at,
-          calories,
-          weight
-          `
-        )
+        >("id, created_at, calories, weight")
         .gte("created_at", startOfWeekToFetchString)
         .lte("created_at", endOfWeekToFetchString)
         .eq("profile_id", profile.id)
@@ -237,19 +264,22 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
     return <Text>Loading...</Text>;
   }
 
-  const hasData = data.length > 0;
+  const filteredCalories = data.filter(({ calories }) => !!calories);
+  const averageCalories =
+    filteredCalories.reduce((acc, entry) => acc + entry.calories, 0) /
+    filteredCalories.length;
 
-  const averageKcal = hasData
-    ? data.reduce((acc, entry) => acc + entry.calories, 0) / data.length
-    : undefined;
-
-  const averageWeight = hasData
-    ? data.reduce((acc, entry) => acc + entry.weight, 0) / data.length
-    : undefined;
+  const filteredWeight = data.filter(({ weight }) => !!weight);
+  const averageWeight =
+    filteredWeight.reduce((acc, entry) => acc + entry.weight, 0) /
+    filteredWeight.length;
 
   const hasSomeDayOfThisWeek = isThisWeek(startOfWeekToFetch, {
     weekStartsOn: WeekDay.Monday,
   });
+
+  const weightUnit =
+    profile.prefered_measurement_system === "imperial" ? "lbs" : "kg";
 
   return (
     <ScrollView
@@ -275,39 +305,6 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
             )}`}
       </Text>
 
-      <View
-        style={{
-          flexDirection: "row",
-          borderRadius: 5,
-          alignItems: "center",
-          marginTop: theme.spacing.sm,
-          paddingHorizontal: 10,
-        }}
-      >
-        <View style={{ width: theme.spacing.xl }} />
-
-        <View
-          style={{
-            flex: 1,
-            marginRight: theme.spacing.lg,
-          }}
-        >
-          <Text style={{ fontFamily: "InterSemiBold", textAlign: "center" }}>
-            Calories
-          </Text>
-        </View>
-
-        <View
-          style={{
-            flex: 1,
-          }}
-        >
-          <Text style={{ fontFamily: "InterSemiBold", textAlign: "center" }}>
-            Weight
-          </Text>
-        </View>
-      </View>
-
       <View style={{ flexDirection: "column" }}>
         {[
           WeekDay.Monday,
@@ -319,12 +316,15 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
           WeekDay.Sunday,
         ].map((day) => (
           <WeekDayData
+            queryKey={queryKey}
             key={`${day}-${endOfWeekToFetchString}`}
-            profile={profile}
             data={data}
             day={day}
             todayDate={todayDate}
             hasSomeDayOfThisWeek={hasSomeDayOfThisWeek}
+            weightUnit={weightUnit}
+            profile={profile}
+            startOfWeekDate={startOfWeekToFetch}
           />
         ))}
 
@@ -334,6 +334,7 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
             borderRadius: 5,
             alignItems: "center",
             marginTop: theme.spacing.sm,
+            paddingHorizontal: hasSomeDayOfThisWeek ? 10 : 0,
           }}
         >
           <View style={{ width: theme.spacing.xl }} />
@@ -345,9 +346,9 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
               alignItems: "center",
             }}
           >
-            {averageKcal ? (
+            {averageCalories ? (
               <>
-                <Text>{averageKcal}</Text>
+                <Text>{Math.round(averageCalories)} kcal</Text>
                 <Text style={{ color: theme.colors.grey0, fontSize: 13 }}>
                   Average calories
                 </Text>
@@ -363,7 +364,9 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
           >
             {averageWeight ? (
               <>
-                <Text>{averageWeight}</Text>
+                <Text>
+                  {formatDecimal(averageWeight)} {weightUnit}
+                </Text>
                 <Text style={{ color: theme.colors.grey0, fontSize: 13 }}>
                   Average weight
                 </Text>
@@ -377,10 +380,13 @@ function WeekData({ todayDate, profile, startOfWeekToFetch }: WeekDataProps) {
 }
 
 type WeekDayDataProps = {
-  profile: Profile;
   todayDate: Date;
+  weightUnit: string;
   hasSomeDayOfThisWeek: boolean;
   day: WeekDay;
+  profile: Profile;
+  startOfWeekDate: Date;
+  queryKey: QueryKey;
   data: {
     id: string;
     created_at: string;
@@ -394,9 +400,13 @@ function WeekDayData({
   day,
   hasSomeDayOfThisWeek,
   todayDate,
+  weightUnit,
   profile,
+  startOfWeekDate,
+  queryKey,
 }: WeekDayDataProps) {
   const { theme } = useTheme();
+  const queryClient = useQueryClient();
 
   const dayData = data.find((entry) => {
     if (day === getDay(new Date(entry.created_at))) {
@@ -404,8 +414,85 @@ function WeekDayData({
     }
   });
 
-  const [calories, setCalories] = useState(dayData?.calories);
-  const [weight, setWeight] = useState(dayData?.weight);
+  const [calories, setCalories] = useState(
+    dayData?.calories ? dayData.calories.toString() : undefined
+  );
+
+  const [weight, setWeight] = useState(
+    dayData?.weight ? dayData.weight.toString() : undefined
+  );
+
+  const [editingCalories, setEditingCalories] = useState(false);
+  const [editingWeight, setEditingWeight] = useState(false);
+
+  const mutation = useMutation<
+    {
+      id: string;
+      created_at: string;
+      calories: number;
+      weight: number;
+    },
+    PostgrestError,
+    { column: "calories" | "weight"; value: number | null }
+  >({
+    mutationFn: async ({ column, value }) => {
+      const { data, error } = await supabase
+        .from("profiles_calories_and_weights")
+        .upsert({
+          id: dayData?.id,
+          [column]: value,
+          profile_id: profile.id,
+          created_at: dayData
+            ? dayData.created_at
+            : setDay(startOfWeekDate, day),
+        })
+        .select<
+          string,
+          {
+            id: string;
+            created_at: string;
+            calories: number;
+            weight: number;
+          }
+        >("id, created_at, calories, weight")
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+
+    onSuccess: (data) => {
+      const queryData = queryClient.getQueryData<
+        {
+          id: string;
+          created_at: string;
+          calories: number;
+          weight: number;
+        }[]
+      >(queryKey);
+
+      if (queryData) {
+        const isExisting = queryData.some((value) => data.id === value.id);
+        if (isExisting) {
+          queryClient.setQueryData(
+            queryKey,
+            queryData.map((value) => {
+              if (data.id === value.id) {
+                return data;
+              }
+
+              return value;
+            })
+          );
+        } else {
+          queryClient.setQueryData(queryKey, [...queryData, data]);
+        }
+      }
+    },
+  });
 
   const isDayToday = dayData
     ? isToday(new Date(dayData.created_at))
@@ -430,44 +517,98 @@ function WeekDayData({
     >
       <Text style={{ width: theme.spacing.xl }}>{weekDayName[0]}</Text>
 
-      <TextInput
-        onBlur={() => {
-          // Update
-        }}
-        onChangeText={(text) => setCalories(Number(text))}
-        value={calories?.toString()}
-        keyboardType="numeric"
-        maxLength={5}
-        style={{
-          backgroundColor: theme.colors.grey5,
-          color: theme.colors.black,
-          flex: 1,
-          fontFamily: "InterRegular",
-          textAlign: "center",
-          padding: 7,
-          borderRadius: 5,
-          marginRight: theme.spacing.lg,
-        }}
-      />
+      {editingCalories ? (
+        <TextInput
+          autoFocus
+          onBlur={() => {
+            setEditingCalories(false);
+            mutation.mutate({
+              column: "calories",
+              value: calories ? Number(calories) : null,
+            });
+          }}
+          onChangeText={(text) => setCalories(text)}
+          value={calories}
+          keyboardType="numeric"
+          maxLength={5}
+          style={{
+            backgroundColor: theme.colors.grey5,
+            color: theme.colors.black,
+            flex: 1,
+            fontFamily: "InterRegular",
+            textAlign: "center",
+            borderRadius: 5,
+            marginRight: theme.spacing.lg,
+            height: 42.5,
+          }}
+        />
+      ) : (
+        <TouchableOpacity
+          onPress={() => {
+            setEditingCalories(true);
+          }}
+          style={{
+            backgroundColor: theme.colors.grey5,
+            flex: 1,
+            borderRadius: 5,
+            marginRight: theme.spacing.lg,
+            alignItems: "center",
+            justifyContent: "center",
+            height: 42.5,
+          }}
+        >
+          {calories ? (
+            <Text style={{ textAlign: "center" }}>{calories} kcal</Text>
+          ) : null}
+        </TouchableOpacity>
+      )}
 
-      <TextInput
-        onBlur={() => {
-          // Update
-        }}
-        onChangeText={(text) => setWeight(Number(text))}
-        value={weight?.toString()}
-        keyboardType="numeric"
-        maxLength={6}
-        style={{
-          backgroundColor: theme.colors.grey5,
-          color: theme.colors.black,
-          flex: 1,
-          fontFamily: "InterRegular",
-          textAlign: "center",
-          padding: 7,
-          borderRadius: 5,
-        }}
-      />
+      {editingWeight ? (
+        <TextInput
+          autoFocus
+          onBlur={() => {
+            setEditingWeight(false);
+            mutation.mutate({
+              column: "weight",
+              value: weight ? Number(weight) : null,
+            });
+          }}
+          onChangeText={(text) => setWeight(text)}
+          value={weight}
+          keyboardType="numeric"
+          maxLength={6}
+          style={{
+            backgroundColor: theme.colors.grey5,
+            flex: 1,
+            borderRadius: 5,
+            height: 42.5,
+            color: theme.colors.black,
+            fontFamily: "InterRegular",
+            textAlign: "center",
+          }}
+        />
+      ) : (
+        <TouchableOpacity
+          onPress={() => {
+            setEditingWeight(true);
+          }}
+          style={{
+            backgroundColor: theme.colors.grey5,
+            flex: 1,
+            borderRadius: 5,
+            alignItems: "center",
+            justifyContent: "center",
+            height: 42.5,
+            flexDirection: "row",
+          }}
+        >
+          {weight ? (
+            <Text style={{ textAlign: "center" }}>
+              {weight} {weightUnit}
+            </Text>
+          ) : null}
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
