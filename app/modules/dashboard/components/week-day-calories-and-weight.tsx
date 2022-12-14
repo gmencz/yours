@@ -176,5 +176,6 @@ const getStyles = (
       justifyContent: "center",
       height: 42.5,
       flexDirection: "row",
+      textAlign: "center",
     },
   });

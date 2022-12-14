@@ -43,7 +43,7 @@ export function WeeksSwiperItem({
       <View
         style={{ paddingHorizontal: theme.spacing.xl, paddingVertical: 30 }}
       >
-        <Text>Loading week data ...</Text>
+        <Text>Loading week data...</Text>
       </View>
     );
   }
@@ -88,13 +88,13 @@ export function WeeksSwiperItem({
       style={{
         flexDirection: "column",
         flex: 1,
-        paddingHorizontal: theme.spacing.xl,
-        paddingVertical: 30,
+        padding: theme.spacing.xl,
       }}
     >
+      <Text style={{ fontFamily: "InterBold", fontSize: 20 }}>Dashboard</Text>
+
       <Text
         style={{
-          fontFamily: "InterBold",
           fontSize: 16,
           marginBottom: theme.spacing.lg,
         }}

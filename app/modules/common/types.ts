@@ -6,7 +6,8 @@ export type UnauthorizedStackParamList = {
 };
 
 export type AuthorizedStackParamList = {
-  Home: undefined;
+  Dashboard: undefined;
+  Analytics: undefined;
   Food: {
     screen: keyof FoodTabStackParamList;
   };

@@ -18,12 +18,13 @@ import {
   AuthorizedStackParamList,
   UnauthorizedStackParamList,
 } from "./modules/common/types";
-import { HomeScreen } from "modules/home/screens/root";
+import { DashboardScreen } from "modules/dashboard/screens/root";
 import { FoodScreen } from "modules/food/screens/root";
 import { WelcomeScreen } from "modules/auth/screens/welcome";
 import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
 import { EmailSignInScreen } from "modules/auth/screens/email-sign-in";
 import { TabBar } from "modules/common/components/bottom-tab-bar";
+import { AnalyticsScreen } from "modules/analytics/screens/root";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -118,12 +119,19 @@ function Screens() {
 
       {session?.user ? (
         <AuthorizedStack.Navigator
-          initialRouteName="Home"
+          initialRouteName="Dashboard"
           tabBar={(props) => <TabBar {...props} />}
         >
           <AuthorizedStack.Screen
-            name="Home"
-            component={HomeScreen}
+            name="Dashboard"
+            component={DashboardScreen}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <AuthorizedStack.Screen
+            name="Analytics"
+            component={AnalyticsScreen}
             options={{
               headerShown: false,
             }}

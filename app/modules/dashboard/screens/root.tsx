@@ -1,8 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useTheme } from "@rneui/themed";
+import { Text, useTheme } from "@rneui/themed";
 import { WeeksSwiper } from "../components/weeks-swiper";
 
-export function HomeScreen() {
+export function DashboardScreen() {
   const { theme } = useTheme();
 
   return (

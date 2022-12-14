@@ -68,7 +68,7 @@ export function FoodScreen({ route, navigation }: Props) {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
-        paddingTop: 30,
+        paddingVertical: 30,
       }}
     >
       <View
