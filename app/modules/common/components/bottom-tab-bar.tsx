@@ -1,7 +1,7 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Colors, Icon, Text, Theme, useTheme } from "@rneui/themed";
 import { TouchableOpacity, View } from "react-native";
-import { AuthorizedStackParamList } from "types";
+import { AuthorizedStackParamList } from "modules/common/types";
 
 const icons: Record<
   keyof AuthorizedStackParamList,

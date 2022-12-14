@@ -13,7 +13,10 @@ import {
 } from "react-native";
 import { useState } from "react";
 
-import { AuthorizedStackParamList, FoodTabStackParamList } from "types";
+import {
+  AuthorizedStackParamList,
+  FoodTabStackParamList,
+} from "modules/common/types";
 import { QuickAddRootScreen } from "./quick-add/root";
 import { SearchTabScreen } from "./search/root";
 import { BarcodeTabScreen } from "./barcode/root";

@@ -5,7 +5,7 @@ import { View } from "react-native";
 import * as yup from "yup";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import { QuickAddStackParamList } from "../../../../types";
+import { QuickAddStackParamList } from "../../../common/types";
 import { RequiredDetailsScreen } from "./required-details";
 import { NutritionFactsDetailsScreen } from "./nutrition-facts";
 import { BarcodeScreen } from "./barcode";

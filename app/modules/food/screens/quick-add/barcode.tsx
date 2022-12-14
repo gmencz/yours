@@ -15,7 +15,7 @@ import {
 } from "react-hook-form";
 import { Dimensions, ScrollView, View } from "react-native";
 
-import { QuickAddStackParamList } from "../../../../types";
+import { QuickAddStackParamList } from "../../../common/types";
 import { Button } from "../../../common/components/button";
 import { ControlledInput } from "../../../common/components/controlled-input";
 import { supabase } from "../../../supabase/client";

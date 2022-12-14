@@ -4,7 +4,7 @@ import { Text, useThemeMode } from "@rneui/themed";
 import { useTheme } from "@rneui/themed";
 import { View } from "react-native";
 
-import { UnauthorizedStackParamList } from "types";
+import { UnauthorizedStackParamList } from "modules/common/types";
 import { AuthButton } from "modules/auth/components/button";
 import { Logo } from "modules/common/components/logo";
 

@@ -1,5 +1,5 @@
 import { Icon, Image, Text, useTheme } from "@rneui/themed";
-import { formatDecimal } from "modules/common/utils/formatDecimal";
+import { formatDecimal } from "modules/common/utils/format-decimal";
 import { View } from "react-native";
 
 export type FoodCardProps = {

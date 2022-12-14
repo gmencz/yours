@@ -23,3 +23,23 @@ export type FoodTabStackParamList = {
   Search: undefined;
   QuickAdd: undefined;
 };
+
+export enum WeekDay {
+  Sunday,
+  Monday,
+  Tuesday,
+  Wednesday,
+  Thursday,
+  Friday,
+  Saturday,
+}
+
+export const weekDaysWithNames = {
+  [WeekDay.Sunday]: "SUNDAY",
+  [WeekDay.Monday]: "MONDAY",
+  [WeekDay.Tuesday]: "TUESDAY",
+  [WeekDay.Wednesday]: "WEDNESDAY",
+  [WeekDay.Thursday]: "THURSDAY",
+  [WeekDay.Friday]: "FRIDAY",
+  [WeekDay.Saturday]: "SATURDAY",
+};

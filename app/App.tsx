@@ -14,7 +14,10 @@ import { supabase } from "modules/supabase/client";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AuthorizedStackParamList, UnauthorizedStackParamList } from "./types";
+import {
+  AuthorizedStackParamList,
+  UnauthorizedStackParamList,
+} from "./modules/common/types";
 import { HomeScreen } from "modules/home/screens/root";
 import { FoodScreen } from "modules/food/screens/root";
 import { WelcomeScreen } from "modules/auth/screens/welcome";

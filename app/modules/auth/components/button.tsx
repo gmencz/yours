@@ -3,7 +3,7 @@ import { Image, useTheme, useThemeMode } from "@rneui/themed";
 import { makeRedirectUri, startAsync } from "expo-auth-session";
 import { StyleProp, ViewStyle } from "react-native";
 import { AtSymbolIcon, LinkIcon } from "react-native-heroicons/outline";
-import { UnauthorizedStackParamList } from "types";
+import { UnauthorizedStackParamList } from "modules/common/types";
 import { Button } from "modules/common/components/button";
 import { supabase, supabaseUrl } from "modules/supabase/client";
 
