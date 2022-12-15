@@ -24,18 +24,6 @@ const icons: Record<
       />
     ),
 
-  Analytics: (theme, isFocused) =>
-    isFocused ? (
-      <Icon type="ionicon" name="analytics" size={30} />
-    ) : (
-      <Icon
-        type="ionicon"
-        name="analytics-outline"
-        size={30}
-        color={theme.colors.grey4}
-      />
-    ),
-
   Food: (theme, isFocused) =>
     isFocused ? (
       <Icon type="material-community" name="food-apple" size={30} />

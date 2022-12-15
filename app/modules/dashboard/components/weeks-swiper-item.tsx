@@ -1,11 +1,16 @@
 import { Text, useTheme } from "@rneui/themed";
-import { addWeeks, format, getDay, isThisWeek } from "date-fns";
+import {
+  addWeeks,
+  format,
+  getDay,
+  isThisWeek as isThisWeekUtil,
+} from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay } from "modules/common/types";
-import { formatDecimal } from "modules/common/utils/format-decimal";
 import { ScrollView, View } from "react-native";
-import { useWeekCaloriesAndWeightsQuery } from "../hooks/use-week-calories-and-weights-query";
+import { WeekCaloriesAndWeights } from "./week-calories-and-weights";
 import { WeekDayCaloriesAndWeight } from "./week-day-calories-and-weight";
+import { WeekInsights } from "./week-insights";
 
 type WeeksSwiperItemProps = {
   startOfWeekDate: Date;
@@ -20,167 +25,46 @@ export function WeeksSwiperItem({
   profile,
   todayDate,
 }: WeeksSwiperItemProps) {
-  const startOfWeekDateString = startOfWeekDate.toISOString();
   const endOfWeekDate = addWeeks(startOfWeekDate, 1);
-  const endOfWeekDateString = endOfWeekDate.toISOString();
   const { theme } = useTheme();
-  const queryKey = ["weekCaloriesAndWeights", startOfWeekDateString];
 
-  const {
-    data: weekCaloriesAndWeights,
-    isLoading,
-    isError,
-  } = useWeekCaloriesAndWeightsQuery({
-    enabled: shouldLoad,
-    profileId: profile.id,
-    queryKey,
-    startOfWeekDateString,
-    endOfWeekDateString,
-  });
-
-  if (isLoading) {
-    return (
-      <View
-        style={{ paddingHorizontal: theme.spacing.xl, paddingVertical: 30 }}
-      >
-        <Text>Loading week data...</Text>
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View
-        style={{ paddingHorizontal: theme.spacing.xl, paddingVertical: 30 }}
-      >
-        <Text style={{ color: theme.colors.error }}>
-          Something went wrong, try again later
-        </Text>
-      </View>
-    );
-  }
-
-  const filteredCalories = weekCaloriesAndWeights.filter(
-    ({ calories }) => !!calories
-  );
-
-  const averageCalories =
-    filteredCalories.reduce((acc, entry) => acc + entry.calories, 0) /
-    filteredCalories.length;
-
-  const filteredWeight = weekCaloriesAndWeights.filter(
-    ({ weight }) => !!weight
-  );
-
-  const averageWeight =
-    filteredWeight.reduce((acc, entry) => acc + entry.weight, 0) /
-    filteredWeight.length;
-
-  const hasSomeDayOfThisWeek = isThisWeek(startOfWeekDate, {
+  const isThisWeek = isThisWeekUtil(startOfWeekDate, {
     weekStartsOn: WeekDay.Monday,
   });
-
-  const weightUnit =
-    profile.prefered_measurement_system === "imperial" ? "lbs" : "kg";
 
   return (
     <ScrollView
       style={{
-        flexDirection: "column",
         flex: 1,
         padding: theme.spacing.xl,
       }}
     >
-      <Text style={{ fontFamily: "InterBold", fontSize: 20 }}>Dashboard</Text>
-
       <Text
         style={{
-          fontSize: 16,
-          marginBottom: theme.spacing.lg,
+          fontSize: 13,
+          color: theme.colors.grey1,
         }}
       >
-        {hasSomeDayOfThisWeek
-          ? `This Week`
+        {isThisWeek
+          ? `This week`
           : `${format(startOfWeekDate, "do' 'MMM")} - ${format(
               endOfWeekDate,
               "do' 'MMM"
             )}`}
       </Text>
 
-      <View style={{ flexDirection: "column" }}>
-        {[
-          WeekDay.Monday,
-          WeekDay.Tuesday,
-          WeekDay.Wednesday,
-          WeekDay.Thursday,
-          WeekDay.Friday,
-          WeekDay.Saturday,
-          WeekDay.Sunday,
-        ].map((day) => (
-          <WeekDayCaloriesAndWeight
-            key={`${day}-${endOfWeekDateString}`}
-            day={day}
-            hasSomeDayOfThisWeek={hasSomeDayOfThisWeek}
-            profile={profile}
-            queryKey={queryKey}
-            startOfWeekDate={startOfWeekDate}
-            todayDate={todayDate}
-            weightUnit={weightUnit}
-            dayData={weekCaloriesAndWeights.find((entry) => {
-              if (day === getDay(new Date(entry.created_at))) {
-                return entry;
-              }
-            })}
-          />
-        ))}
+      <Text style={{ fontFamily: "InterBold", fontSize: 20 }}>Dashboard</Text>
 
-        <View
-          style={{
-            flexDirection: "row",
-            borderRadius: 5,
-            alignItems: "center",
-            marginTop: theme.spacing.sm,
-            paddingHorizontal: hasSomeDayOfThisWeek ? 10 : 0,
-          }}
-        >
-          <View style={{ width: theme.spacing.xl }} />
+      <WeekCaloriesAndWeights
+        endOfWeekDate={endOfWeekDate}
+        isThisWeek={isThisWeek}
+        profile={profile}
+        shouldLoad={shouldLoad}
+        startOfWeekDate={startOfWeekDate}
+        todayDate={todayDate}
+      />
 
-          <View
-            style={{
-              flex: 1,
-              marginRight: theme.spacing.lg,
-              alignItems: "center",
-            }}
-          >
-            {averageCalories ? (
-              <>
-                <Text>{Math.round(averageCalories)} kcal</Text>
-                <Text style={{ color: theme.colors.grey0, fontSize: 13 }}>
-                  Average calories
-                </Text>
-              </>
-            ) : null}
-          </View>
-
-          <View
-            style={{
-              flex: 1,
-              alignItems: "center",
-            }}
-          >
-            {averageWeight ? (
-              <>
-                <Text>
-                  {formatDecimal(averageWeight)} {weightUnit}
-                </Text>
-                <Text style={{ color: theme.colors.grey0, fontSize: 13 }}>
-                  Average weight
-                </Text>
-              </>
-            ) : null}
-          </View>
-        </View>
-      </View>
+      <WeekInsights />
     </ScrollView>
   );
 }

@@ -24,7 +24,7 @@ import { WelcomeScreen } from "modules/auth/screens/welcome";
 import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
 import { EmailSignInScreen } from "modules/auth/screens/email-sign-in";
 import { TabBar } from "modules/common/components/bottom-tab-bar";
-import { AnalyticsScreen } from "modules/analytics/screens/root";
+import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -34,6 +34,9 @@ const UnauthorizedStack =
 const AuthorizedStack = createBottomTabNavigator<AuthorizedStackParamList>();
 
 const queryClient = new QueryClient();
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
 
 function App() {
   const { theme } = useTheme();
@@ -71,41 +74,38 @@ function Screens() {
 
   const colorMode = useColorScheme();
   const { setMode, mode } = useThemeMode();
-  const [loadingAuth, setLoadingAuth] = useState(true);
+  const { isSuccess: hasLoadedProfile } = useProfileQuery({
+    enabled: !!session,
+  });
+
+  const appIsReady = fontsLoaded && hasLoadedProfile;
 
   useEffect(() => {
     setMode(colorMode as "light" | "dark");
   }, [colorMode]);
 
-  const isLoading = !fontsLoaded || loadingAuth;
-
   const onLayoutRootView = useCallback(async () => {
-    if (!isLoading) {
+    if (appIsReady) {
       // This tells the splash screen to hide immediately! If we call this after
-      // `!isLoading`, then we may see a blank screen while the app is
+      // `!appIsReady`, then we may see a blank screen while the app is
       // loading its initial state and rendering its first pixels. So instead,
       // we hide the splash screen once we know the root view has already
       // performed layout.
       await SplashScreen.hideAsync();
     }
-  }, [isLoading]);
+  }, [appIsReady]);
 
   useEffect(() => {
-    supabase.auth
-      .getSession()
-      .then(({ data: { session } }) => {
-        setSession(session);
-      })
-      .finally(() => {
-        setLoadingAuth(false);
-      });
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-  }, [setLoadingAuth]);
+  }, []);
 
-  if (isLoading) {
+  if (!appIsReady) {
     return null;
   }
 
@@ -125,13 +125,6 @@ function Screens() {
           <AuthorizedStack.Screen
             name="Dashboard"
             component={DashboardScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <AuthorizedStack.Screen
-            name="Analytics"
-            component={AnalyticsScreen}
             options={{
               headerShown: false,
             }}

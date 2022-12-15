@@ -4,8 +4,8 @@ import { supabase } from "modules/supabase/client";
 export type WeekDayCaloriesAndWeightData = {
   id: string;
   created_at: string;
-  calories: number;
-  weight: number;
+  calories: number | null;
+  weight: number | null;
 };
 
 type UseWeekCaloriesAndWeights = {

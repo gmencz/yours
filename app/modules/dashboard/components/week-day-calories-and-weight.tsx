@@ -1,54 +1,71 @@
-import { Colors, Text, Theme, useTheme } from "@rneui/themed";
+import { Colors, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
-import { isToday } from "date-fns";
+import { getDay, isToday } from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay, weekDaysWithNames } from "modules/common/types";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { WeekDayCaloriesAndWeightData } from "../hooks/use-week-calories-and-weights-query";
 import { useWeekDayMutation } from "../hooks/use-week-day-mutation";
 
 type WeekDayCaloriesAndWeightProps = {
-  dayData?: WeekDayCaloriesAndWeightData;
+  weekCaloriesAndWeights?: WeekDayCaloriesAndWeightData[];
   day: WeekDay;
   profile: Profile;
   startOfWeekDate: Date;
   queryKey: QueryKey;
-  hasSomeDayOfThisWeek: boolean;
+  isThisWeek: boolean;
   todayDate: Date;
   weightUnit: string;
+  isLoading: boolean;
 };
 
 export function WeekDayCaloriesAndWeight({
-  dayData,
+  weekCaloriesAndWeights,
   profile,
   startOfWeekDate,
   day,
   queryKey,
-  hasSomeDayOfThisWeek,
+  isThisWeek,
   todayDate,
   weightUnit,
+  isLoading,
 }: WeekDayCaloriesAndWeightProps) {
   const { theme } = useTheme();
   const styles = getStyles(theme);
   const queryClient = useQueryClient();
+  const savedCaloriesAndWeight = useMemo(
+    () =>
+      weekCaloriesAndWeights?.find((entry) => {
+        if (day === getDay(new Date(entry.created_at))) {
+          return entry;
+        }
+      }),
 
-  const [calories, setCalories] = useState(
-    dayData?.calories ? dayData.calories.toString() : undefined
+    [weekCaloriesAndWeights]
   );
 
-  const [weight, setWeight] = useState(
-    dayData?.weight ? dayData.weight.toString() : undefined
-  );
+  const [calories, setCalories] = useState<string>();
+  const [weight, setWeight] = useState<string>();
 
   const [editingCalories, setEditingCalories] = useState(false);
   const [editingWeight, setEditingWeight] = useState(false);
+
+  useEffect(() => {
+    if (savedCaloriesAndWeight?.calories) {
+      setCalories(savedCaloriesAndWeight.calories.toString());
+    }
+
+    if (savedCaloriesAndWeight?.weight) {
+      setWeight(savedCaloriesAndWeight.weight.toString());
+    }
+  }, [savedCaloriesAndWeight]);
 
   const mutation = useWeekDayMutation({
     day,
     profileId: profile.id,
     startOfWeekDate,
-    dayData,
+    savedCaloriesAndWeight,
     onSuccess: (data) => {
       const queryData =
         queryClient.getQueryData<WeekDayCaloriesAndWeightData[]>(queryKey);
@@ -76,9 +93,9 @@ export function WeekDayCaloriesAndWeight({
     },
   });
 
-  const isDayToday = dayData
-    ? isToday(new Date(dayData.created_at))
-    : hasSomeDayOfThisWeek
+  const isDayToday = savedCaloriesAndWeight
+    ? isToday(new Date(savedCaloriesAndWeight.created_at))
+    : isThisWeek
     ? todayDate.getDay() === day
     : false;
 
@@ -92,14 +109,24 @@ export function WeekDayCaloriesAndWeight({
         borderWidth: isDayToday ? 1 : 0,
         borderColor: theme.colors.black,
         paddingVertical: 10,
-        paddingHorizontal: hasSomeDayOfThisWeek ? 10 : 0,
+        paddingHorizontal: isThisWeek ? 10 : 0,
         borderRadius: 5,
         alignItems: "center",
       }}
     >
       <Text style={{ width: theme.spacing.xl }}>{weekDayName[0]}</Text>
 
-      {editingCalories ? (
+      {isLoading ? (
+        <Skeleton
+          style={{
+            backgroundColor: theme.colors.grey5,
+            flex: 1,
+            borderRadius: 5,
+            marginRight: theme.spacing.lg,
+          }}
+          height={42.5}
+        />
+      ) : editingCalories ? (
         <TextInput
           autoFocus
           onBlur={() => {
@@ -128,7 +155,16 @@ export function WeekDayCaloriesAndWeight({
         </TouchableOpacity>
       )}
 
-      {editingWeight ? (
+      {isLoading ? (
+        <Skeleton
+          style={{
+            backgroundColor: theme.colors.grey5,
+            flex: 1,
+            borderRadius: 5,
+          }}
+          height={42.5}
+        />
+      ) : editingWeight ? (
         <TextInput
           autoFocus
           onBlur={() => {

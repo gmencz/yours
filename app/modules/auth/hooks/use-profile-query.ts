@@ -7,10 +7,15 @@ export type Profile = {
   prefered_measurement_system: "metric" | "imperial";
 };
 
-export function useProfileQuery() {
+type UseProfileQuery = {
+  enabled?: boolean;
+};
+
+export function useProfileQuery(options?: UseProfileQuery) {
   const query = useQuery<Profile, Error | PostgrestError | AuthError>({
     queryKey: ["profile"],
     staleTime: Infinity,
+    enabled: options?.enabled,
     queryFn: async () => {
       const {
         data: { user },

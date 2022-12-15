@@ -7,7 +7,7 @@ import { WeekDayCaloriesAndWeightData } from "./use-week-calories-and-weights-qu
 
 type UseWeekDayMutation = {
   onSuccess?: (data: WeekDayCaloriesAndWeightData) => void;
-  dayData?: WeekDayCaloriesAndWeightData;
+  savedCaloriesAndWeight?: WeekDayCaloriesAndWeightData;
   profileId: string;
   day: WeekDay;
   startOfWeekDate: Date;
@@ -15,7 +15,7 @@ type UseWeekDayMutation = {
 
 export function useWeekDayMutation({
   onSuccess,
-  dayData,
+  savedCaloriesAndWeight,
   profileId,
   day,
   startOfWeekDate,
@@ -29,11 +29,11 @@ export function useWeekDayMutation({
       const { data, error } = await supabase
         .from("profiles_calories_and_weights")
         .upsert({
-          id: dayData?.id,
+          id: savedCaloriesAndWeight?.id,
           [column]: value,
           profile_id: profileId,
-          created_at: dayData
-            ? dayData.created_at
+          created_at: savedCaloriesAndWeight
+            ? savedCaloriesAndWeight.created_at
             : setDay(startOfWeekDate, day),
         })
         .select<string, WeekDayCaloriesAndWeightData>(
