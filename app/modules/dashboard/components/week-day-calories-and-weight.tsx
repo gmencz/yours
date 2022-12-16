@@ -1,6 +1,6 @@
 import { Colors, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
-import { getDay, isToday } from "date-fns";
+import { format, getDay, isToday } from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay, weekDaysWithNames } from "modules/common/types";
 import { useEffect, useMemo, useState } from "react";
@@ -34,6 +34,7 @@ export function WeekDayCaloriesAndWeight({
   const { theme } = useTheme();
   const styles = getStyles(theme);
   const queryClient = useQueryClient();
+  const weekDayName = weekDaysWithNames[day];
   const savedCaloriesAndWeight = useMemo(
     () =>
       weekCaloriesAndWeights?.find((entry) => {
@@ -98,8 +99,6 @@ export function WeekDayCaloriesAndWeight({
     : isThisWeek
     ? todayDate.getDay() === day
     : false;
-
-  const weekDayName = weekDaysWithNames[day];
 
   return (
     <View

@@ -1,5 +1,6 @@
 import { Skeleton, Text, useTheme } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "modules/supabase/client";
 import { View } from "react-native";
 import { WeekDayCaloriesAndWeightData } from "../hooks/use-week-calories-and-weights-query";
 
@@ -85,8 +86,23 @@ function WeekInsightsData({
 
   useQuery({
     queryKey: ["weekExpenditure", startOfWeekDateString],
-    queryFn: () => {
+    queryFn: async () => {
       // TODO
+      const { count, error } = await supabase
+        .from("profiles_calories_and_weights")
+        .select("*", { count: "exact", head: true })
+        .not("calories", "is", "null")
+        .not("weight", "is", "null");
+
+      if (error) {
+        throw error;
+      }
+
+      // If we don't have at least 2 weeks of data, not enough...
+      if (!count || count < 14) {
+        return null;
+      }
+
       return null;
     },
   });

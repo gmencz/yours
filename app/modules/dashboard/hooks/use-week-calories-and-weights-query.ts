@@ -39,7 +39,7 @@ export function useWeekCaloriesAndWeightsQuery({
             weight: number;
           }
         >("id, created_at, calories, weight")
-        .gte("created_at", startOfWeekDateString)
+        .gt("created_at", startOfWeekDateString)
         .lte("created_at", endOfWeekDateString)
         .eq("profile_id", profileId)
         .limit(7)
