@@ -1,10 +1,10 @@
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import { Colors, Icon, Text, Theme, useTheme } from "@rneui/themed";
 import { TouchableOpacity, View } from "react-native";
-import { AuthorizedStackParamList } from "modules/common/types";
+import { CompletedProfileStackParamList } from "modules/common/types";
 
 const icons: Record<
-  keyof AuthorizedStackParamList,
+  keyof CompletedProfileStackParamList,
   (
     theme: {
       colors: Colors;
@@ -81,7 +81,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
           });
         };
 
-        const icon = icons[route.name as keyof AuthorizedStackParamList](
+        const icon = icons[route.name as keyof CompletedProfileStackParamList](
           theme,
           isFocused
         );

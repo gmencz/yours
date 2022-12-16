@@ -14,14 +14,14 @@ import {
 import { useState } from "react";
 
 import {
-  AuthorizedStackParamList,
+  CompletedProfileStackParamList,
   FoodTabStackParamList,
 } from "modules/common/types";
 import { QuickAddRootScreen } from "./quick-add/root";
 import { SearchTabScreen } from "./search/root";
 import { BarcodeTabScreen } from "./barcode/root";
 
-type Props = NativeStackScreenProps<AuthorizedStackParamList, "Food">;
+type Props = NativeStackScreenProps<CompletedProfileStackParamList, "Food">;
 
 const FoodTabStack = createNativeStackNavigator<FoodTabStackParamList>();
 

@@ -213,5 +213,6 @@ const getStyles = (
       height: 42.5,
       flexDirection: "row",
       textAlign: "center",
+      color: theme.colors.black,
     },
   });

@@ -5,11 +5,16 @@ export type UnauthorizedStackParamList = {
   EmailSignIn: undefined;
 };
 
-export type AuthorizedStackParamList = {
+export type CompletedProfileStackParamList = {
   Dashboard: undefined;
   Food: {
     screen: keyof FoodTabStackParamList;
   };
+};
+
+export type UncompletedProfileStackParamList = {
+  BasalEnergyExpenditure: undefined;
+  Goal: undefined;
 };
 
 export type QuickAddStackParamList = {

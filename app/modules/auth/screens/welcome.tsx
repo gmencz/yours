@@ -30,7 +30,7 @@ export function WelcomeScreen({ navigation }: Props) {
         <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>cut</Text>
         <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>bulk</Text>
         <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>
-          maintain
+          maingain
         </Text>
 
         <Text

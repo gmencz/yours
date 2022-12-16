@@ -15,7 +15,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {
-  AuthorizedStackParamList,
+  CompletedProfileStackParamList,
+  UncompletedProfileStackParamList,
   UnauthorizedStackParamList,
 } from "./modules/common/types";
 import { DashboardScreen } from "modules/dashboard/screens/root";
@@ -25,13 +26,19 @@ import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
 import { EmailSignInScreen } from "modules/auth/screens/email-sign-in";
 import { TabBar } from "modules/common/components/bottom-tab-bar";
 import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
+import { BasalEnergyExpenditureScreen } from "modules/basal-energy-expenditure/screens/root";
+import { GoalScreen } from "modules/goal/screens/root";
 
 global.Buffer = global.Buffer || Buffer;
 
 const UnauthorizedStack =
   createNativeStackNavigator<UnauthorizedStackParamList>();
 
-const AuthorizedStack = createBottomTabNavigator<AuthorizedStackParamList>();
+const UncompletedProfileStack =
+  createNativeStackNavigator<UncompletedProfileStackParamList>();
+
+const CompletedProfileStack =
+  createBottomTabNavigator<CompletedProfileStackParamList>();
 
 const queryClient = new QueryClient();
 
@@ -74,7 +81,7 @@ function Screens() {
 
   const colorMode = useColorScheme();
   const { setMode, mode } = useThemeMode();
-  const { isSuccess: hasLoadedProfile } = useProfileQuery({
+  const { data: profile, isSuccess: hasLoadedProfile } = useProfileQuery({
     enabled: !!session,
   });
 
@@ -109,6 +116,12 @@ function Screens() {
     return null;
   }
 
+  const isLoggedIn = !!session?.user;
+  const hasCompletedProfile =
+    !!profile?.prefered_measurement_system &&
+    !!profile.starting_tdee &&
+    !!profile.goal;
+
   return (
     <NavigationContainer onReady={onLayoutRootView}>
       <StatusBar
@@ -117,29 +130,54 @@ function Screens() {
         translucent={true}
       />
 
-      {session?.user ? (
-        <AuthorizedStack.Navigator
-          initialRouteName="Dashboard"
-          tabBar={(props) => <TabBar {...props} />}
-        >
-          <AuthorizedStack.Screen
-            name="Dashboard"
-            component={DashboardScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <AuthorizedStack.Screen
-            name="Food"
-            component={FoodScreen}
-            initialParams={{
-              screen: "Barcode",
-            }}
-            options={{
-              headerShown: false,
-            }}
-          />
-        </AuthorizedStack.Navigator>
+      {isLoggedIn ? (
+        hasCompletedProfile ? (
+          <CompletedProfileStack.Navigator
+            initialRouteName="Dashboard"
+            tabBar={(props) => <TabBar {...props} />}
+          >
+            <CompletedProfileStack.Screen
+              name="Dashboard"
+              component={DashboardScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <CompletedProfileStack.Screen
+              name="Food"
+              component={FoodScreen}
+              initialParams={{
+                screen: "Barcode",
+              }}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </CompletedProfileStack.Navigator>
+        ) : (
+          <UncompletedProfileStack.Navigator
+            initialRouteName={
+              profile?.prefered_measurement_system
+                ? "Goal"
+                : "BasalEnergyExpenditure"
+            }
+          >
+            <UncompletedProfileStack.Screen
+              name="BasalEnergyExpenditure"
+              component={BasalEnergyExpenditureScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <UncompletedProfileStack.Screen
+              name="Goal"
+              component={GoalScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </UncompletedProfileStack.Navigator>
+        )
       ) : (
         <UnauthorizedStack.Navigator initialRouteName="Welcome">
           <UnauthorizedStack.Screen

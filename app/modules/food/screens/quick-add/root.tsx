@@ -28,7 +28,10 @@ const schema = yup
       .number()
       .typeError("Protein is required")
       .required("Protein is required"),
-    carbs: yup.number().typeError("v").required("Carbs are required"),
+    carbs: yup
+      .number()
+      .typeError("Carbs are required")
+      .required("Carbs are required"),
     sugar: yup.number(),
     fiber: yup.number(),
     salt: yup.number(),

@@ -5,6 +5,8 @@ import { supabase } from "modules/supabase/client";
 export type Profile = {
   id: string;
   prefered_measurement_system: "metric" | "imperial";
+  starting_tdee: number | null;
+  goal: string | null;
 };
 
 type UseProfileQuery = {
@@ -32,7 +34,9 @@ export function useProfileQuery(options?: UseProfileQuery) {
 
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
-        .select<string, Profile>("id, prefered_measurement_system")
+        .select<string, Profile>(
+          "id, prefered_measurement_system, starting_tdee, goal"
+        )
         .eq("id", user.id)
         .single();
 
