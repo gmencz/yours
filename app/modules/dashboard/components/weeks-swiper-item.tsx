@@ -11,7 +11,6 @@ import { WeekDay } from "modules/common/types";
 import { ScrollView } from "react-native";
 import { useWeekCaloriesAndWeightsQuery } from "../hooks/use-week-calories-and-weights-query";
 import { WeekCaloriesAndWeights } from "./week-calories-and-weights";
-import { WeekInsights } from "./week-insights";
 
 type WeeksSwiperItemProps = {
   startOfWeekDate: Date;
@@ -77,12 +76,6 @@ export function WeeksSwiperItem({
         isLoading={isLoading}
         queryKey={queryKey}
         weekCaloriesAndWeights={weekCaloriesAndWeights}
-      />
-
-      <WeekInsights
-        weekCaloriesAndWeights={weekCaloriesAndWeights}
-        isLoading={isLoading}
-        startOfWeekDateString={startOfWeekDateString}
       />
     </ScrollView>
   );
