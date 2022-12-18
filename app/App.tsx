@@ -28,6 +28,7 @@ import { TabBar } from "modules/common/components/bottom-tab-bar";
 import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
 import { BasalEnergyExpenditureScreen } from "modules/basal-energy-expenditure/screens/root";
 import { GoalScreen } from "modules/goal/screens/root";
+import { InsightsScreen } from "modules/insights/screens/root";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -131,17 +132,26 @@ function Screens() {
       {isLoggedIn ? (
         hasCompletedProfile ? (
           <CompletedProfileStack.Navigator
-            initialRouteName="Dashboard"
+            initialRouteName="Home"
             tabBar={(props) => <TabBar {...props} />}
           >
             <CompletedProfileStack.Screen
-              name="Dashboard"
+              name="Home"
               component={DashboardScreen}
               options={{
                 headerShown: false,
               }}
             />
             <CompletedProfileStack.Screen
+              name="Insights"
+              component={InsightsScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+
+            {/* The food feature is disabled for now */}
+            {/* <CompletedProfileStack.Screen
               name="Food"
               component={FoodScreen}
               initialParams={{
@@ -150,7 +160,7 @@ function Screens() {
               options={{
                 headerShown: false,
               }}
-            />
+            /> */}
           </CompletedProfileStack.Navigator>
         ) : (
           <UncompletedProfileStack.Navigator

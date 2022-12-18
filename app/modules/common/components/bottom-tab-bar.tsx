@@ -12,13 +12,25 @@ const icons: Record<
     isFocused: boolean
   ) => JSX.Element
 > = {
-  Dashboard: (theme, isFocused) =>
+  Home: (theme, isFocused) =>
     isFocused ? (
-      <Icon type="material-icons" name="dashboard" size={30} />
+      <Icon type="material-community" name="home-variant" size={30} />
     ) : (
       <Icon
-        type="material-icons"
-        name="dashboard"
+        type="material-community"
+        name="home-variant"
+        size={30}
+        color={theme.colors.grey4}
+      />
+    ),
+
+  Insights: (theme, isFocused) =>
+    isFocused ? (
+      <Icon type="ionicon" name="analytics" size={30} />
+    ) : (
+      <Icon
+        type="ionicon"
+        name="analytics-outline"
         size={30}
         color={theme.colors.grey4}
       />

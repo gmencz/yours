@@ -6,7 +6,8 @@ export type UnauthorizedStackParamList = {
 };
 
 export type CompletedProfileStackParamList = {
-  Dashboard: undefined;
+  Home: undefined;
+  Insights: undefined;
   Food: {
     screen: keyof FoodTabStackParamList;
   };

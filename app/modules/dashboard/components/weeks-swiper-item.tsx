@@ -64,7 +64,7 @@ export function WeeksSwiperItem({
             )}`}
       </Text>
 
-      <Text style={{ fontFamily: "InterBold", fontSize: 20 }}>Dashboard</Text>
+      <Text style={{ fontFamily: "InterBold", fontSize: 20 }}>Home</Text>
 
       <WeekCaloriesAndWeights
         endOfWeekDate={endOfWeekDate}
