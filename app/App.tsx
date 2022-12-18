@@ -118,9 +118,7 @@ function Screens() {
 
   const isLoggedIn = !!session?.user;
   const hasCompletedProfile =
-    !!profile?.prefered_measurement_system &&
-    !!profile.starting_tdee &&
-    !!profile.goal;
+    !!profile?.prefered_measurement_system && !!profile.tdee && !!profile.goal;
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>

@@ -1,5 +1,7 @@
 import { Skeleton, Text, useTheme } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
+import { subDays } from "date-fns";
+import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
 import { supabase } from "modules/supabase/client";
 import { View } from "react-native";
 import { WeekDayCaloriesAndWeightData } from "../hooks/use-week-calories-and-weights-query";
@@ -82,26 +84,54 @@ function WeekInsightsData({
     weights.reduce((total, next) => total + (next.weight as number), 0) /
     weights.length;
 
-  console.log({ weight });
+  const totalCalories = weekCaloriesAndWeights
+    .filter(({ calories }) => !!calories)
+    .reduce((total, next) => total + (next.calories as number), 0);
+
+  const { data: profile } = useProfileQuery();
 
   useQuery({
     queryKey: ["weekExpenditure", startOfWeekDateString],
     queryFn: async () => {
-      // TODO
-      const { count, error } = await supabase
+      // Fetch previous week and get avg weight.
+      const startOfLastWeekDateString = subDays(
+        new Date(startOfWeekDateString),
+        6
+      ).toISOString();
+
+      const { data, error } = await supabase
         .from("profiles_calories_and_weights")
-        .select("*", { count: "exact", head: true })
-        .not("calories", "is", "null")
-        .not("weight", "is", "null");
+        .select<
+          string,
+          {
+            calories: number;
+            weight: number;
+          }
+        >("id, created_at, calories, weight")
+        .gte("created_at", startOfLastWeekDateString)
+        .lt("created_at", startOfWeekDateString)
+        .eq("profile_id", profile!.id)
+        .limit(7)
+        .order("created_at", { ascending: true });
 
       if (error) {
         throw error;
       }
 
-      // If we don't have at least 2 weeks of data, not enough...
-      if (!count || count < 14) {
-        return null;
-      }
+      const currentTdee = profile!.tdee!;
+      const caloriesNeededToGain1kg = 7000;
+      const previousWeekWeights = data.filter(({ weight }) => !!weight);
+      const previousWeekWeight =
+        previousWeekWeights.reduce(
+          (total, next) => total + (next.weight as number),
+          0
+        ) / previousWeekWeights.length;
+
+      const weightFluctuation = weight - previousWeekWeight;
+      const extraCaloriesConsumed = caloriesNeededToGain1kg * weightFluctuation;
+      // const caloriesNeededForMaintance = totalCalories - extraCaloriesConsumed;
+
+      console.log({ extraCaloriesConsumed, totalCalories });
 
       return null;
     },

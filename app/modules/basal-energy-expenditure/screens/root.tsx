@@ -100,9 +100,7 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
     defaultValues: {
       // @ts-expect-error because we are providing a string but this is actually correct because
       // RN expects a string even tho react-hook-form will transform it with yup.
-      tdee: profile?.starting_tdee
-        ? Math.round(profile.starting_tdee).toString()
-        : undefined,
+      tdee: profile?.tdee ? Math.round(profile.tdee).toString() : undefined,
     },
   });
 
@@ -127,7 +125,7 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
     mutationFn: async ({ tdee }) => {
       const { error } = await supabase
         .from("profiles")
-        .update({ starting_tdee: tdee })
+        .update({ tdee: tdee })
         .eq("id", profile!.id);
 
       if (error) {
@@ -142,7 +140,7 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
       if (queryData) {
         queryClient.setQueryData<Profile>(["profile"], {
           ...queryData,
-          starting_tdee: tdee,
+          tdee: tdee,
         });
       }
 
@@ -155,7 +153,7 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
   const activity = estimatorWatch("activity");
   const trainingActivity = estimatorWatch("trainingActivity");
   const [showCalculator, setShowCalculator] = useState(
-    profile?.starting_tdee ? false : true
+    profile?.tdee ? false : true
   );
 
   const estimatorGoNext = ({
