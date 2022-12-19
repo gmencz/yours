@@ -2,9 +2,13 @@ import "react-native-url-polyfill/auto";
 import { Buffer } from "buffer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider, useTheme, useThemeMode } from "@rneui/themed";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useMutation,
+} from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js";
+import { PostgrestError, Session } from "@supabase/supabase-js";
 import { useFonts } from "expo-font";
 import { StatusBar, useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
@@ -20,15 +24,15 @@ import {
   UnauthorizedStackParamList,
 } from "./modules/common/types";
 import { HomeScreen } from "modules/home/screens/root";
-import { FoodScreen } from "modules/food/screens/root";
 import { WelcomeScreen } from "modules/auth/screens/welcome";
 import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
 import { EmailSignInScreen } from "modules/auth/screens/email-sign-in";
 import { TabBar } from "modules/common/components/bottom-tab-bar";
-import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
+import { Profile, useProfileQuery } from "modules/auth/hooks/use-profile-query";
 import { BasalEnergyExpenditureScreen } from "modules/basal-energy-expenditure/screens/root";
 import { GoalScreen } from "modules/goal/screens/root";
 import { InsightsScreen } from "modules/insights/screens/root";
+import { runTdeeEstimator } from "modules/insights/utils/tdee-estimator";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -86,11 +90,58 @@ function Screens() {
     enabled: !!session,
   });
 
-  const appIsReady = fontsLoaded && hasLoadedProfile;
-
   useEffect(() => {
     setMode(colorMode as "light" | "dark");
   }, [colorMode]);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
+
+  const isLoggedIn = !!session?.user;
+
+  const hasCompletedProfile =
+    !!profile?.prefered_measurement_system &&
+    !!profile.initial_tdee_estimation &&
+    !!profile.goal;
+
+  const tdeeEstimationMutation = useMutation<
+    boolean,
+    PostgrestError,
+    { profile: Profile }
+  >({
+    mutationFn: async ({ profile }) => {
+      await runTdeeEstimator({ profile });
+      return true;
+    },
+  });
+
+  useEffect(() => {
+    if (hasCompletedProfile && isLoggedIn) {
+      // This will try to create a tdee estimation for every 10 days of data.
+      // If there isn't enough data it won't create anything but we need to run this
+      // on app load to make sure we don't miss any data.
+      tdeeEstimationMutation.mutate({ profile });
+    }
+  }, [hasCompletedProfile, isLoggedIn]);
+
+  let appIsReady = false;
+  if (isLoggedIn) {
+    appIsReady =
+      fontsLoaded &&
+      hasLoadedProfile &&
+      (hasCompletedProfile && isLoggedIn
+        ? tdeeEstimationMutation.isSuccess
+        : true);
+  } else {
+    appIsReady = fontsLoaded;
+  }
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -103,26 +154,9 @@ function Screens() {
     }
   }, [appIsReady]);
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
-
   if (!appIsReady) {
     return null;
   }
-
-  const isLoggedIn = !!session?.user;
-
-  const hasCompletedProfile =
-    !!profile?.prefered_measurement_system &&
-    !!profile.initial_tdee_estimation &&
-    !!profile.goal;
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>

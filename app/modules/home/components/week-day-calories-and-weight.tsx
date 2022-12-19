@@ -1,16 +1,10 @@
-import { Colors, Icon, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
+import { Colors, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
-import {
-  differenceInCalendarDays,
-  format,
-  getDay,
-  isAfter,
-  isToday,
-  setDay,
-  startOfWeek,
-} from "date-fns";
+import { getDay, isBefore, isToday, setDay, subDays } from "date-fns";
+import { endOfDay } from "date-fns/esm";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay, weekDaysWithNames } from "modules/common/types";
+import { runTdeeEstimator } from "modules/insights/utils/tdee-estimator";
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { WeekDayCaloriesAndWeightData } from "../hooks/use-week-calories-and-weights-query";
@@ -71,11 +65,22 @@ export function WeekDayCaloriesAndWeight({
     }
   }, [savedCaloriesAndWeight]);
 
+  let createdAtDate = useMemo(() => {
+    if (savedCaloriesAndWeight?.created_at) {
+      return new Date(savedCaloriesAndWeight.created_at);
+    } else {
+      if (day === WeekDay.Sunday) {
+        return endOfWeekDate;
+      } else {
+        return setDay(startOfWeekDate, day);
+      }
+    }
+  }, [savedCaloriesAndWeight, endOfWeekDate, startOfWeekDate, day]);
+
   const mutation = useWeekDayMutation({
     day,
     profile,
-    startOfWeekDate,
-    endOfWeekDate,
+    createdAtDateString: createdAtDate.toISOString(),
     savedCaloriesAndWeight,
     onSuccess: (data) => {
       const queryData =
@@ -83,23 +88,28 @@ export function WeekDayCaloriesAndWeight({
 
       if (queryData) {
         const isExisting = queryData.some((value) => data.id === value.id);
-
+        const { id, calories, created_at, weight } = data;
         if (isExisting) {
           queryClient.setQueryData(
             queryKey,
             queryData.map((value) => {
-              if (data.id === value.id) {
-                return data;
+              if (id === value.id) {
+                return { id, calories, weight, created_at };
               }
 
               return value;
             })
           );
-
-          return;
+        } else {
+          queryClient.setQueryData(queryKey, [
+            ...queryData,
+            { id, calories, weight, created_at },
+          ]);
         }
+      }
 
-        queryClient.setQueryData(queryKey, [...queryData, data]);
+      if (data.shouldRerunTdeeEstimator) {
+        runTdeeEstimator({ profile });
       }
     },
   });
@@ -118,7 +128,13 @@ export function WeekDayCaloriesAndWeight({
       : day > todayDay || day === WeekDay.Sunday
     : false;
 
-  const styles = getStyles(theme, isAfterToday);
+  const isOver10DaysOld = isBefore(
+    endOfDay(createdAtDate),
+    subDays(endOfDay(todayDate), 9)
+  );
+
+  const isDisabled = isAfterToday || isOver10DaysOld;
+  const styles = getStyles(theme, isDisabled);
 
   return (
     <View
@@ -164,17 +180,13 @@ export function WeekDayCaloriesAndWeight({
       ) : (
         <TouchableOpacity
           style={[styles.inputOrPressable, { marginRight: theme.spacing.lg }]}
-          disabled={isAfterToday}
+          disabled={isDisabled}
           onPress={() => {
             setEditingCalories(true);
           }}
         >
           {calories ? (
             <Text style={{ textAlign: "center" }}>{calories} kcal</Text>
-          ) : null}
-
-          {isAfterToday ? (
-            <Icon name="lock" type="ant-design" size={20} />
           ) : null}
         </TouchableOpacity>
       )}
@@ -207,7 +219,7 @@ export function WeekDayCaloriesAndWeight({
       ) : (
         <TouchableOpacity
           style={styles.inputOrPressable}
-          disabled={isAfterToday}
+          disabled={isDisabled}
           onPress={() => {
             setEditingWeight(true);
           }}
@@ -216,10 +228,6 @@ export function WeekDayCaloriesAndWeight({
             <Text style={{ textAlign: "center" }}>
               {weight} {weightUnit}
             </Text>
-          ) : null}
-
-          {isAfterToday ? (
-            <Icon name="lock" type="ant-design" size={20} />
           ) : null}
         </TouchableOpacity>
       )}
@@ -231,12 +239,11 @@ const getStyles = (
   theme: {
     colors: Colors;
   } & Theme,
-
-  isAfterToday: boolean
+  isDisabled: boolean
 ) =>
   StyleSheet.create({
     inputOrPressable: {
-      backgroundColor: isAfterToday ? theme.colors.grey4 : theme.colors.grey5,
+      backgroundColor: isDisabled ? theme.colors.grey4 : theme.colors.grey5,
       flex: 1,
       borderRadius: 5,
       alignItems: "center",

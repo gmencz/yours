@@ -1,4 +1,3 @@
-import { subDays } from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { supabase } from "modules/supabase/client";
 import { calculateWeightChange } from "./calculate-weight-change";
@@ -27,7 +26,7 @@ type CreateTdeeEstimationParams = {
   profile: Profile;
 };
 
-export async function createTdeeEstimation({
+export async function runTdeeEstimator({
   profile,
 }: CreateTdeeEstimationParams) {
   // Fetch the latest TDEE estimation.
@@ -62,7 +61,7 @@ export async function createTdeeEstimation({
       throw caloriesAndWeightsError;
     }
 
-    // Check if there's at least 10 days of data since the last estimated item.
+    // Check if there's at least `MINIMUM_DAYS_OF_DATA` since the last estimated item.
     if (caloriesAndWeights.length >= MINIMUM_DAYS_OF_DATA) {
       await supabase.from("profiles_tdee_estimations").insert({
         profile_id: profile.id,
@@ -89,7 +88,7 @@ export async function createTdeeEstimation({
       throw caloriesAndWeightsError;
     }
 
-    // Check if there's at least 10 days of data since the user started using the app.
+    // Check if there's at least `MINIMUM_DAYS_OF_DATA` since the user started using the app.
     if (caloriesAndWeights.length >= MINIMUM_DAYS_OF_DATA) {
       await supabase.from("profiles_tdee_estimations").insert({
         profile_id: profile.id,
