@@ -2,6 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, useTheme } from "@rneui/themed";
 import { View } from "react-native";
 import { Expenditure } from "../components/expenditure";
+import { WeightTrend } from "../components/weight-trend";
 
 export function InsightsScreen() {
   const { theme } = useTheme();
@@ -25,7 +26,7 @@ export function InsightsScreen() {
         </Text>
       </View>
 
-      {/* <WeightTrend /> */}
+      <WeightTrend />
       <Expenditure />
     </SafeAreaView>
   );
