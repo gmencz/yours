@@ -1,6 +1,14 @@
-import { Colors, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
+import { Colors, Icon, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
-import { format, getDay, isToday } from "date-fns";
+import {
+  differenceInCalendarDays,
+  format,
+  getDay,
+  isAfter,
+  isToday,
+  setDay,
+  startOfWeek,
+} from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay, weekDaysWithNames } from "modules/common/types";
 import { useEffect, useMemo, useState } from "react";
@@ -13,6 +21,7 @@ type WeekDayCaloriesAndWeightProps = {
   day: WeekDay;
   profile: Profile;
   startOfWeekDate: Date;
+  endOfWeekDate: Date;
   queryKey: QueryKey;
   isThisWeek: boolean;
   todayDate: Date;
@@ -24,6 +33,7 @@ export function WeekDayCaloriesAndWeight({
   weekCaloriesAndWeights,
   profile,
   startOfWeekDate,
+  endOfWeekDate,
   day,
   queryKey,
   isThisWeek,
@@ -32,7 +42,6 @@ export function WeekDayCaloriesAndWeight({
   isLoading,
 }: WeekDayCaloriesAndWeightProps) {
   const { theme } = useTheme();
-  const styles = getStyles(theme);
   const queryClient = useQueryClient();
   const weekDayName = weekDaysWithNames[day];
   const savedCaloriesAndWeight = useMemo(
@@ -64,8 +73,9 @@ export function WeekDayCaloriesAndWeight({
 
   const mutation = useWeekDayMutation({
     day,
-    profileId: profile.id,
+    profile,
     startOfWeekDate,
+    endOfWeekDate,
     savedCaloriesAndWeight,
     onSuccess: (data) => {
       const queryData =
@@ -94,11 +104,21 @@ export function WeekDayCaloriesAndWeight({
     },
   });
 
+  const todayDay = getDay(todayDate);
+
   const isDayToday = savedCaloriesAndWeight
     ? isToday(new Date(savedCaloriesAndWeight.created_at))
     : isThisWeek
-    ? todayDate.getDay() === day
+    ? todayDay === day
     : false;
+
+  const isAfterToday = isThisWeek
+    ? todayDay === WeekDay.Sunday
+      ? false
+      : day > todayDay || day === WeekDay.Sunday
+    : false;
+
+  const styles = getStyles(theme, isAfterToday);
 
   return (
     <View
@@ -144,12 +164,17 @@ export function WeekDayCaloriesAndWeight({
       ) : (
         <TouchableOpacity
           style={[styles.inputOrPressable, { marginRight: theme.spacing.lg }]}
+          disabled={isAfterToday}
           onPress={() => {
             setEditingCalories(true);
           }}
         >
           {calories ? (
             <Text style={{ textAlign: "center" }}>{calories} kcal</Text>
+          ) : null}
+
+          {isAfterToday ? (
+            <Icon name="lock" type="ant-design" size={20} />
           ) : null}
         </TouchableOpacity>
       )}
@@ -182,6 +207,7 @@ export function WeekDayCaloriesAndWeight({
       ) : (
         <TouchableOpacity
           style={styles.inputOrPressable}
+          disabled={isAfterToday}
           onPress={() => {
             setEditingWeight(true);
           }}
@@ -190,6 +216,10 @@ export function WeekDayCaloriesAndWeight({
             <Text style={{ textAlign: "center" }}>
               {weight} {weightUnit}
             </Text>
+          ) : null}
+
+          {isAfterToday ? (
+            <Icon name="lock" type="ant-design" size={20} />
           ) : null}
         </TouchableOpacity>
       )}
@@ -200,11 +230,13 @@ export function WeekDayCaloriesAndWeight({
 const getStyles = (
   theme: {
     colors: Colors;
-  } & Theme
+  } & Theme,
+
+  isAfterToday: boolean
 ) =>
   StyleSheet.create({
     inputOrPressable: {
-      backgroundColor: theme.colors.grey5,
+      backgroundColor: isAfterToday ? theme.colors.grey4 : theme.colors.grey5,
       flex: 1,
       borderRadius: 5,
       alignItems: "center",

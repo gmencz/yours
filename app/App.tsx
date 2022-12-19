@@ -19,7 +19,7 @@ import {
   UncompletedProfileStackParamList,
   UnauthorizedStackParamList,
 } from "./modules/common/types";
-import { DashboardScreen } from "modules/dashboard/screens/root";
+import { HomeScreen } from "modules/home/screens/root";
 import { FoodScreen } from "modules/food/screens/root";
 import { WelcomeScreen } from "modules/auth/screens/welcome";
 import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
@@ -118,8 +118,11 @@ function Screens() {
   }
 
   const isLoggedIn = !!session?.user;
+
   const hasCompletedProfile =
-    !!profile?.prefered_measurement_system && !!profile.tdee && !!profile.goal;
+    !!profile?.prefered_measurement_system &&
+    !!profile.initial_tdee_estimation &&
+    !!profile.goal;
 
   return (
     <NavigationContainer onReady={onLayoutRootView}>
@@ -137,7 +140,7 @@ function Screens() {
           >
             <CompletedProfileStack.Screen
               name="Home"
-              component={DashboardScreen}
+              component={HomeScreen}
               options={{
                 headerShown: false,
               }}

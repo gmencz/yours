@@ -1,9 +1,8 @@
 import { Text, useTheme } from "@rneui/themed";
 import {
-  addDays,
-  addWeeks,
+  endOfDay,
+  endOfWeek,
   format,
-  getDay,
   isThisWeek as isThisWeekUtil,
 } from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
@@ -25,7 +24,12 @@ export function WeeksSwiperItem({
   profile,
   todayDate,
 }: WeeksSwiperItemProps) {
-  const endOfWeekDate = addDays(startOfWeekDate, 6);
+  const endOfWeekDate = endOfDay(
+    endOfWeek(startOfWeekDate, {
+      weekStartsOn: WeekDay.Monday,
+    })
+  );
+
   const { theme } = useTheme();
 
   const isThisWeek = isThisWeekUtil(startOfWeekDate, {

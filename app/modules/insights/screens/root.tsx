@@ -1,13 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Skeleton, Text, useTheme, useThemeMode } from "@rneui/themed";
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart,
-} from "react-native-chart-kit";
+import { LineChart } from "react-native-chart-kit";
 import { calculateWeightFluctuations } from "../utils/calculate-weight-fluctuations";
 import { Dimensions, View } from "react-native";
 import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
@@ -42,7 +35,8 @@ export function InsightsScreen() {
       }
 
       const weights = data.map(({ weight }) => weight);
-      return calculateWeightFluctuations(weights);
+      const fluctuations = calculateWeightFluctuations(weights);
+      return fluctuations;
     },
   });
 
@@ -103,7 +97,7 @@ export function InsightsScreen() {
         <View
           style={{
             marginVertical: theme.spacing.xl,
-            paddingHorizontal: theme.spacing.xl - 5,
+            paddingLeft: theme.spacing.xl - 5,
           }}
         >
           <LineChart
@@ -115,8 +109,8 @@ export function InsightsScreen() {
                 },
               ],
             }}
-            width={Dimensions.get("window").width - (theme.spacing.xl - 5) * 2}
-            height={250}
+            width={Dimensions.get("screen").width - theme.spacing.xl * 2}
+            height={350}
             yAxisSuffix={
               profile?.prefered_measurement_system === "imperial"
                 ? " lbs"

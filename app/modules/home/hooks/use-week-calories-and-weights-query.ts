@@ -1,4 +1,5 @@
 import { QueryKey, useQuery } from "@tanstack/react-query";
+import { endOfDay, startOfDay } from "date-fns";
 import { supabase } from "modules/supabase/client";
 
 export type WeekDayCaloriesAndWeightData = {
@@ -39,7 +40,7 @@ export function useWeekCaloriesAndWeightsQuery({
             weight: number;
           }
         >("id, created_at, calories, weight")
-        .gt("created_at", startOfWeekDateString)
+        .gte("created_at", startOfWeekDateString)
         .lte("created_at", endOfWeekDateString)
         .eq("profile_id", profileId)
         .limit(7)

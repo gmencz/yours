@@ -36,16 +36,6 @@ export function WeekCaloriesAndWeights({
 
   return (
     <View style={{ marginTop: theme.spacing.md }}>
-      <Text
-        style={{
-          fontFamily: "InterSemiBold",
-          fontSize: 16,
-          marginBottom: theme.spacing.md,
-        }}
-      >
-        Calories & Weights
-      </Text>
-
       {[
         WeekDay.Monday,
         WeekDay.Tuesday,
@@ -57,6 +47,7 @@ export function WeekCaloriesAndWeights({
       ].map((day) => (
         <WeekDayCaloriesAndWeight
           key={`${day}-${endOfWeekDateString}`}
+          endOfWeekDate={endOfWeekDate}
           day={day}
           isThisWeek={isThisWeek}
           profile={profile}
