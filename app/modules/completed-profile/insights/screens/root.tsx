@@ -1,13 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Icon, Text, useTheme } from "@rneui/themed";
-import {
-  ScrollView,
-  StyleProp,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import {
   createNativeStackNavigator,
   NativeStackScreenProps,
@@ -16,9 +9,9 @@ import {
   CompletedProfileStackParamList,
   InsightsStackParamList,
 } from "modules/common/types";
-import { useState } from "react";
 import { EnergyExpenditureScreen } from "./energy-expenditure/root";
 import { WeightScreen } from "./weight/root";
+import { useTabs } from "modules/common/hooks/use-tabs";
 
 type Props = NativeStackScreenProps<CompletedProfileStackParamList, "Insights">;
 
@@ -26,36 +19,9 @@ const InsightsTabStack = createNativeStackNavigator<InsightsStackParamList>();
 
 export function InsightsScreen({ route, navigation }: Props) {
   const { theme } = useTheme();
-  const [selectedTab, setSelectedTab] = useState(route.params.screen);
-
-  const getTabStyles = (tab: keyof InsightsStackParamList) => {
-    const isSelected = tab === selectedTab;
-
-    const tabStyles: StyleProp<ViewStyle> = {
-      flex: 1,
-      borderBottomWidth: 1,
-      borderBottomColor: isSelected ? theme.colors.black : theme.colors.grey4,
-      alignItems: "center",
-      paddingBottom: 15,
-      flexDirection: "row",
-      justifyContent: "center",
-    };
-
-    const tabTextStyles: StyleProp<TextStyle> = {
-      fontSize: 13,
-      marginLeft: 7,
-      color: isSelected ? theme.colors.black : theme.colors.grey4,
-      fontFamily: "InterBold",
-    };
-
-    const iconColor = isSelected ? theme.colors.black : theme.colors.grey4;
-
-    return {
-      tab: tabStyles,
-      text: tabTextStyles,
-      iconColor,
-    };
-  };
+  const { getTabStyles, setSelectedTab } = useTabs({
+    initialSelectedTab: route.params.screen,
+  });
 
   const [energyExpenditureStyles, weightStyles] = [
     getTabStyles("EnergyExpenditure"),
