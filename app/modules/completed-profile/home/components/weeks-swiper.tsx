@@ -48,18 +48,6 @@ export function WeeksSwiper() {
         <Skeleton height={42.5} style={{ marginTop: 20 }} />
         <Skeleton height={42.5} style={{ marginTop: 20 }} />
         <Skeleton height={42.5} style={{ marginTop: 20 }} />
-
-        <View style={{ paddingBottom: 70 }}>
-          <Skeleton width={120} height={25} style={{ marginTop: 40 }} />
-
-          <View style={{ flexDirection: "row", marginTop: theme.spacing.md }}>
-            <Skeleton height={100} style={{ flex: 1 }} />
-            <Skeleton
-              height={100}
-              style={{ flex: 1, marginLeft: theme.spacing.md }}
-            />
-          </View>
-        </View>
       </ScrollView>
     );
   }

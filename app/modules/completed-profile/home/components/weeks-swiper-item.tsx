@@ -6,6 +6,7 @@ import {
   isThisWeek as isThisWeekUtil,
 } from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
+import { Heading1, Heading2 } from "modules/common/components/headings";
 import { WeekDay } from "modules/common/types";
 import { ScrollView } from "react-native";
 import { useWeekCaloriesAndWeightsQuery } from "../hooks/use-week-calories-and-weights-query";
@@ -55,20 +56,16 @@ export function WeeksSwiperItem({
         padding: theme.spacing.xl,
       }}
     >
-      <Text
-        style={{
-          color: theme.colors.grey1,
-        }}
-      >
+      <Heading1>Home</Heading1>
+
+      <Heading2 style={{ marginTop: theme.spacing.sm }}>
         {isThisWeek
           ? `This week`
           : `${format(startOfWeekDate, "do' 'MMM")} - ${format(
               endOfWeekDate,
               "do' 'MMM"
             )}`}
-      </Text>
-
-      <Text style={{ fontFamily: "InterBold", fontSize: 20 }}>Home</Text>
+      </Heading2>
 
       <WeekCaloriesAndWeights
         endOfWeekDate={endOfWeekDate}

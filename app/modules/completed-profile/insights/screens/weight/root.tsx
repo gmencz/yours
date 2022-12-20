@@ -1,10 +1,16 @@
 import { Skeleton, Text, useTheme } from "@rneui/themed";
 import { useQuery } from "@tanstack/react-query";
 import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
+import { Heading1, Heading2 } from "modules/common/components/headings";
 import { supabase } from "modules/supabase/client";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 
-export function WeightTrend() {
+type WeightsQueryData = {
+  weight: number;
+  created_at: string;
+}[];
+
+export function WeightScreen() {
   const { theme } = useTheme();
   const { data: profile } = useProfileQuery();
 
@@ -17,13 +23,7 @@ export function WeightTrend() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles_calories_and_weights")
-        .select<
-          string,
-          {
-            weight: number;
-            created_at: string;
-          }
-        >("weight, created_at")
+        .select<string, WeightsQueryData[number]>("weight, created_at")
         .eq("profile_id", profile!.id)
         .not("weight", "is", "null")
         .order("created_at", { ascending: true });
@@ -36,19 +36,19 @@ export function WeightTrend() {
     },
   });
 
-  console.log(JSON.stringify({ weights }, null, 4));
-
   return (
-    <View style={{ paddingHorizontal: theme.spacing.xl }}>
-      <Text
-        style={{ marginTop: theme.spacing.lg, fontFamily: "InterSemiBold" }}
-      >
-        Weight Trend
-      </Text>
-
-      <Text style={{ color: theme.colors.grey0 }}>
-        Trend based on daily weigh-ins over time
-      </Text>
+    <ScrollView
+      style={{
+        backgroundColor: theme.colors.background,
+        padding: theme.spacing.xl,
+      }}
+    >
+      <View>
+        <Heading1>Weight Trend</Heading1>
+        <Heading2 style={{ marginTop: theme.spacing.sm }}>
+          Trend based on daily weigh-ins over time
+        </Heading2>
+      </View>
 
       <View style={{ marginTop: theme.spacing.lg }}>
         {isLoading ? (
@@ -62,9 +62,23 @@ export function WeightTrend() {
             Something went wrong calculating your weight trend.
           </Text>
         ) : (
-          <Text>TODO</Text>
+          <Graph weights={weights} />
         )}
       </View>
-    </View>
+    </ScrollView>
+  );
+}
+
+interface GraphProps {
+  weights: WeightsQueryData;
+}
+
+function Graph({ weights }: GraphProps) {
+  const { theme } = useTheme();
+
+  return (
+    <>
+      <Text>TODO</Text>
+    </>
   );
 }

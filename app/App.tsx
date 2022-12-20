@@ -23,16 +23,16 @@ import {
   UncompletedProfileStackParamList,
   UnauthorizedStackParamList,
 } from "./modules/common/types";
-import { HomeScreen } from "modules/home/screens/root";
+import { HomeScreen } from "modules/completed-profile/home/screens/root";
 import { WelcomeScreen } from "modules/auth/screens/welcome";
 import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
 import { EmailSignInScreen } from "modules/auth/screens/email-sign-in";
 import { TabBar } from "modules/common/components/bottom-tab-bar";
 import { Profile, useProfileQuery } from "modules/auth/hooks/use-profile-query";
-import { BasalEnergyExpenditureScreen } from "modules/basal-energy-expenditure/screens/root";
-import { GoalScreen } from "modules/goal/screens/root";
-import { InsightsScreen } from "modules/insights/screens/root";
-import { runTdeeEstimator } from "modules/insights/utils/tdee-estimator";
+import { BasalEnergyExpenditureScreen } from "modules/uncompleted-profile/basal-energy-expenditure/screens/root";
+import { GoalScreen } from "modules/uncompleted-profile/goal/screens/root";
+import { InsightsScreen } from "modules/completed-profile/insights/screens/root";
+import { runTdeeEstimator } from "modules/completed-profile/insights/utils/tdee-estimator";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -130,7 +130,7 @@ function Screens() {
 
   useEffect(() => {
     if (hasCompletedProfile && isLoggedIn) {
-      // This will try to create a tdee estimation for every 10 days of data.
+      // This will try to create a tdee estimation for every 7 days of data.
       // If there isn't enough data it won't create anything but we need to run this
       // on app load to make sure we don't miss any data.
       tdeeEstimationMutation.mutate({ profile });
@@ -189,6 +189,9 @@ function Screens() {
             <CompletedProfileStack.Screen
               name="Insights"
               component={InsightsScreen}
+              initialParams={{
+                screen: "EnergyExpenditure",
+              }}
               options={{
                 headerShown: false,
               }}

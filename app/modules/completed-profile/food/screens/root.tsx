@@ -34,7 +34,7 @@ export function FoodScreen({ route, navigation }: Props) {
 
     const tabStyles: StyleProp<ViewStyle> = {
       flex: 1,
-      borderBottomWidth: isSelected ? 2 : 2,
+      borderBottomWidth: 1,
       borderBottomColor: isSelected ? theme.colors.black : theme.colors.grey4,
       alignItems: "center",
       paddingBottom: 15,
@@ -68,7 +68,7 @@ export function FoodScreen({ route, navigation }: Props) {
       style={{
         flex: 1,
         backgroundColor: theme.colors.background,
-        paddingVertical: 30,
+        paddingVertical: theme.spacing.xl,
       }}
     >
       <View

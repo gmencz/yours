@@ -7,7 +7,9 @@ export type UnauthorizedStackParamList = {
 
 export type CompletedProfileStackParamList = {
   Home: undefined;
-  Insights: undefined;
+  Insights: {
+    screen: keyof InsightsStackParamList;
+  };
   Food: {
     screen: keyof FoodTabStackParamList;
   };
@@ -28,6 +30,11 @@ export type FoodTabStackParamList = {
   Barcode: undefined;
   Search: undefined;
   QuickAdd: undefined;
+};
+
+export type InsightsStackParamList = {
+  EnergyExpenditure: undefined;
+  Weight: undefined;
 };
 
 export enum WeekDay {

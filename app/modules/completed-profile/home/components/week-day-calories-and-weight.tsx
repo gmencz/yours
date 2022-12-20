@@ -1,10 +1,9 @@
 import { Colors, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
-import { getDay, isToday, setDay, subDays } from "date-fns";
-import { endOfDay } from "date-fns/esm";
+import { getDay, isToday, setDay } from "date-fns";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay, weekDaysWithNames } from "modules/common/types";
-import { runTdeeEstimator } from "modules/insights/utils/tdee-estimator";
+import { runTdeeEstimator } from "modules/completed-profile/insights/utils/tdee-estimator";
 import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { WeekDayCaloriesAndWeightData } from "../hooks/use-week-calories-and-weights-query";
@@ -82,7 +81,7 @@ export function WeekDayCaloriesAndWeight({
     profile,
     createdAtDateString: createdAtDate.toISOString(),
     savedCaloriesAndWeight,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       const queryData =
         queryClient.getQueryData<WeekDayCaloriesAndWeightData[]>(queryKey);
 
@@ -109,10 +108,12 @@ export function WeekDayCaloriesAndWeight({
       }
 
       if (data.shouldRerunTdeeEstimator) {
-        runTdeeEstimator({
+        await runTdeeEstimator({
           profile,
           dateStringFilter: createdAtDate.toISOString(),
         });
+
+        queryClient.invalidateQueries(["tdeeEstimations"]);
       }
     },
   });

@@ -19,9 +19,9 @@ type StoredCaloriesAndWeights = {
 const MAX_CALORIC_CHANGE = 200;
 
 // In order for us to get a more reasonable estimation, we will only make the estimation
-// when we have at least 10 days of data, this is because weight can fluctuate a lot
-// and in 10 days we can get a more accurate fluctuation.
-const MINIMUM_DAYS_OF_DATA = 10;
+// when we have at least 7 days of data, this is because weight can fluctuate a lot
+// and in 7 days we can get a more accurate fluctuation.
+const MINIMUM_DAYS_OF_DATA = 7;
 
 type CreateTdeeEstimationParams = {
   profile: Profile;

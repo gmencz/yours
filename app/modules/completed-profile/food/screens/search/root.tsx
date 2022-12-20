@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useDebounce } from "modules/common/hooks/use-debounce";
 import { supabase } from "modules/supabase/client";
-import { FoodCard, FoodCardProps } from "modules/food/components/result-card";
+import { FoodCard, FoodCardProps } from "../../components/result-card";
 
 type FormValues = {
   query: string;

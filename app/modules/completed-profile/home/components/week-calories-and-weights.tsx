@@ -81,7 +81,7 @@ export function WeekCaloriesAndWeights({
           <Text
             style={{
               textAlign: "center",
-              fontFamily: "InterBold",
+              color: theme.colors.grey0,
             }}
           >
             Calories (kcal)
@@ -98,7 +98,7 @@ export function WeekCaloriesAndWeights({
           <Text
             style={{
               textAlign: "center",
-              fontFamily: "InterBold",
+              color: theme.colors.grey0,
             }}
           >
             Weight (
