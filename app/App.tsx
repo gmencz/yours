@@ -86,6 +86,7 @@ function Screens() {
 
   const colorMode = useColorScheme();
   const { setMode, mode } = useThemeMode();
+  const [fetchingSession, setFetchingSession] = useState(true);
   const { data: profile, isSuccess: hasLoadedProfile } = useProfileQuery({
     enabled: !!session,
   });
@@ -95,9 +96,14 @@ function Screens() {
   }, [colorMode]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+      })
+      .finally(() => {
+        setFetchingSession(false);
+      });
 
     supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
@@ -134,13 +140,14 @@ function Screens() {
   let appIsReady = false;
   if (isLoggedIn) {
     appIsReady =
+      !fetchingSession &&
       fontsLoaded &&
       hasLoadedProfile &&
       (hasCompletedProfile && isLoggedIn
         ? tdeeEstimationMutation.isSuccess
         : true);
   } else {
-    appIsReady = fontsLoaded;
+    appIsReady = !fetchingSession && fontsLoaded;
   }
 
   const onLayoutRootView = useCallback(async () => {

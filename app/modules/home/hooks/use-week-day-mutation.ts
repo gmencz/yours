@@ -48,12 +48,13 @@ export function useWeekDayMutation({
       }
 
       let shouldRerunTdeeEstimator = false;
-      // If previously, either the calories or the weight were missing from this day and now the user has added them, we
-      // should re run the tdee estimator just in case.
+      // If both the calories and weight are present and one of them changed, re-run the
+      // TDEE estimator for this period of time.
       if (
-        (!savedCaloriesAndWeight?.calories || !savedCaloriesAndWeight.weight) &&
         data.calories &&
-        data.weight
+        data.weight &&
+        (savedCaloriesAndWeight?.weight !== data.weight ||
+          savedCaloriesAndWeight.calories !== data.calories)
       ) {
         shouldRerunTdeeEstimator = true;
       }

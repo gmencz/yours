@@ -1,6 +1,6 @@
 import { Colors, Skeleton, Text, Theme, useTheme } from "@rneui/themed";
 import { QueryKey, useQueryClient } from "@tanstack/react-query";
-import { getDay, isBefore, isToday, setDay, subDays } from "date-fns";
+import { getDay, isToday, setDay, subDays } from "date-fns";
 import { endOfDay } from "date-fns/esm";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay, weekDaysWithNames } from "modules/common/types";
@@ -109,7 +109,10 @@ export function WeekDayCaloriesAndWeight({
       }
 
       if (data.shouldRerunTdeeEstimator) {
-        runTdeeEstimator({ profile });
+        runTdeeEstimator({
+          profile,
+          dateStringFilter: createdAtDate.toISOString(),
+        });
       }
     },
   });
@@ -128,12 +131,7 @@ export function WeekDayCaloriesAndWeight({
       : day > todayDay || day === WeekDay.Sunday
     : false;
 
-  const isOver10DaysOld = isBefore(
-    endOfDay(createdAtDate),
-    subDays(endOfDay(todayDate), 9)
-  );
-
-  const isDisabled = isAfterToday || isOver10DaysOld;
+  const isDisabled = isAfterToday;
   const styles = getStyles(theme, isDisabled);
 
   return (

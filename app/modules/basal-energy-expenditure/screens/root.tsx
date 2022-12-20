@@ -38,6 +38,10 @@ const trainingActivityToReadable = {
 const manualSchema = yup
   .object({
     tdee: yup.number().max(50000, "That TDEE is too high"),
+    preferedMeasurementSystem: yup
+      .mixed()
+      .oneOf(["metric", "imperial"], "Invalid measurement system")
+      .required("Measurement system is required"),
   })
   .required();
 
@@ -98,6 +102,7 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
   } = useForm<ManualFormValues>({
     resolver: yupResolver(manualSchema),
     defaultValues: {
+      preferedMeasurementSystem: "metric",
       // @ts-expect-error because we are providing a string but this is actually correct because
       // RN expects a string even tho react-hook-form will transform it with yup.
       tdee: profile?.initial_tdee_estimation
@@ -123,11 +128,18 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
 
   const queryClient = useQueryClient();
 
-  const mutation = useMutation<unknown, unknown, { tdee: number }>({
-    mutationFn: async ({ tdee }) => {
+  const mutation = useMutation<
+    unknown,
+    unknown,
+    { tdee: number; preferedMeasurementSystem: string }
+  >({
+    mutationFn: async ({ tdee, preferedMeasurementSystem }) => {
       const { error } = await supabase
         .from("profiles")
-        .update({ initial_tdee_estimation: tdee })
+        .update({
+          initial_tdee_estimation: tdee,
+          prefered_measurement_system: preferedMeasurementSystem,
+        })
         .eq("id", profile!.id);
 
       if (error) {
@@ -150,7 +162,12 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
     },
   });
 
-  const preferedMeasurementSystem = estimatorWatch("preferedMeasurementSystem");
+  const estimatorPreferedMeasurementSystem = estimatorWatch(
+    "preferedMeasurementSystem"
+  );
+  const manualPreferedMeasurementSystem = manualWatch(
+    "preferedMeasurementSystem"
+  );
   const gender = estimatorWatch("gender");
   const activity = estimatorWatch("activity");
   const trainingActivity = estimatorWatch("trainingActivity");
@@ -177,12 +194,17 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
         trainingActivity,
         weight: weight!,
       }),
+      preferedMeasurementSystem,
     });
   };
 
-  const manualGoNext = ({ tdee }: ManualFormValues) => {
+  const manualGoNext = ({
+    tdee,
+    preferedMeasurementSystem,
+  }: ManualFormValues) => {
     mutation.mutate({
       tdee: tdee!,
+      preferedMeasurementSystem,
     });
   };
 
@@ -249,7 +271,7 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
             <View style={{ marginTop: theme.spacing.xl }}>
               <ControlledPicker
                 value={
-                  preferedMeasurementSystem === "imperial"
+                  estimatorPreferedMeasurementSystem === "imperial"
                     ? "Imperial (lbs, ft)"
                     : "Metric (kgs, cms)"
                 }
@@ -375,7 +397,9 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
                 control={estimatorControl}
                 name="weight"
                 helperText={
-                  preferedMeasurementSystem === "imperial" ? "lbs" : "kgs"
+                  estimatorPreferedMeasurementSystem === "imperial"
+                    ? "lbs"
+                    : "kgs"
                 }
                 errorMessage={estimatorErrors.weight?.message}
                 placeholder="Enter your weight"
@@ -389,7 +413,9 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
                 control={estimatorControl}
                 name="height"
                 helperText={
-                  preferedMeasurementSystem === "imperial" ? "ft" : "cms"
+                  estimatorPreferedMeasurementSystem === "imperial"
+                    ? "ft"
+                    : "cms"
                 }
                 errorMessage={estimatorErrors.height?.message}
                 placeholder="Enter your height"
@@ -423,6 +449,31 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
           </>
         ) : (
           <>
+            <View style={{ marginTop: theme.spacing.xl }}>
+              <ControlledPicker
+                value={
+                  manualPreferedMeasurementSystem === "imperial"
+                    ? "Imperial (lbs, ft)"
+                    : "Metric (kgs, cms)"
+                }
+                label="Measurement system"
+                control={manualControl}
+                name="preferedMeasurementSystem"
+                errorMessage={manualErrors.preferedMeasurementSystem?.message?.toString()}
+              >
+                <Picker.Item
+                  label="Metric (kgs, cms)"
+                  value="metric"
+                  style={{ fontFamily: "InterRegular" }}
+                />
+                <Picker.Item
+                  label="Imperial (lbs, ft)"
+                  value="imperial"
+                  style={{ fontFamily: "InterRegular" }}
+                />
+              </ControlledPicker>
+            </View>
+
             <View style={{ marginTop: theme.spacing.xl }}>
               <ControlledInput
                 label="Total daily energy expenditure (TDEE)"

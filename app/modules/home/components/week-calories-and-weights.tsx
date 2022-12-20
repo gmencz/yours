@@ -1,4 +1,4 @@
-import { Text, useTheme } from "@rneui/themed";
+import { Icon, Text, useTheme } from "@rneui/themed";
 import { QueryKey } from "@tanstack/react-query";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { WeekDay } from "modules/common/types";
@@ -59,6 +59,53 @@ export function WeekCaloriesAndWeights({
           isLoading={isLoading}
         />
       ))}
+
+      <View
+        style={{
+          paddingHorizontal: isThisWeek ? 10 : 0,
+          flexDirection: "row",
+          marginTop: theme.spacing.sm,
+        }}
+      >
+        <View style={{ width: theme.spacing.xl }} />
+
+        <View
+          style={{
+            marginRight: theme.spacing.lg,
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "row",
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: "InterBold",
+            }}
+          >
+            Calories (kcal)
+          </Text>
+        </View>
+
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              fontFamily: "InterBold",
+            }}
+          >
+            Weight (
+            {profile.prefered_measurement_system === "imperial" ? "lbs" : "kg"})
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }

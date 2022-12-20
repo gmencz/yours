@@ -16,8 +16,8 @@ type Props = NativeStackScreenProps<UncompletedProfileStackParamList, "Goal">;
 
 export function GoalScreen({ navigation }: Props) {
   const { theme } = useTheme();
-  const [goal, setGoal] = useState<Goal>("maingain");
   const { data: profile } = useProfileQuery();
+  const [goal, setGoal] = useState<Goal>((profile?.goal as Goal) || "maingain");
 
   const queryClient = useQueryClient();
 
