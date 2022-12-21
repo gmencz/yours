@@ -1,6 +1,6 @@
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { supabase } from "modules/supabase/client";
-import { calculateWeightChange } from "./calculate-weight-change";
+import { smoothOutWeights } from "./smooth-out-weights";
 
 type StoredEstimation = {
   date_of_first_estimated_item: string;
@@ -168,7 +168,9 @@ export async function runTdeeEstimator({
 
 function estimateNewTdee(caloriesAndWeights: StoredCaloriesAndWeights[]) {
   const weights = caloriesAndWeights.map(({ weight }) => weight);
-  const weightChange = calculateWeightChange(weights);
+  const smoothedWeights = smoothOutWeights(weights);
+  const weightChange =
+    smoothedWeights[smoothedWeights.length - 1] - smoothedWeights[0];
 
   // Removing the last element with slice (this doesn't mutate the original) because we don't
   // want to take into account the last day of calories since that will impact the next days after this

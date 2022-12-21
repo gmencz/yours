@@ -12,6 +12,7 @@ type ButtonProps = {
   style?: StyleProp<ViewStyle>;
   title: string;
   icon?: JSX.Element;
+  small?: boolean;
 };
 
 export function Button({
@@ -20,6 +21,7 @@ export function Button({
   style = {},
   title,
   icon,
+  small,
 }: ButtonProps) {
   const { theme } = useTheme();
   const { mode } = useThemeMode();
@@ -61,7 +63,8 @@ export function Button({
               : variant === "2"
               ? theme.colors.black
               : undefined,
-          fontFamily: "InterBlack",
+          fontSize: small ? 12 : 14,
+          fontFamily: "InterBold",
         }}
       >
         {title}
