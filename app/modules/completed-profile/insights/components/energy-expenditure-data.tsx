@@ -1,9 +1,11 @@
 import { Text, useTheme } from "@rneui/themed";
 import { format } from "date-fns";
+import { hexToRgba } from "modules/common/utils/hex-to-rgba";
 import { useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { EstimationsQueryData } from "../screens/energy-expenditure/root";
 import { isClose } from "../utils/is-close";
+import { GRAPH_YELLOW } from "./weights-graph";
 
 interface ExpenditureDataProps {
   estimations: EstimationsQueryData;
@@ -30,7 +32,7 @@ export function ExpenditureData({ estimations }: ExpenditureDataProps) {
             style={{
               height: 15,
               width: 15,
-              backgroundColor: `rgba(255, 205, 0, ${confidenceOpacity})`,
+              backgroundColor: hexToRgba(GRAPH_YELLOW, confidenceOpacity),
               marginRight: theme.spacing.md,
               borderRadius: 5,
             }}
@@ -42,7 +44,7 @@ export function ExpenditureData({ estimations }: ExpenditureDataProps) {
 
       <ScrollView
         style={{
-          height: 250,
+          flex: 1,
         }}
       >
         {estimations.map((estimation, index) => (
@@ -98,6 +100,7 @@ function ExpenditureDataItem({
       style={{
         flexDirection: "row",
         alignItems: "center",
+        marginBottom: theme.spacing.xl,
       }}
     >
       <View

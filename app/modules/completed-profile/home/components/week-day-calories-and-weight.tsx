@@ -77,7 +77,6 @@ export function WeekDayCaloriesAndWeight({
   }, [savedCaloriesAndWeight, endOfWeekDate, startOfWeekDate, day]);
 
   const mutation = useWeekDayMutation({
-    day,
     profile,
     createdAtDateString: createdAtDate.toISOString(),
     savedCaloriesAndWeight,

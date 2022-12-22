@@ -1,7 +1,6 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { useMutation } from "@tanstack/react-query";
+import { QueryKey, useMutation } from "@tanstack/react-query";
 import { Profile } from "modules/auth/hooks/use-profile-query";
-import { WeekDay } from "modules/common/types";
 import { supabase } from "modules/supabase/client";
 import { WeekDayCaloriesAndWeightData } from "./use-week-calories-and-weights-query";
 
@@ -13,7 +12,6 @@ type UseWeekDayMutation = {
   onSuccess?: (data: Data) => void;
   savedCaloriesAndWeight?: WeekDayCaloriesAndWeightData;
   profile: Profile;
-  day: WeekDay;
   createdAtDateString: string;
 };
 
@@ -21,7 +19,6 @@ export function useWeekDayMutation({
   onSuccess,
   savedCaloriesAndWeight,
   profile,
-  day,
   createdAtDateString,
 }: UseWeekDayMutation) {
   return useMutation<
