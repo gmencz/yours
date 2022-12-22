@@ -10,6 +10,7 @@ type ControlledInputProps = {
   icon?: JSX.Element;
   errorMessage?: string;
   helperText?: string;
+  helperDescription?: string;
 } & TextInputProps;
 
 export function ControlledInput({
@@ -18,6 +19,7 @@ export function ControlledInput({
   name,
   icon,
   helperText,
+  helperDescription,
   errorMessage,
   ...inputProps
 }: ControlledInputProps) {
@@ -88,6 +90,18 @@ export function ControlledInput({
           </Text>
         ) : null}
       </View>
+
+      {helperDescription ? (
+        <Text
+          style={{
+            color: theme.colors.grey2,
+            marginTop: theme.spacing.md,
+            fontSize: 11,
+          }}
+        >
+          {helperDescription}
+        </Text>
+      ) : null}
 
       {errorMessage ? (
         <Text

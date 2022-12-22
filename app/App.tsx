@@ -33,6 +33,7 @@ import { BasalEnergyExpenditureScreen } from "modules/uncompleted-profile/basal-
 import { GoalScreen } from "modules/uncompleted-profile/goal/screens/root";
 import { InsightsScreen } from "modules/completed-profile/insights/screens/root";
 import { runTdeeEstimator } from "modules/completed-profile/insights/utils/tdee-estimator";
+import { StrategyScreen } from "modules/completed-profile/strategy/screens/root";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -115,7 +116,7 @@ function Screens() {
   const hasCompletedProfile =
     !!profile?.prefered_measurement_system &&
     !!profile.initial_tdee_estimation &&
-    !!profile.goal;
+    !!profile.goal_id;
 
   const tdeeEstimationMutation = useMutation<
     boolean,
@@ -196,6 +197,13 @@ function Screens() {
                 headerShown: false,
               }}
             />
+            <CompletedProfileStack.Screen
+              name="Strategy"
+              component={StrategyScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
 
             {/* The food feature is disabled for now */}
             {/* <CompletedProfileStack.Screen
@@ -212,7 +220,10 @@ function Screens() {
         ) : (
           <UncompletedProfileStack.Navigator
             initialRouteName={
-              profile?.prefered_measurement_system
+              profile?.prefered_measurement_system &&
+              profile.initial_tdee_estimation &&
+              profile.initial_weight &&
+              profile.gender
                 ? "Goal"
                 : "BasalEnergyExpenditure"
             }

@@ -10,7 +10,7 @@ import { ControlledPicker } from "modules/common/components/controlled-picker";
 import { Logo } from "modules/common/components/logo";
 import { UncompletedProfileStackParamList } from "modules/common/types";
 import { supabase } from "modules/supabase/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Pressable, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,6 +42,15 @@ const manualSchema = yup
       .mixed()
       .oneOf(["metric", "imperial"], "Invalid measurement system")
       .required("Measurement system is required"),
+    gender: yup
+      .mixed()
+      .oneOf(["male", "female"], "Invalid gender")
+      .required("Gender is required"),
+    weight: yup
+      .number()
+      .typeError("Weight is required")
+      .max(1400, "That weight is too high")
+      .required("Weight is required"),
   })
   .required();
 
@@ -54,7 +63,7 @@ const estimatorSchema = yup
 
     gender: yup
       .mixed()
-      .oneOf(["man", "woman"], "Invalid gender")
+      .oneOf(["male", "female"], "Invalid gender")
       .required("Gender is required"),
     weight: yup
       .number()
@@ -93,18 +102,23 @@ type Props = NativeStackScreenProps<
 export function BasalEnergyExpenditureScreen({ navigation }: Props) {
   const { theme } = useTheme();
   const { data: profile } = useProfileQuery();
-
   const {
     handleSubmit: manualHandleSubmit,
     control: manualControl,
     watch: manualWatch,
+    setValue: manualSetValue,
     formState: { errors: manualErrors },
   } = useForm<ManualFormValues>({
     resolver: yupResolver(manualSchema),
     defaultValues: {
-      preferedMeasurementSystem: "metric",
-      // @ts-expect-error because we are providing a string but this is actually correct because
-      // RN expects a string even tho react-hook-form will transform it with yup.
+      gender: profile?.gender || "male",
+      preferedMeasurementSystem:
+        profile?.prefered_measurement_system || "metric",
+      // @ts-expect-error
+      weight: profile?.initial_weight
+        ? profile.initial_weight.toString()
+        : undefined,
+      // @ts-expect-error
       tdee: profile?.initial_tdee_estimation
         ? Math.round(profile.initial_tdee_estimation).toString()
         : undefined,
@@ -115,12 +129,18 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
     handleSubmit: estimatorHandleSubmit,
     control: estimatorControl,
     watch: estimatorWatch,
+    setValue: estimatorSetValue,
     formState: { errors: estimatorErrors },
   } = useForm<EstimatorFormValues>({
     resolver: yupResolver(estimatorSchema),
     defaultValues: {
-      preferedMeasurementSystem: "metric",
-      gender: "man",
+      preferedMeasurementSystem:
+        profile?.prefered_measurement_system || "metric",
+      // @ts-expect-error
+      weight: profile?.initial_weight
+        ? profile.initial_weight.toString()
+        : undefined,
+      gender: profile?.gender || "male",
       activity: Activity.Moderate,
       trainingActivity: TrainingActivity.FourToSixWeeklySessions,
     },
@@ -131,14 +151,21 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
   const mutation = useMutation<
     unknown,
     unknown,
-    { tdee: number; preferedMeasurementSystem: string }
+    {
+      tdee: number;
+      preferedMeasurementSystem: string;
+      weight: number;
+      gender: string;
+    }
   >({
-    mutationFn: async ({ tdee, preferedMeasurementSystem }) => {
+    mutationFn: async ({ tdee, preferedMeasurementSystem, weight, gender }) => {
       const { error } = await supabase
         .from("profiles")
         .update({
           initial_tdee_estimation: tdee,
           prefered_measurement_system: preferedMeasurementSystem,
+          initial_weight: weight,
+          gender,
         })
         .eq("id", profile!.id);
 
@@ -149,12 +176,17 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
       return true;
     },
 
-    onSuccess: (_data, { tdee }) => {
+    onSuccess: (_data, { tdee, preferedMeasurementSystem, weight, gender }) => {
       const queryData = queryClient.getQueryData<Profile>(["profile"]);
       if (queryData) {
         queryClient.setQueryData<Profile>(["profile"], {
           ...queryData,
           initial_tdee_estimation: tdee,
+          initial_weight: weight,
+          gender,
+          prefered_measurement_system: preferedMeasurementSystem as
+            | "metric"
+            | "imperial",
         });
       }
 
@@ -168,7 +200,8 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
   const manualPreferedMeasurementSystem = manualWatch(
     "preferedMeasurementSystem"
   );
-  const gender = estimatorWatch("gender");
+  const manualGender = manualWatch("gender");
+  const estimatorGender = estimatorWatch("gender");
   const activity = estimatorWatch("activity");
   const trainingActivity = estimatorWatch("trainingActivity");
   const [showCalculator, setShowCalculator] = useState(
@@ -195,16 +228,22 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
         weight: weight!,
       }),
       preferedMeasurementSystem,
+      weight: weight!,
+      gender: gender!,
     });
   };
 
   const manualGoNext = ({
     tdee,
     preferedMeasurementSystem,
+    weight,
+    gender,
   }: ManualFormValues) => {
     mutation.mutate({
       tdee: tdee!,
       preferedMeasurementSystem,
+      weight: weight!,
+      gender: gender!,
     });
   };
 
@@ -295,20 +334,20 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
 
             <View style={{ marginTop: theme.spacing.xl }}>
               <ControlledPicker
-                value={gender === "man" ? "Man" : "Woman"}
+                value={estimatorGender === "male" ? "Male" : "Female"}
                 label="Gender"
                 control={estimatorControl}
                 name="gender"
                 errorMessage={estimatorErrors.gender?.message?.toString()}
               >
                 <Picker.Item
-                  label="Man"
-                  value="man"
+                  label="Male"
+                  value="male"
                   style={{ fontFamily: "InterRegular" }}
                 />
                 <Picker.Item
-                  label="Woman"
-                  value="woman"
+                  label="Female"
+                  value="female"
                   style={{ fontFamily: "InterRegular" }}
                 />
               </ControlledPicker>
@@ -472,6 +511,41 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
                   style={{ fontFamily: "InterRegular" }}
                 />
               </ControlledPicker>
+            </View>
+
+            <View style={{ marginTop: theme.spacing.xl }}>
+              <ControlledPicker
+                value={manualGender === "male" ? "Male" : "Female"}
+                label="Gender"
+                control={manualControl}
+                name="gender"
+                errorMessage={manualErrors.gender?.message?.toString()}
+              >
+                <Picker.Item
+                  label="Male"
+                  value="male"
+                  style={{ fontFamily: "InterRegular" }}
+                />
+                <Picker.Item
+                  label="Female"
+                  value="female"
+                  style={{ fontFamily: "InterRegular" }}
+                />
+              </ControlledPicker>
+            </View>
+
+            <View style={{ marginTop: theme.spacing.xl }}>
+              <ControlledInput
+                label="Weight"
+                control={manualControl}
+                name="weight"
+                helperText={
+                  manualPreferedMeasurementSystem === "imperial" ? "lbs" : "kgs"
+                }
+                errorMessage={manualErrors.weight?.message}
+                placeholder="Enter your weight"
+                keyboardType="numeric"
+              />
             </View>
 
             <View style={{ marginTop: theme.spacing.xl }}>

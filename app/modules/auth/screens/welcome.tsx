@@ -27,10 +27,14 @@ export function WelcomeScreen({ navigation }: Props) {
       <Logo />
 
       <View style={{ marginTop: theme.spacing.xl }}>
-        <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>cut</Text>
-        <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>bulk</Text>
         <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>
-          maingain
+          build muscle
+        </Text>
+        <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>
+          lose fat
+        </Text>
+        <Text style={{ fontFamily: "InterSemiBold", fontSize: 24 }}>
+          maintain
         </Text>
 
         <Text

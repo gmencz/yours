@@ -24,6 +24,18 @@ const icons: Record<
       />
     ),
 
+  Strategy: (theme, isFocused) =>
+    isFocused ? (
+      <Icon type="material-community" name="strategy" size={25} />
+    ) : (
+      <Icon
+        type="material-community"
+        name="strategy"
+        size={25}
+        color={theme.colors.grey4}
+      />
+    ),
+
   Insights: (theme, isFocused) =>
     isFocused ? (
       <Icon type="ionicon" name="analytics" size={30} />
@@ -58,7 +70,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
         flexDirection: "row",
         backgroundColor: theme.colors.background,
         justifyContent: "center",
-        alignItems: "center",
+        alignItems: "flex-end",
         borderTopWidth: 1,
         borderTopColor: theme.colors.grey4,
       }}

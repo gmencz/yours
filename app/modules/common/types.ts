@@ -10,6 +10,7 @@ export type CompletedProfileStackParamList = {
   Insights: {
     screen: keyof InsightsStackParamList;
   };
+  Strategy: undefined;
   Food: {
     screen: keyof FoodTabStackParamList;
   };
