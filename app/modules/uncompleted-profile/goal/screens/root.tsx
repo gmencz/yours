@@ -43,15 +43,38 @@ interface ProfileGoal {
   id: number;
 }
 
+function getRecommendedWeeklyWeightChange(
+  approach: "bulk" | "cut" | "maintain",
+  profile: Profile
+): { kgs: number; lbs: number } {
+  switch (approach) {
+    case "bulk": {
+      // Gain 1% of your BW as a male per month and 0.5% as a female which
+      // is 0.25% of your BW as a male per week.
+      const percentage = profile.gender === "male" ? 1 : 0.5;
+      let monthlyKgsChange = (profile!.initial_weight! / 100) * percentage;
+      monthlyKgsChange = monthlyKgsChange > 1 ? 1 : monthlyKgsChange;
+      const weeklyKgsChange = monthlyKgsChange / 4;
+      const weeklyLbsChange = weeklyKgsChange * ONE_KG_IN_LBS;
+      return { kgs: weeklyKgsChange, lbs: weeklyLbsChange };
+    }
+    case "cut": {
+      // Lose 1.25% of your BW per month which is around 0.3% as a male per week.
+      const percentage = 1.25;
+      const monthlyKgsChange = (profile!.initial_weight! / 100) * percentage;
+      const weeklyKgsChange = monthlyKgsChange / 4;
+      const weeklyLbsChange = weeklyKgsChange * ONE_KG_IN_LBS;
+      return { kgs: -weeklyKgsChange, lbs: -weeklyLbsChange };
+    }
+    default:
+      // Maintain so the recommended weekly weight change is 0.
+      return { kgs: 0, lbs: 0 };
+  }
+}
+
 export function GoalScreen({ navigation }: Props) {
   const { theme } = useTheme();
   const { data: profile } = useProfileQuery();
-
-  const percentage = profile?.gender === "male" ? 1 : 0.5;
-  let monthlyKgsChange = (profile!.initial_weight! / 100) * percentage;
-  monthlyKgsChange = monthlyKgsChange > 1 ? 1 : monthlyKgsChange;
-  const weeklyKgsChange = monthlyKgsChange / 4;
-  const weeklyLbsChange = weeklyKgsChange * ONE_KG_IN_LBS;
 
   const {
     watch,
@@ -64,26 +87,24 @@ export function GoalScreen({ navigation }: Props) {
     defaultValues: {
       goal: "build-muscle",
       approach: "bulk",
-      // @ts-expect-error
-      weeklyWeightChange:
-        profile?.prefered_measurement_system === "imperial"
-          ? formatDecimal(weeklyLbsChange).toString()
-          : formatDecimal(weeklyKgsChange).toString(),
     },
   });
 
+  const goal = watch("goal");
+  const approach = watch("approach");
+
   useEffect(() => {
+    const { kgs: recommendedWeeklyKgsChange, lbs: recommendedWeeklyLbsChange } =
+      getRecommendedWeeklyWeightChange(approach, profile!);
+
     setValue(
       "weeklyWeightChange",
       // @ts-expect-error
       profile?.prefered_measurement_system === "imperial"
-        ? formatDecimal(weeklyLbsChange).toString()
-        : formatDecimal(weeklyKgsChange).toString()
+        ? formatDecimal(recommendedWeeklyLbsChange).toString()
+        : formatDecimal(recommendedWeeklyKgsChange).toString()
     );
-  }, [profile?.prefered_measurement_system, profile?.gender]);
-
-  const goal = watch("goal");
-  const approach = watch("approach");
+  }, [profile?.prefered_measurement_system, profile?.gender, approach]);
 
   useEffect(() => {
     if (goal === "build-muscle") {
@@ -260,10 +281,11 @@ export function GoalScreen({ navigation }: Props) {
         <View style={{ marginTop: theme.spacing.xl }}>
           <ControlledInput
             control={control}
+            editable={false}
             label="Weekly weight change goal"
             name="weeklyWeightChange"
             keyboardType="numeric"
-            helperDescription="Don't change your weekly weight change goal unless you really know what you're doing."
+            helperDescription="This is the recommended weekly weight change goal based on nutrition and behavioral science and is only editable in the strategy's settings once startedz."
             helperText={
               profile?.prefered_measurement_system === "imperial"
                 ? "lbs"
