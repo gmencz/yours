@@ -1,6 +1,7 @@
 import { Text, useTheme } from "@rneui/themed";
 import { format } from "date-fns";
 import { Button } from "modules/common/components/button";
+import { themeColor3 } from "modules/common/utils/colors";
 import { hexToRgba } from "modules/common/utils/hex-to-rgba";
 import { Dispatch, SetStateAction } from "react";
 import { Dimensions, View } from "react-native";
@@ -87,7 +88,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             style={{
               width: 40,
               height: 10,
-              backgroundColor: GRAPH_YELLOW,
+              backgroundColor: themeColor3,
               borderRadius: 10,
               marginRight: theme.spacing.md,
             }}
@@ -109,7 +110,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             {
               data: scaleWeights,
               strokeWidth: 2,
-              color: () => hexToRgba(GRAPH_YELLOW, 1),
+              color: () => hexToRgba(themeColor3, 1),
             },
           ],
         }}

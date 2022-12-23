@@ -76,12 +76,19 @@ export async function runTdeeEstimator({
       throw caloriesAndWeightsError;
     }
 
+    const totalWeight = caloriesAndWeights.reduce(
+      (total, { weight }) => total + weight,
+      0
+    );
+    const weight = totalWeight / caloriesAndWeights.length;
+
     // Check if there's at least `MINIMUM_DAYS_OF_DATA` since the last estimated item.
     if (caloriesAndWeights.length >= MINIMUM_DAYS_OF_DATA) {
       const { error: errorUpdating } = await supabase
         .from("profiles_tdee_estimations")
         .update({
           estimation: estimateNewTdee(caloriesAndWeights),
+          weight,
         })
         .eq("id", existingEstimation.id);
 
@@ -124,11 +131,18 @@ export async function runTdeeEstimator({
         throw caloriesAndWeightsError;
       }
 
+      const totalWeight = caloriesAndWeights.reduce(
+        (total, { weight }) => total + weight,
+        0
+      );
+      const weight = totalWeight / caloriesAndWeights.length;
+
       // Check if there's at least `MINIMUM_DAYS_OF_DATA` since the last estimated item.
       if (caloriesAndWeights.length >= MINIMUM_DAYS_OF_DATA) {
         await supabase.from("profiles_tdee_estimations").insert({
           profile_id: profile.id,
           estimation: estimateNewTdee(caloriesAndWeights),
+          weight,
           date_of_first_estimated_item: caloriesAndWeights[0].created_at,
           date_of_last_estimated_item:
             caloriesAndWeights[caloriesAndWeights.length - 1].created_at,
@@ -152,11 +166,18 @@ export async function runTdeeEstimator({
         throw caloriesAndWeightsError;
       }
 
+      const totalWeight = caloriesAndWeights.reduce(
+        (total, { weight }) => total + weight,
+        0
+      );
+      const weight = totalWeight / caloriesAndWeights.length;
+
       // Check if there's at least `MINIMUM_DAYS_OF_DATA` since the user started using the app.
       if (caloriesAndWeights.length >= MINIMUM_DAYS_OF_DATA) {
         await supabase.from("profiles_tdee_estimations").insert({
           profile_id: profile.id,
           estimation: estimateNewTdee(caloriesAndWeights),
+          weight,
           date_of_first_estimated_item: caloriesAndWeights[0].created_at,
           date_of_last_estimated_item:
             caloriesAndWeights[caloriesAndWeights.length - 1].created_at,

@@ -104,7 +104,7 @@ export function GoalScreen({ navigation }: Props) {
         ? formatDecimal(recommendedWeeklyLbsChange).toString()
         : formatDecimal(recommendedWeeklyKgsChange).toString()
     );
-  }, [profile?.prefered_measurement_system, profile?.gender, approach]);
+  }, [profile, approach]);
 
   useEffect(() => {
     if (goal === "build-muscle") {
