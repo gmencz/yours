@@ -26,7 +26,10 @@ export function WeeksSwiper() {
   if (isLoadingWeeksDates) {
     return (
       <ScrollView
-        style={{ paddingHorizontal: theme.spacing.xl, paddingVertical: 30 }}
+        style={{
+          paddingHorizontal: theme.spacing.xl,
+          paddingVertical: 30,
+        }}
       >
         <Skeleton width={60} height={10} />
         <Skeleton

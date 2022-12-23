@@ -6,6 +6,10 @@ import {
   BarCodeScannerResult,
   PermissionStatus,
 } from "expo-barcode-scanner";
+import { Button } from "modules/common/components/button";
+import { ControlledInput } from "modules/common/components/controlled-input";
+import { QuickAddStackParamList } from "modules/common/types";
+import { supabase } from "modules/supabase/client";
 import { useEffect, useState } from "react";
 import {
   Control,
@@ -15,10 +19,6 @@ import {
 } from "react-hook-form";
 import { Dimensions, ScrollView, View } from "react-native";
 
-import { QuickAddStackParamList } from "../../../common/types";
-import { Button } from "../../../common/components/button";
-import { ControlledInput } from "../../../common/components/controlled-input";
-import { supabase } from "../../../supabase/client";
 import { FormValues } from "./root";
 
 type BarcodeScreenProps = NativeStackScreenProps<

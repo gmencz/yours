@@ -1,11 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Text, useTheme } from "@rneui/themed";
+import { Button } from "modules/common/components/button";
+import { ControlledInput } from "modules/common/components/controlled-input";
+import { QuickAddStackParamList } from "modules/common/types";
 import { Control, FieldErrorsImpl, UseFormTrigger } from "react-hook-form";
 import { ScrollView, View } from "react-native";
 
-import { QuickAddStackParamList } from "../../../common/types";
-import { Button } from "../../../common/components/button";
-import { ControlledInput } from "../../../common/components/controlled-input";
 import { FormValues } from "./root";
 
 type RequiredDetailsScreenProps = NativeStackScreenProps<

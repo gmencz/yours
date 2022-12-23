@@ -43,7 +43,7 @@ interface ProfileGoal {
   id: number;
 }
 
-function getRecommendedWeeklyWeightChange(
+export function getRecommendedWeeklyWeightChange(
   approach: "bulk" | "cut" | "maintain",
   profile: Profile
 ): { kgs: number; lbs: number } {
