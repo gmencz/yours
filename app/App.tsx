@@ -13,12 +13,8 @@ import { useFonts } from "expo-font";
 import { StatusBar, useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
-import Toast, {
-  BaseToast,
-  ErrorToast,
-  ToastConfig,
-} from "react-native-toast-message";
-import { theme as appTheme, theme } from "./theme";
+import Toast, { ErrorToast, ToastConfig } from "react-native-toast-message";
+import { theme as appTheme } from "./theme";
 import { supabase } from "modules/supabase/client";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";

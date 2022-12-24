@@ -116,7 +116,7 @@ export function GoalScreen({ navigation }: Props) {
       return profileGoal[0];
     },
 
-    onSuccess: (data, { goal }) => {
+    onSuccess: (data) => {
       const queryData = queryClient.getQueryData<Profile>(["profile"]);
       if (queryData) {
         queryClient.setQueryData<Profile>(["profile"], {
@@ -126,7 +126,7 @@ export function GoalScreen({ navigation }: Props) {
       }
     },
 
-    onError(error, variables, context) {
+    onError(error, variables) {
       Sentry.Native.captureException(error, { extra: { variables } });
     },
   });
