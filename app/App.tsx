@@ -13,7 +13,12 @@ import { useFonts } from "expo-font";
 import { StatusBar, useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
-import { theme as appTheme } from "./theme";
+import Toast, {
+  BaseToast,
+  ErrorToast,
+  ToastConfig,
+} from "react-native-toast-message";
+import { theme as appTheme, theme } from "./theme";
 import { supabase } from "modules/supabase/client";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -87,6 +92,7 @@ function Screens() {
 
   const colorMode = useColorScheme();
   const { setMode, mode } = useThemeMode();
+  const { theme } = useTheme();
   const [fetchingSession, setFetchingSession] = useState(true);
   const { data: profile, isSuccess: hasLoadedProfile } = useProfileQuery({
     enabled: !!session,
@@ -166,47 +172,89 @@ function Screens() {
     return null;
   }
 
-  return (
-    <NavigationContainer onReady={onLayoutRootView}>
-      <StatusBar
-        backgroundColor="transparent"
-        barStyle={mode === "light" ? "dark-content" : "light-content"}
-        translucent={true}
+  // Custom toast config
+  const toastConfig: ToastConfig = {
+    /*
+    Overwrite 'success' type,
+    by modifying the existing `BaseToast` component
+  */
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: "pink" }}
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          fontWeight: "400",
+        }}
       />
+    ),
+    /*
+    Overwrite 'error' type,
+    by modifying the existing `ErrorToast` component
+  */
+    error: (props) => (
+      <ErrorToast
+        {...props}
+        style={{
+          borderLeftColor: theme.colors.error,
+          backgroundColor: theme.colors.grey5,
+        }}
+        text2NumberOfLines={2}
+        text1Style={{
+          color: theme.colors.black,
+          fontSize: 14,
+        }}
+        text2Style={{
+          color: theme.colors.grey1,
+          fontSize: 14,
+        }}
+      />
+    ),
+  };
 
-      {isLoggedIn ? (
-        hasCompletedProfile ? (
-          <CompletedProfileStack.Navigator
-            initialRouteName="Home"
-            tabBar={(props) => <TabBar {...props} />}
-          >
-            <CompletedProfileStack.Screen
-              name="Home"
-              component={HomeScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <CompletedProfileStack.Screen
-              name="Insights"
-              component={InsightsScreen}
-              initialParams={{
-                screen: "EnergyExpenditure",
-              }}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <CompletedProfileStack.Screen
-              name="Strategy"
-              component={StrategyScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
+  return (
+    <>
+      <NavigationContainer onReady={onLayoutRootView}>
+        <StatusBar
+          backgroundColor="transparent"
+          barStyle={mode === "light" ? "dark-content" : "light-content"}
+          translucent={true}
+        />
 
-            {/* The food feature is disabled for now */}
-            {/* <CompletedProfileStack.Screen
+        {isLoggedIn ? (
+          hasCompletedProfile ? (
+            <CompletedProfileStack.Navigator
+              initialRouteName="Home"
+              tabBar={(props) => <TabBar {...props} />}
+            >
+              <CompletedProfileStack.Screen
+                name="Home"
+                component={HomeScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <CompletedProfileStack.Screen
+                name="Insights"
+                component={InsightsScreen}
+                initialParams={{
+                  screen: "EnergyExpenditure",
+                }}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <CompletedProfileStack.Screen
+                name="Strategy"
+                component={StrategyScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+
+              {/* The food feature is disabled for now */}
+              {/* <CompletedProfileStack.Screen
               name="Food"
               component={FoodScreen}
               initialParams={{
@@ -216,59 +264,62 @@ function Screens() {
                 headerShown: false,
               }}
             /> */}
-          </CompletedProfileStack.Navigator>
+            </CompletedProfileStack.Navigator>
+          ) : (
+            <UncompletedProfileStack.Navigator
+              initialRouteName={
+                profile?.prefered_measurement_system &&
+                profile.initial_tdee_estimation &&
+                profile.initial_weight &&
+                profile.gender
+                  ? "Goal"
+                  : "BasalEnergyExpenditure"
+              }
+            >
+              <UncompletedProfileStack.Screen
+                name="BasalEnergyExpenditure"
+                component={BasalEnergyExpenditureScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <UncompletedProfileStack.Screen
+                name="Goal"
+                component={GoalScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            </UncompletedProfileStack.Navigator>
+          )
         ) : (
-          <UncompletedProfileStack.Navigator
-            initialRouteName={
-              profile?.prefered_measurement_system &&
-              profile.initial_tdee_estimation &&
-              profile.initial_weight &&
-              profile.gender
-                ? "Goal"
-                : "BasalEnergyExpenditure"
-            }
-          >
-            <UncompletedProfileStack.Screen
-              name="BasalEnergyExpenditure"
-              component={BasalEnergyExpenditureScreen}
+          <UnauthorizedStack.Navigator initialRouteName="Welcome">
+            <UnauthorizedStack.Screen
+              name="Welcome"
+              component={WelcomeScreen}
               options={{
                 headerShown: false,
               }}
             />
-            <UncompletedProfileStack.Screen
-              name="Goal"
-              component={GoalScreen}
+            <UnauthorizedStack.Screen
+              name="LinkSignIn"
+              component={LinkSignInScreen}
               options={{
                 headerShown: false,
               }}
             />
-          </UncompletedProfileStack.Navigator>
-        )
-      ) : (
-        <UnauthorizedStack.Navigator initialRouteName="Welcome">
-          <UnauthorizedStack.Screen
-            name="Welcome"
-            component={WelcomeScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <UnauthorizedStack.Screen
-            name="LinkSignIn"
-            component={LinkSignInScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-          <UnauthorizedStack.Screen
-            name="EmailSignIn"
-            component={EmailSignInScreen}
-            options={{
-              headerShown: false,
-            }}
-          />
-        </UnauthorizedStack.Navigator>
-      )}
-    </NavigationContainer>
+            <UnauthorizedStack.Screen
+              name="EmailSignIn"
+              component={EmailSignInScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </UnauthorizedStack.Navigator>
+        )}
+      </NavigationContainer>
+
+      <Toast config={toastConfig} />
+    </>
   );
 }

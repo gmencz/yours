@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { WeekDayCaloriesAndWeightData } from "../hooks/use-week-calories-and-weights-query";
 import { useWeekDayMutation } from "../hooks/use-week-day-mutation";
+import Toast from "react-native-toast-message";
 
 type WeekDayCaloriesAndWeightProps = {
   weekCaloriesAndWeights?: WeekDayCaloriesAndWeightData[];
@@ -80,6 +81,12 @@ export function WeekDayCaloriesAndWeight({
     profile,
     createdAtDateString: createdAtDate.toISOString(),
     savedCaloriesAndWeight,
+    onError: () => {
+      Toast.show({
+        type: "error",
+        text2: "Oops! Something went wrong saving the changes you just made.",
+      });
+    },
     onSuccess: async (data) => {
       const queryData =
         queryClient.getQueryData<WeekDayCaloriesAndWeightData[]>(queryKey);

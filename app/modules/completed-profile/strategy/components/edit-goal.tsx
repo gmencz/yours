@@ -12,6 +12,7 @@ import { getRecommendedWeeklyWeightChange } from "modules/uncompleted-profile/go
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { View } from "react-native";
+import Toast from "react-native-toast-message";
 import * as yup from "yup";
 import { UseStrategyQueryData } from "../hooks/use-strategy-query";
 
@@ -119,6 +120,12 @@ export function EditGoal({
 
       setEditGoal(false);
     },
+    onError: () => {
+      Toast.show({
+        type: "error",
+        text2: "Oops! Something went wrong updating your goal.",
+      });
+    },
   });
 
   const updateGoal = (values: FormValues) => {
@@ -205,14 +212,6 @@ export function EditGoal({
           errorMessage={errors.weeklyWeightChange?.message?.toString()}
         />
       </View>
-
-      {mutation.isError ? (
-        <View style={{ marginTop: theme.spacing.md }}>
-          <Text style={{ color: theme.colors.error, fontSize: 13 }}>
-            Something went wrong updating your goal. Try again later.
-          </Text>
-        </View>
-      ) : null}
 
       <Button
         title="Update goal"

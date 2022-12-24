@@ -10,12 +10,14 @@ type Data = WeekDayCaloriesAndWeightData & {
 
 type UseWeekDayMutation = {
   onSuccess?: (data: Data) => void;
+  onError?: VoidFunction;
   savedCaloriesAndWeight?: WeekDayCaloriesAndWeightData;
   profile: Profile;
   createdAtDateString: string;
 };
 
 export function useWeekDayMutation({
+  onError,
   onSuccess,
   savedCaloriesAndWeight,
   profile,
@@ -60,5 +62,6 @@ export function useWeekDayMutation({
     },
 
     onSuccess,
+    onError,
   });
 }
