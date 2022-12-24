@@ -15,6 +15,7 @@ import { View } from "react-native";
 import Toast from "react-native-toast-message";
 import * as yup from "yup";
 import { UseStrategyQueryData } from "../hooks/use-strategy-query";
+import * as Sentry from "sentry-expo";
 
 const schema = yup
   .object({
@@ -120,7 +121,8 @@ export function EditGoal({
 
       setEditGoal(false);
     },
-    onError: () => {
+    onError: (error, variables) => {
+      Sentry.Native.captureException(error, { extra: { variables } });
       Toast.show({
         type: "error",
         text2: "Oops! Something went wrong updating your goal.",

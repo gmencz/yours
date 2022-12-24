@@ -40,14 +40,17 @@ export function WeeksSwiperItem({
   const startOfWeekDateString = startOfWeekDate.toISOString();
   const endOfWeekDateString = endOfWeekDate.toISOString();
   const queryKey = ["weekCaloriesAndWeights", startOfWeekDateString];
-  const { data: weekCaloriesAndWeights, isLoading } =
-    useWeekCaloriesAndWeightsQuery({
-      enabled: shouldLoad,
-      profileId: profile.id,
-      queryKey,
-      startOfWeekDateString,
-      endOfWeekDateString,
-    });
+  const {
+    data: weekCaloriesAndWeights,
+    isLoading,
+    error,
+  } = useWeekCaloriesAndWeightsQuery({
+    enabled: shouldLoad,
+    profileId: profile.id,
+    queryKey,
+    startOfWeekDateString,
+    endOfWeekDateString,
+  });
 
   return (
     <ScrollView

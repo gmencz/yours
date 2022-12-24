@@ -3,6 +3,7 @@ import { QueryKey, useMutation } from "@tanstack/react-query";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { supabase } from "modules/supabase/client";
 import { WeekDayCaloriesAndWeightData } from "./use-week-calories-and-weights-query";
+import * as Sentry from "sentry-expo";
 
 type Data = WeekDayCaloriesAndWeightData & {
   shouldRerunTdeeEstimator: boolean;
@@ -62,6 +63,9 @@ export function useWeekDayMutation({
     },
 
     onSuccess,
-    onError,
+    onError: (error, variables) => {
+      Sentry.Native.captureException(error, { extra: { variables } });
+      onError?.();
+    },
   });
 }

@@ -11,18 +11,14 @@ import {
 import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
 import { supabase } from "modules/supabase/client";
 import { WeekDay } from "modules/common/types";
+import * as Sentry from "sentry-expo";
 
-type UseWeeksDatesQuery = {
-  onSuccess?: (data: Date[]) => void;
-};
-
-export function useWeeksDatesQuery({ onSuccess }: UseWeeksDatesQuery) {
+export function useWeeksDatesQuery() {
   const { data: profile } = useProfileQuery();
   const todayDate = new Date();
 
   return useQuery<Date[], PostgrestError | Error>({
     queryKey: ["weeksDates"],
-    onSuccess,
     enabled: !!profile,
     staleTime: Infinity,
     queryFn: async () => {
@@ -53,6 +49,10 @@ export function useWeeksDatesQuery({ onSuccess }: UseWeeksDatesQuery) {
       return [
         startOfDay(startOfWeek(todayDate, { weekStartsOn: WeekDay.Monday })),
       ];
+    },
+
+    onError: (error) => {
+      Sentry.Native.captureException(error);
     },
   });
 }

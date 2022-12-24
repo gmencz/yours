@@ -8,6 +8,7 @@ import { useState } from "react";
 import { useDebounce } from "modules/common/hooks/use-debounce";
 import { supabase } from "modules/supabase/client";
 import { FoodCard, FoodCardProps } from "../../components/result-card";
+import * as Sentry from "sentry-expo";
 
 type FormValues = {
   query: string;
@@ -66,6 +67,10 @@ export function SearchTabScreen() {
       }
 
       return data;
+    },
+
+    onError(error) {
+      Sentry.Native.captureException(error);
     },
   });
 

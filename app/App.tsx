@@ -23,6 +23,7 @@ import { supabase } from "modules/supabase/client";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import * as Sentry from "sentry-expo";
 import {
   CompletedProfileStackParamList,
   UncompletedProfileStackParamList,
@@ -55,6 +56,11 @@ const queryClient = new QueryClient();
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
+
+Sentry.init({
+  dsn: "https://890e7a057c824ff5bbc20f3a15525d66@o446724.ingest.sentry.io/4504384322404352",
+  debug: __DEV__, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
+});
 
 function App() {
   const { theme } = useTheme();
@@ -133,6 +139,9 @@ function Screens() {
       await runTdeeEstimator({ profile });
       return true;
     },
+    onError(error, variables) {
+      Sentry.Native.captureException(error, { extra: { variables } });
+    },
   });
 
   useEffect(() => {
@@ -151,7 +160,7 @@ function Screens() {
       fontsLoaded &&
       hasLoadedProfile &&
       (hasCompletedProfile && isLoggedIn
-        ? tdeeEstimationMutation.isSuccess
+        ? !tdeeEstimationMutation.isLoading
         : true);
   } else {
     appIsReady = !fetchingSession && fontsLoaded;
@@ -174,25 +183,6 @@ function Screens() {
 
   // Custom toast config
   const toastConfig: ToastConfig = {
-    /*
-    Overwrite 'success' type,
-    by modifying the existing `BaseToast` component
-  */
-    success: (props) => (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: "pink" }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
-        text1Style={{
-          fontSize: 15,
-          fontWeight: "400",
-        }}
-      />
-    ),
-    /*
-    Overwrite 'error' type,
-    by modifying the existing `ErrorToast` component
-  */
     error: (props) => (
       <ErrorToast
         {...props}

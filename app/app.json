@@ -15,9 +15,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -35,6 +33,19 @@
         "projectId": "79bbb9d1-94a4-4b57-9036-ef82216b588a"
       }
     },
-    "owner": "gmencz"
+    "owner": "gmencz",
+    "plugins": ["sentry-expo"],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "gmencz",
+            "project": "yours-app",
+            "authToken": "84e09e99ed0e4b32a364fd8f14a5a53d4066e17e7cc24b99b6ee655cadbc3d35"
+          }
+        }
+      ]
+    }
   }
 }

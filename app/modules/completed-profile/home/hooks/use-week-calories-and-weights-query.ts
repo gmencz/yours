@@ -1,5 +1,5 @@
 import { QueryKey, useQuery } from "@tanstack/react-query";
-import { endOfDay, startOfDay } from "date-fns";
+import * as Sentry from "sentry-expo";
 import { supabase } from "modules/supabase/client";
 
 export type WeekDayCaloriesAndWeightData = {
@@ -51,6 +51,10 @@ export function useWeekCaloriesAndWeightsQuery({
       }
 
       return data;
+    },
+
+    onError(error) {
+      Sentry.Native.captureException(error);
     },
   });
 }

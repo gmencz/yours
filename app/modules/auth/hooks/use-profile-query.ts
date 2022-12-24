@@ -1,6 +1,7 @@
 import { AuthError, PostgrestError } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "modules/supabase/client";
+import * as Sentry from "sentry-expo";
 
 export type Profile = {
   id: string;
@@ -47,6 +48,10 @@ export function useProfileQuery(options?: UseProfileQuery) {
       }
 
       return profile;
+    },
+
+    onError(error) {
+      Sentry.Native.captureException(error);
     },
   });
 

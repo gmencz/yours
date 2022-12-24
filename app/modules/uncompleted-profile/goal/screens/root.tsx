@@ -16,6 +16,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import * as yup from "yup";
 import { getRecommendedWeeklyWeightChange } from "../utils/get-recommended-weekly-weight-change";
+import * as Sentry from "sentry-expo";
 
 type Props = NativeStackScreenProps<UncompletedProfileStackParamList, "Goal">;
 
@@ -123,6 +124,10 @@ export function GoalScreen({ navigation }: Props) {
           goal_id: data.id,
         });
       }
+    },
+
+    onError(error, variables, context) {
+      Sentry.Native.captureException(error, { extra: { variables } });
     },
   });
 

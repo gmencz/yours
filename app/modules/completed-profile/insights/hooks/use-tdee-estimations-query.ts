@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "modules/supabase/client";
+import * as Sentry from "sentry-expo";
 import { EstimationsQueryData } from "../screens/energy-expenditure/root";
 
 interface UseTdeeEstimationsQuery {
@@ -25,6 +26,10 @@ export function useTdeeEstimationsQuery({
       }
 
       return data;
+    },
+
+    onError(error) {
+      Sentry.Native.captureException(error);
     },
   });
 }

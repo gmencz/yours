@@ -18,6 +18,7 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { Dimensions, ScrollView, View } from "react-native";
+import * as Sentry from "sentry-expo";
 
 import { FormValues } from "./root";
 
@@ -78,6 +79,10 @@ export function BarcodeScreen({
       }
 
       return true;
+    },
+
+    onError(error, variables) {
+      Sentry.Native.captureException(error, { extra: { variables } });
     },
   });
 

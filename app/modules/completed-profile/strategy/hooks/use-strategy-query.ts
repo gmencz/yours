@@ -2,6 +2,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import { Profile } from "modules/auth/hooks/use-profile-query";
 import { supabase } from "modules/supabase/client";
+import * as Sentry from "sentry-expo";
 import { calculateDailyCalorieChange } from "../utils/calculate-daily-calorie-change";
 
 interface EstimationSelect {
@@ -79,6 +80,10 @@ export function useStrategyQuery({ profile }: UseStrategyQuery) {
       const recommendedProteinIntake = Math.round(weight * proteinMultiplier);
 
       return { recommendedDailyCalories, recommendedProteinIntake, goal };
+    },
+
+    onError(error) {
+      Sentry.Native.captureException(error);
     },
   });
 }

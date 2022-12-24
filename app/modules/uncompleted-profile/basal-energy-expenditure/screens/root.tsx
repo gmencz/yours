@@ -21,6 +21,7 @@ import {
   TrainingActivity,
 } from "../utils/estimate-tdee";
 import { Profile } from "modules/auth/hooks/use-profile-query";
+import * as Sentry from "sentry-expo";
 
 const activityToReadable = {
   [Activity.Low]: "Low",
@@ -191,6 +192,10 @@ export function BasalEnergyExpenditureScreen({ navigation }: Props) {
       }
 
       navigation.navigate("Goal");
+    },
+
+    onError(error, variables) {
+      Sentry.Native.captureException(error, { extra: { variables } });
     },
   });
 

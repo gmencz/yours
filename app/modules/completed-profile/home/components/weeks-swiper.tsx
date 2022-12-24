@@ -1,6 +1,6 @@
 import { Skeleton, Text, useTheme } from "@rneui/themed";
 import { useProfileQuery } from "modules/auth/hooks/use-profile-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import Swiper from "react-native-swiper";
 import { useWeeksDatesQuery } from "../hooks/use-weeks-dates-query";
@@ -10,18 +10,19 @@ export function WeeksSwiper() {
   const todayDate = new Date();
   const { theme } = useTheme();
   const [loadedIndexes, setLoadedIndexes] = useState<Set<number>>(new Set());
-
+  const { data: profile } = useProfileQuery();
   const {
     data: weeksDates,
     isLoading: isLoadingWeeksDates,
     isError: isErrorWeeksDates,
-  } = useWeeksDatesQuery({
-    onSuccess: (dates) => {
-      setLoadedIndexes((prev) => new Set(prev).add(dates.length - 1));
-    },
-  });
+    isSuccess: isSuccessWeeksDates,
+  } = useWeeksDatesQuery();
 
-  const { data: profile } = useProfileQuery();
+  useEffect(() => {
+    if (isSuccessWeeksDates) {
+      setLoadedIndexes((prev) => new Set(prev).add(weeksDates.length - 1));
+    }
+  }, [isSuccessWeeksDates]);
 
   if (isLoadingWeeksDates) {
     return (

@@ -9,8 +9,9 @@ import { Dimensions, View } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 import { supabase } from "modules/supabase/client";
-import { FoodCard, FoodCardProps } from "modules/food/components/result-card";
 import { Button } from "modules/common/components/button";
+import * as Sentry from "sentry-expo";
+import { FoodCard, FoodCardProps } from "../../components/result-card";
 
 export function BarcodeTabScreen() {
   const [hasPermission, setHasPermission] = useState<boolean>();
@@ -107,6 +108,10 @@ function BarcodeSearchResults({
       }
 
       return data;
+    },
+
+    onError(error) {
+      Sentry.Native.captureException(error);
     },
   });
 

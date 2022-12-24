@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { subMonths, subWeeks, subYears } from "date-fns";
 import { supabase } from "modules/supabase/client";
+import * as Sentry from "sentry-expo";
 import { Period } from "../screens/weight/root";
 
 export type WeightsQueryData = {
@@ -51,6 +52,10 @@ export function useWeightsQuery({ period, profileId }: UseWeightsQuery) {
       }
 
       return data;
+    },
+
+    onError(error) {
+      Sentry.Native.captureException(error);
     },
   });
 }

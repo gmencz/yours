@@ -1,6 +1,8 @@
 import * as Linking from "expo-linking";
 import { useEffect } from "react";
 import { supabase } from "modules/supabase/client";
+import Toast from "react-native-toast-message";
+import * as Sentry from "sentry-expo";
 
 export const useSessionListener = () => {
   const extractSessionFromLink = async (link: string) => {
@@ -15,9 +17,14 @@ export const useSessionListener = () => {
         refresh_token: parsedURL.queryParams.refresh_token as string,
       });
     } else if (parsedURL.queryParams?.error_code) {
-      // TODO: Handle error
-      console.log(
-        `Error extracting session from link: ${parsedURL.queryParams.error_code}`
+      Toast.show({
+        type: "error",
+        text2: "Oops! Something went wrong authenticating you.",
+      });
+
+      Sentry.Native.captureException(
+        new Error("Error extracting session from link"),
+        { extra: { error_code: parsedURL.queryParams.error_code } }
       );
     }
   };
