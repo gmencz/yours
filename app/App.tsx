@@ -13,7 +13,11 @@ import { useFonts } from "expo-font";
 import { StatusBar, useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
-import Toast, { ErrorToast, ToastConfig } from "react-native-toast-message";
+import Toast, {
+  BaseToast,
+  ErrorToast,
+  ToastConfig,
+} from "react-native-toast-message";
 import { theme as appTheme } from "./theme";
 import { supabase } from "modules/supabase/client";
 import { NavigationContainer } from "@react-navigation/native";
@@ -36,6 +40,8 @@ import { GoalScreen } from "modules/uncompleted-profile/goal/screens/root";
 import { InsightsScreen } from "modules/completed-profile/insights/screens/root";
 import { runTdeeEstimator } from "modules/completed-profile/insights/utils/tdee-estimator";
 import { StrategyScreen } from "modules/completed-profile/strategy/screens/root";
+import { ProfileScreen } from "modules/completed-profile/profile/screens/root";
+import { ClosedBetaLinkSignIn } from "modules/auth/screens/closed-beta-link-sign-in";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -179,6 +185,25 @@ function Screens() {
 
   // Custom toast config
   const toastConfig: ToastConfig = {
+    success: (props) => (
+      <BaseToast
+        {...props}
+        style={{
+          borderLeftColor: theme.colors.success,
+          backgroundColor: theme.colors.grey5,
+        }}
+        text2NumberOfLines={2}
+        text1Style={{
+          color: theme.colors.black,
+          fontSize: 14,
+        }}
+        text2Style={{
+          color: theme.colors.grey1,
+          fontSize: 14,
+        }}
+      />
+    ),
+
     error: (props) => (
       <ErrorToast
         {...props}
@@ -238,6 +263,13 @@ function Screens() {
                   headerShown: false,
                 }}
               />
+              <CompletedProfileStack.Screen
+                name="Profile"
+                component={ProfileScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
 
               {/* The food feature is disabled for now */}
               {/* <CompletedProfileStack.Screen
@@ -279,8 +311,8 @@ function Screens() {
             </UncompletedProfileStack.Navigator>
           )
         ) : (
-          <UnauthorizedStack.Navigator initialRouteName="Welcome">
-            <UnauthorizedStack.Screen
+          <UnauthorizedStack.Navigator initialRouteName="ClosedBetaLinkSignIn">
+            {/* <UnauthorizedStack.Screen
               name="Welcome"
               component={WelcomeScreen}
               options={{
@@ -297,6 +329,13 @@ function Screens() {
             <UnauthorizedStack.Screen
               name="EmailSignIn"
               component={EmailSignInScreen}
+              options={{
+                headerShown: false,
+              }}
+            /> */}
+            <UnauthorizedStack.Screen
+              name="ClosedBetaLinkSignIn"
+              component={ClosedBetaLinkSignIn}
               options={{
                 headerShown: false,
               }}

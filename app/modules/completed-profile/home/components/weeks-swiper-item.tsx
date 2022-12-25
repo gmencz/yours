@@ -52,6 +52,13 @@ export function WeeksSwiperItem({
     endOfWeekDateString,
   });
 
+  const weekText = isThisWeek
+    ? `This week`
+    : `${format(startOfWeekDate, "do' 'MMM")} - ${format(
+        endOfWeekDate,
+        "do' 'MMM"
+      )}`;
+
   return (
     <ScrollView
       style={{
@@ -60,15 +67,7 @@ export function WeeksSwiperItem({
       }}
     >
       <Heading1>Home</Heading1>
-
-      <Heading2 style={{ marginTop: theme.spacing.sm }}>
-        {isThisWeek
-          ? `This week`
-          : `${format(startOfWeekDate, "do' 'MMM")} - ${format(
-              endOfWeekDate,
-              "do' 'MMM"
-            )}`}
-      </Heading2>
+      <Heading2 style={{ marginTop: theme.spacing.sm }}>{weekText}</Heading2>
 
       <WeekCaloriesAndWeights
         endOfWeekDate={endOfWeekDate}

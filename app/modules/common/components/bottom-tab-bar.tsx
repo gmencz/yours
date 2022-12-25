@@ -36,6 +36,13 @@ const icons: Record<
       />
     ),
 
+  Profile: (theme, isFocused) =>
+    isFocused ? (
+      <Icon type="antdesign" name="user" size={25} />
+    ) : (
+      <Icon type="antdesign" name="user" size={25} color={theme.colors.grey4} />
+    ),
+
   Insights: (theme, isFocused) =>
     isFocused ? (
       <Icon type="ionicon" name="analytics" size={30} />
@@ -69,7 +76,7 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
       style={{
         flexDirection: "row",
         backgroundColor: theme.colors.background,
-        justifyContent: "center",
+        justifyContent: "space-evenly",
         alignItems: "flex-end",
         borderTopWidth: 1,
         borderTopColor: theme.colors.grey4,
@@ -122,8 +129,8 @@ export function TabBar({ state, descriptors, navigation }: BottomTabBarProps) {
             style={{
               backgroundColor: theme.colors.background,
               paddingVertical: 20,
-              paddingHorizontal: theme.spacing.xl,
               alignItems: "center",
+              // marginRight: index !== state.routes.length - 1 ? 30 : 0,
             }}
           >
             {icon}

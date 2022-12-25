@@ -3,6 +3,7 @@ export type UnauthorizedStackParamList = {
   CreateAccount: undefined;
   LinkSignIn: undefined;
   EmailSignIn: undefined;
+  ClosedBetaLinkSignIn: undefined;
 };
 
 export type CompletedProfileStackParamList = {
@@ -11,6 +12,7 @@ export type CompletedProfileStackParamList = {
     screen: keyof InsightsStackParamList;
   };
   Strategy: undefined;
+  Profile: undefined;
   Food: {
     screen: keyof FoodTabStackParamList;
   };
