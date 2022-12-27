@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Linking from "expo-linking";
+import * as Linking from "expo-linking";
 import Toast from "react-native-toast-message";
 import Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
