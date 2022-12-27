@@ -71,10 +71,7 @@ export function EditGoal({
   });
 
   useEffect(() => {
-    if (
-      latestTdeeEstimation &&
-      (touchedFields.approach || touchedFields.goal)
-    ) {
+    if (touchedFields.approach || touchedFields.goal) {
       // TODO: Take into account the latest weight here instead of the initial weight from the profile
       // when calculating this.
       const {
@@ -83,7 +80,7 @@ export function EditGoal({
       } = getRecommendedWeeklyWeightChange(
         approach,
         profile,
-        latestTdeeEstimation.weight
+        latestTdeeEstimation ? latestTdeeEstimation.weight : undefined
       );
 
       setValue(

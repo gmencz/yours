@@ -2,7 +2,11 @@ import { makeStyles, Text, useTheme } from "@rneui/themed";
 import { ScrollView, View } from "react-native";
 import { EstimationsQueryData } from "~/hooks/useTdeeEstimatonsQuery";
 import { hexToRgba } from "~/utils/hexToRgba";
-import { confidences, ExpenditureDataItem } from "./EnergyExpenditureDataItem";
+import {
+  confidences,
+  ExpenditureDataItem,
+  InitialExpenditureDataItem,
+} from "./EnergyExpenditureDataItem";
 
 interface ExpenditureDataProps {
   estimations: EstimationsQueryData;
@@ -44,6 +48,8 @@ export function ExpenditureData({ estimations }: ExpenditureDataProps) {
             index={index}
           />
         ))}
+
+        <InitialExpenditureDataItem />
       </ScrollView>
     </>
   );

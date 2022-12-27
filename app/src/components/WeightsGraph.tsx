@@ -5,6 +5,7 @@ import { Dimensions, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { WeightsQueryData } from "~/hooks/useWeightsQuery";
 import { Period } from "~/screens/Insights/Weight";
+import { formatDecimal } from "~/utils/formatDecimal";
 import { hexToRgba } from "~/utils/hexToRgba";
 import { smoothOutWeights } from "~/utils/smoothOutWeights";
 import { Button } from "./Button";
@@ -20,6 +21,10 @@ function formatCreatedAt(s: string) {
 }
 
 function getGraphLabels(weights: WeightsQueryData) {
+  if (weights.length <= 4) {
+    return weights.map((w) => formatCreatedAt(w.created_at));
+  }
+
   // Create a new array with the same length as the input data
   const labels: string[] = new Array(weights.length).fill("");
 
@@ -50,6 +55,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
   const smoothedWeights = smoothOutWeights(scaleWeights, { pad: true });
   const labels = getGraphLabels(weights);
   const styles = useStyles();
+  const width = Dimensions.get("screen").width - theme.spacing.xl;
 
   return (
     <>
@@ -82,13 +88,14 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             },
           ],
         }}
-        width={Dimensions.get("window").width}
+        width={width}
         height={300}
         withDots={false}
         withShadow={false}
         transparent
         yAxisInterval={3}
         bezier
+        formatYLabel={(value) => formatDecimal(Number(value))}
         chartConfig={{
           color: (opacity = 1) => hexToRgba(theme.colors.black, opacity),
           decimalPlaces: 1,
@@ -161,6 +168,12 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing.xl,
   },
 
+  noWeightsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   scaleLegendContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -187,7 +200,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   chart: {
-    marginHorizontal: -14,
+    marginHorizontal: -7,
   },
 
   buttonsContainer: {

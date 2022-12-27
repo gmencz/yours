@@ -2,6 +2,7 @@ import { makeStyles, Text } from "@rneui/themed";
 import { format } from "date-fns";
 import { useMemo } from "react";
 import { View } from "react-native";
+import { useProfileQuery } from "~/hooks/useProfileQuery";
 import { EstimationsQueryData } from "~/hooks/useTdeeEstimatonsQuery";
 import { hexToRgba } from "~/utils/hexToRgba";
 import { isClose } from "~/utils/isClose";
@@ -13,6 +14,25 @@ interface ExpenditureDataItemProps {
   estimations: EstimationsQueryData;
   estimation: EstimationsQueryData[number];
   index: number;
+}
+
+export function InitialExpenditureDataItem() {
+  const styles = useStyles({ confidence: confidences[0] });
+  const { data: profile } = useProfileQuery();
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.opacityIndicatorBox} />
+
+      <View style={styles.dataContainer}>
+        <Text>Initial estimation</Text>
+
+        <Text style={styles.caloriesText}>
+          {Math.round(profile!.initialTdeeEstimation!)} kcal/day
+        </Text>
+      </View>
+    </View>
+  );
 }
 
 export function ExpenditureDataItem({

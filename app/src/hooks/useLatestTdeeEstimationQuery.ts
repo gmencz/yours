@@ -29,14 +29,17 @@ export function useLatestTdeeEstimationQuery({
         )
         .eq("profile_id", profileId)
         .order("date_of_last_estimated_item", { ascending: false })
-        .limit(1)
-        .single();
+        .limit(1);
 
       if (error) {
         throw error;
       }
 
-      return data;
+      if (!data.length) {
+        return null;
+      }
+
+      return data[0];
     },
 
     onError(error) {

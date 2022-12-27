@@ -2,7 +2,11 @@ import "react-native-url-polyfill/auto";
 import { Buffer } from "buffer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider, useTheme, useThemeMode } from "@rneui/themed";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
 import { Session } from "@supabase/supabase-js";
 import { useFonts } from "expo-font";
@@ -94,6 +98,7 @@ function Screens() {
   const colorMode = useColorScheme();
   const { setMode, mode } = useThemeMode();
   const [fetchingSession, setFetchingSession] = useState(true);
+  const queryClient = useQueryClient();
   const { data: profile, isSuccess: hasLoadedProfile } = useProfileQuery({
     enabled: !!session,
   });
@@ -112,8 +117,11 @@ function Screens() {
         setFetchingSession(false);
       });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
+      if (event === "SIGNED_OUT") {
+        queryClient.clear();
+      }
     });
   }, []);
 

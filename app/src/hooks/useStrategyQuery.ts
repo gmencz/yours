@@ -50,15 +50,15 @@ export function useStrategyQuery({ profile }: UseStrategyQuery) {
         estimation = latestTdeeEstimation.estimation;
         weight = latestTdeeEstimation.weight;
       } else {
-        estimation = profile!.initialTdeeEstimation!;
-        weight = profile!.initialWeight!;
+        estimation = profile.initialTdeeEstimation!;
+        weight = profile.initialWeight!;
       }
 
       // Get the user's goal
       const { data: goal, error: goalError } = await supabase
         .from("profiles_goals")
         .select<string, GoalSelect>("goal, weekly_weight_change, approach")
-        .eq("id", profile!.goalId)
+        .eq("id", profile.goalId)
         .single();
 
       if (goalError) {
@@ -66,7 +66,7 @@ export function useStrategyQuery({ profile }: UseStrategyQuery) {
       }
 
       const caloriesToChange = calculateDailyCalorieChange(
-        profile?.preferedMeasurementSystem === "imperial" ? "lbs" : "kgs",
+        profile.preferedMeasurementSystem === "imperial" ? "lbs" : "kgs",
         goal.weekly_weight_change
       );
 
@@ -75,7 +75,7 @@ export function useStrategyQuery({ profile }: UseStrategyQuery) {
       );
 
       const proteinMultiplier =
-        profile?.preferedMeasurementSystem === "imperial" ? 1 : 2.2;
+        profile.preferedMeasurementSystem === "imperial" ? 1 : 2.2;
       const recommendedProteinIntake = Math.round(weight * proteinMultiplier);
 
       return { recommendedDailyCalories, recommendedProteinIntake, goal };

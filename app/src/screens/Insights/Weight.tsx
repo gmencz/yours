@@ -22,13 +22,21 @@ export function WeightScreen() {
     profileId: profile!.id,
   });
 
+  const showGraph = weights?.length && weights.length > 1;
+
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.headingsContainer}>
         <Heading type="h1">Weight Trend & Scale Weight</Heading>
-        <Heading type="h2" style={styles.h2}>
-          Data based on daily weigh-ins over time.
-        </Heading>
+        {isLoading ? (
+          <Skeleton height={20} style={styles.h2Skeleton} />
+        ) : (
+          <Heading type="h2" style={styles.h2}>
+            {showGraph
+              ? "Graph based on daily weigh-ins over time."
+              : "There aren't enough daily weigh-ins to show you accurate insights about your weight yet."}
+          </Heading>
+        )}
       </View>
 
       <View style={styles.container}>
@@ -46,13 +54,13 @@ export function WeightScreen() {
           <Text style={styles.error}>
             Something went wrong calculating your weight trend.
           </Text>
-        ) : (
+        ) : showGraph ? (
           <WeightsGraph
             weights={weights}
             period={period}
             setPeriod={setPeriod}
           />
-        )}
+        ) : null}
       </View>
     </ScrollView>
   );
@@ -87,5 +95,9 @@ const useStyles = makeStyles((theme) => ({
 
   h2: {
     marginTop: theme.spacing.sm,
+  },
+
+  h2Skeleton: {
+    marginTop: theme.spacing.md,
   },
 }));
