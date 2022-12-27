@@ -2,46 +2,36 @@ import "react-native-url-polyfill/auto";
 import { Buffer } from "buffer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider, useTheme, useThemeMode } from "@rneui/themed";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useMutation,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCallback, useEffect, useState } from "react";
-import { PostgrestError, Session } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 import { useFonts } from "expo-font";
 import { StatusBar, useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
-
-import Toast, {
-  BaseToast,
-  ErrorToast,
-  ToastConfig,
-} from "react-native-toast-message";
-import { theme as appTheme } from "./theme";
-import { supabase } from "modules/supabase/client";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as Sentry from "sentry-expo";
+import Sentry from "sentry-expo";
+import Toast from "react-native-toast-message";
 import {
   CompletedProfileStackParamList,
-  UncompletedProfileStackParamList,
   UnauthorizedStackParamList,
-} from "./modules/common/types";
-import { HomeScreen } from "modules/completed-profile/home/screens/root";
-import { WelcomeScreen } from "modules/auth/screens/welcome";
-import { LinkSignInScreen } from "modules/auth/screens/link-sign-in";
-import { EmailSignInScreen } from "modules/auth/screens/email-sign-in";
-import { TabBar } from "modules/common/components/bottom-tab-bar";
-import { Profile, useProfileQuery } from "modules/auth/hooks/use-profile-query";
-import { BasalEnergyExpenditureScreen } from "modules/uncompleted-profile/basal-energy-expenditure/screens/root";
-import { GoalScreen } from "modules/uncompleted-profile/goal/screens/root";
-import { InsightsScreen } from "modules/completed-profile/insights/screens/root";
-import { runTdeeEstimator } from "modules/completed-profile/insights/utils/tdee-estimator";
-import { StrategyScreen } from "modules/completed-profile/strategy/screens/root";
-import { ProfileScreen } from "modules/completed-profile/profile/screens/root";
-import { ClosedBetaLinkSignIn } from "modules/auth/screens/closed-beta-link-sign-in";
+  UncompletedProfileStackParamList,
+} from "~/typings";
+import { SENTRY_DSN } from "~/constants";
+import { theme } from "~/theme";
+import { useProfileQuery } from "~/hooks/useProfileQuery";
+import { supabase } from "~/supabase";
+import { useTdeeEstimationMutation } from "~/hooks/useTdeeEstimationMutation";
+import { HomeScreen } from "~/screens/Home";
+import { BottomTabBar } from "~/components/BottomTabBar";
+import { InsightsScreen } from "~/screens/Insights";
+import { StrategyScreen } from "~/screens/Strategy";
+import { ProfileScreen } from "~/screens/Profile";
+import { ProfileStepOneScreen } from "~/screens/ProfileStepOne";
+import { ProfileStepTwoScreen } from "~/screens/ProfileStepTwo";
+import { ClosedBetaAuthScreen } from "~/screens/ClosedBetaAuth";
+import { useToastConfig } from "~/hooks/useToastConfig";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -59,10 +49,13 @@ const queryClient = new QueryClient();
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-Sentry.init({
-  dsn: "https://890e7a057c824ff5bbc20f3a15525d66@o446724.ingest.sentry.io/4504384322404352",
-  debug: __DEV__, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
-});
+if (!__DEV__) {
+  Sentry.init({
+    dsn: SENTRY_DSN,
+    enableInExpoDevelopment: false,
+    debug: false,
+  });
+}
 
 function App() {
   const { theme } = useTheme();
@@ -76,7 +69,7 @@ function App() {
 
 export default function AppWithTheme() {
   return (
-    <ThemeProvider theme={appTheme}>
+    <ThemeProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <App />
       </QueryClientProvider>
@@ -100,7 +93,6 @@ function Screens() {
 
   const colorMode = useColorScheme();
   const { setMode, mode } = useThemeMode();
-  const { theme } = useTheme();
   const [fetchingSession, setFetchingSession] = useState(true);
   const { data: profile, isSuccess: hasLoadedProfile } = useProfileQuery({
     enabled: !!session,
@@ -128,23 +120,13 @@ function Screens() {
   const isLoggedIn = !!session?.user;
 
   const hasCompletedProfile =
-    !!profile?.prefered_measurement_system &&
-    !!profile.initial_tdee_estimation &&
-    !!profile.goal_id;
+    !!profile?.preferedMeasurementSystem &&
+    !!profile.initialTdeeEstimation &&
+    !!profile.gender &&
+    !!profile.goalId;
 
-  const tdeeEstimationMutation = useMutation<
-    boolean,
-    PostgrestError,
-    { profile: Profile }
-  >({
-    mutationFn: async ({ profile }) => {
-      await runTdeeEstimator({ profile });
-      return true;
-    },
-    onError(error, variables) {
-      Sentry.Native.captureException(error, { extra: { variables } });
-    },
-  });
+  const tdeeEstimationMutation = useTdeeEstimationMutation();
+  const toastConfig = useToastConfig();
 
   useEffect(() => {
     if (hasCompletedProfile && isLoggedIn) {
@@ -183,47 +165,6 @@ function Screens() {
     return null;
   }
 
-  // Custom toast config
-  const toastConfig: ToastConfig = {
-    success: (props) => (
-      <BaseToast
-        {...props}
-        style={{
-          borderLeftColor: theme.colors.success,
-          backgroundColor: theme.colors.grey5,
-        }}
-        text2NumberOfLines={2}
-        text1Style={{
-          color: theme.colors.black,
-          fontSize: 14,
-        }}
-        text2Style={{
-          color: theme.colors.grey1,
-          fontSize: 14,
-        }}
-      />
-    ),
-
-    error: (props) => (
-      <ErrorToast
-        {...props}
-        style={{
-          borderLeftColor: theme.colors.error,
-          backgroundColor: theme.colors.grey5,
-        }}
-        text2NumberOfLines={2}
-        text1Style={{
-          color: theme.colors.black,
-          fontSize: 14,
-        }}
-        text2Style={{
-          color: theme.colors.grey1,
-          fontSize: 14,
-        }}
-      />
-    ),
-  };
-
   return (
     <>
       <NavigationContainer onReady={onLayoutRootView}>
@@ -237,7 +178,7 @@ function Screens() {
           hasCompletedProfile ? (
             <CompletedProfileStack.Navigator
               initialRouteName="Home"
-              tabBar={(props) => <TabBar {...props} />}
+              tabBar={(props) => <BottomTabBar {...props} />}
             >
               <CompletedProfileStack.Screen
                 name="Home"
@@ -270,40 +211,28 @@ function Screens() {
                   headerShown: false,
                 }}
               />
-
-              {/* The food feature is disabled for now */}
-              {/* <CompletedProfileStack.Screen
-              name="Food"
-              component={FoodScreen}
-              initialParams={{
-                screen: "Barcode",
-              }}
-              options={{
-                headerShown: false,
-              }}
-            /> */}
             </CompletedProfileStack.Navigator>
           ) : (
             <UncompletedProfileStack.Navigator
               initialRouteName={
-                profile?.prefered_measurement_system &&
-                profile.initial_tdee_estimation &&
-                profile.initial_weight &&
+                profile?.preferedMeasurementSystem &&
+                profile.initialTdeeEstimation &&
+                profile.initialWeight &&
                 profile.gender
-                  ? "Goal"
-                  : "BasalEnergyExpenditure"
+                  ? "StepTwo"
+                  : "StepOne"
               }
             >
               <UncompletedProfileStack.Screen
-                name="BasalEnergyExpenditure"
-                component={BasalEnergyExpenditureScreen}
+                name="StepOne"
+                component={ProfileStepOneScreen}
                 options={{
                   headerShown: false,
                 }}
               />
               <UncompletedProfileStack.Screen
-                name="Goal"
-                component={GoalScreen}
+                name="StepTwo"
+                component={ProfileStepTwoScreen}
                 options={{
                   headerShown: false,
                 }}
@@ -311,31 +240,10 @@ function Screens() {
             </UncompletedProfileStack.Navigator>
           )
         ) : (
-          <UnauthorizedStack.Navigator initialRouteName="ClosedBetaLinkSignIn">
-            {/* <UnauthorizedStack.Screen
-              name="Welcome"
-              component={WelcomeScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
+          <UnauthorizedStack.Navigator initialRouteName="ClosedBetaAuth">
             <UnauthorizedStack.Screen
-              name="LinkSignIn"
-              component={LinkSignInScreen}
-              options={{
-                headerShown: false,
-              }}
-            />
-            <UnauthorizedStack.Screen
-              name="EmailSignIn"
-              component={EmailSignInScreen}
-              options={{
-                headerShown: false,
-              }}
-            /> */}
-            <UnauthorizedStack.Screen
-              name="ClosedBetaLinkSignIn"
-              component={ClosedBetaLinkSignIn}
+              name="ClosedBetaAuth"
+              component={ClosedBetaAuthScreen}
               options={{
                 headerShown: false,
               }}
