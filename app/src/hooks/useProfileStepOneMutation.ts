@@ -1,7 +1,7 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { supabase } from "../supabase";
 import { MeasurementSystem, UncompletedProfileStackParamList } from "~/typings";
 import { Profile } from "./useProfileQuery";

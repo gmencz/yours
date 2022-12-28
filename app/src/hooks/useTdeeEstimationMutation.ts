@@ -1,6 +1,6 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation } from "@tanstack/react-query";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { runTdeeEstimator } from "~/utils/tdeeEstimator";
 import { Profile } from "./useProfileQuery";
 

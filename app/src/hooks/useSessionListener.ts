@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import * as Linking from "expo-linking";
 import Toast from "react-native-toast-message";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
 
 export function useSessionListener() {

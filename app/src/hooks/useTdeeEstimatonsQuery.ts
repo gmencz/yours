@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
 
 interface UseTdeeEstimationsQuery {

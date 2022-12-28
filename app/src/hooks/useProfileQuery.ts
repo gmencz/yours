@@ -1,6 +1,6 @@
 import { AuthError, PostgrestError } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
 import { MeasurementSystem } from "~/typings";
 

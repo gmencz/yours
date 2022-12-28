@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import Toast from "react-native-toast-message";
 import { supabase } from "~/supabase";
 import { Profile } from "./useProfileQuery";

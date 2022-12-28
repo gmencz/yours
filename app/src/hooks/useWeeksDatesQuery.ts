@@ -1,7 +1,7 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import { eachWeekOfInterval, startOfDay, startOfWeek } from "date-fns";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
 import { WeekDay } from "~/typings";
 import { useProfileQuery } from "./useProfileQuery";

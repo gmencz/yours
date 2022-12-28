@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "yours",
+    "name": "Yours",
     "slug": "yours",
     "scheme": "yours",
     "version": "1.0.0",
@@ -13,9 +13,12 @@
       "backgroundColor": "#18181b"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/79bbb9d1-94a4-4b57-9036-ef82216b588a"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.gmencz.yours"
@@ -36,18 +39,11 @@
       }
     },
     "owner": "gmencz",
-    "plugins": ["sentry-expo"],
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "gmencz",
-            "project": "yours-app",
-            "authToken": "84e09e99ed0e4b32a364fd8f14a5a53d4066e17e7cc24b99b6ee655cadbc3d35"
-          }
-        }
-      ]
-    }
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    },
+    "plugins": [
+      "sentry-expo"
+    ]
   }
 }

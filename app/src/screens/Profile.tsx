@@ -1,7 +1,7 @@
 import { makeStyles, Text } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { Button } from "~/components/Button";
 import { useProfileQuery } from "~/hooks/useProfileQuery";
 import { supabase } from "~/supabase";

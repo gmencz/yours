@@ -1,6 +1,6 @@
 import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
 import { Profile } from "./useProfileQuery";
 

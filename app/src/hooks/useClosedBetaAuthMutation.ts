@@ -2,7 +2,7 @@ import { AuthApiError, AuthError } from "@supabase/supabase-js";
 import { useMutation } from "@tanstack/react-query";
 import { makeRedirectUri } from "expo-auth-session";
 import Toast from "react-native-toast-message";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
 
 interface Variables {

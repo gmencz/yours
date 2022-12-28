@@ -5,22 +5,28 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "preview"
     },
     "preview-apk": {
       "android": {
         "buildType": "apk"
-      }
+      },
+      "channel": "preview-apk"
     },
     "preview-ios-simulator": {
       "ios": {
         "simulator": true
-      }
+      },
+      "channel": "preview-ios-simulator"
     },
-    "production": {}
+    "production": {
+      "channel": "production"
+    }
   },
   "submit": {
     "production": {}

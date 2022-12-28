@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { subMonths, subWeeks, subYears } from "date-fns";
-import Sentry from "sentry-expo";
+import * as Sentry from "sentry-expo";
 import { Period } from "~/screens/Insights/Weight";
 import { supabase } from "~/supabase";
 
