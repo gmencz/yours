@@ -3,9 +3,8 @@ import { Icon, makeStyles, useTheme } from "@rneui/themed";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 import { AtSymbolIcon } from "react-native-heroicons/outline";
-import { Logo } from "~/components/Logo";
 import { Heading } from "~/components/Heading";
 import { useSessionListener } from "~/hooks/useSessionListener";
 import { Input } from "~/components/Input";
@@ -47,10 +46,15 @@ export function ClosedBetaAuthScreen() {
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <Logo />
+      <Heading type="h1">The Yours closed beta</Heading>
+
+      <Image
+        source={require("../../assets/closed-beta-auth-hero.png")}
+        style={styles.heroImage}
+      />
 
       <Heading type="h2" style={styles.h2}>
-        Enter your closed beta email and we'll send you a sign in link.
+        You'll receive an email with a link that will sign you in.
       </Heading>
 
       <View style={styles.inputContainer}>
@@ -85,20 +89,34 @@ const useStyles = makeStyles((theme) => ({
   safeAreaView: {
     flex: 1,
     backgroundColor: theme.colors.background,
-    padding: theme.spacing.xl,
+    paddingHorizontal: theme.spacing.xl,
+    paddingBottom: theme.spacing.xl,
+    paddingTop: 60,
+    alignItems: "center",
+  },
+
+  heroImage: {
+    width: "50%",
+    height: undefined,
+    aspectRatio: 249 / 323,
+    marginTop: 50,
+    marginBottom: 20,
   },
 
   h2: {
     marginTop: theme.spacing.xl,
     textAlign: "center",
+    maxWidth: 250,
   },
 
   inputContainer: {
     marginTop: theme.spacing.xl,
+    width: "100%",
   },
 
   button: {
     marginTop: theme.spacing.xl,
+    width: "100%",
   },
 
   buttonIcon: {

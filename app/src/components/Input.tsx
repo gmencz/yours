@@ -37,7 +37,7 @@ export function Input({
   };
 
   return (
-    <View>
+    <>
       {label ? <Text style={styles.label}>{label}</Text> : null}
 
       <View style={styles.container}>
@@ -64,7 +64,7 @@ export function Input({
 
       {helperText ? <Text style={styles.helperText}>{helperText}</Text> : null}
       {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-    </View>
+    </>
   );
 }
 
