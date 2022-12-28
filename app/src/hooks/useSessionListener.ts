@@ -3,8 +3,11 @@ import * as Linking from "expo-linking";
 import Toast from "react-native-toast-message";
 import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
+import { useSessionContext } from "./useSessionContext";
 
 export function useSessionListener() {
+  const { setSession } = useSessionContext();
+
   const extractSessionFromLink = async (link: string) => {
     const parsedURL = Linking.parse(link.replace("#", "?")!);
 
@@ -12,10 +15,30 @@ export function useSessionListener() {
       parsedURL.queryParams?.access_token &&
       parsedURL.queryParams.refresh_token
     ) {
-      supabase.auth.setSession({
+      const { data, error } = await supabase.auth.setSession({
         access_token: parsedURL.queryParams.access_token as string,
         refresh_token: parsedURL.queryParams.refresh_token as string,
       });
+
+      setSession(data.session);
+
+      if (error) {
+        Toast.show({
+          type: "error",
+          text2: "Oops! Something went wrong authenticating you.",
+        });
+
+        Sentry.Native.captureException(
+          new Error("Error setting session from query params"),
+          {
+            extra: {
+              error_code: parsedURL.queryParams.error_code,
+              access_token: parsedURL.queryParams.access_token,
+              refresh_token: parsedURL.queryParams.refresh_token,
+            },
+          }
+        );
+      }
     } else if (parsedURL.queryParams?.error_code) {
       Toast.show({
         type: "error",

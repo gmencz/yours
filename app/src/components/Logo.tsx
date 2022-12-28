@@ -1,33 +1,19 @@
 import { Text, useTheme } from "@rneui/themed";
-import { View } from "react-native";
+import { Image, View } from "react-native";
 
 export function Logo() {
   const { theme } = useTheme();
 
   return (
-    <View
-      style={{
-        width: 70,
-      }}
-    >
-      <Text
+    <View style={{ alignItems: "center" }}>
+      <Image
         style={{
-          fontSize: 20,
-          fontFamily: "InterBlack",
-        }}
-      >
-        yours
-      </Text>
-
-      <View
-        style={{
-          height: 2,
-          width: 53,
-          backgroundColor: theme.colors.black,
-          marginLeft: 10,
-          marginTop: -3.5,
+          width: 150,
+          height: 100,
+          backgroundColor: theme.colors.grey5,
           borderRadius: 10,
         }}
+        source={require("../../assets/icon.png")}
       />
     </View>
   );

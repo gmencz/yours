@@ -8,7 +8,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "start:wsl:wifi": "REACT_NATIVE_PACKAGER_HOSTNAME=$(netsh.exe interface ip show address 'Wi-Fi' | grep 'IP Address' | sed -r 's/^.*IP Address:\\W*//') expo start",
-    "start:wsl:ether": "REACT_NATIVE_PACKAGER_HOSTNAME=$(netsh.exe interface ip show address 'Ethernet' | grep 'IP Address' | sed -r 's/^.*IP Address:\\W*//') expo start",
+    "start:wsl:ether": "REACT_NATIVE_PACKAGER_HOSTNAME=$(netsh.exe interface ip show address 'Ethernet' | grep 'IP Address' | sed -r 's/^.*IP Address:\\W*//') expo start -c",
     "build:apk": "eas build -p android --profile preview-apk",
     "build:ios-simulator": "eas build -p ios --profile preview-ios-simulator"
   },

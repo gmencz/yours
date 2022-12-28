@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { makeStyles, useTheme } from "@rneui/themed";
+import { Icon, makeStyles, useTheme } from "@rneui/themed";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -46,18 +46,11 @@ export function ClosedBetaAuthScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: theme.colors.background,
-        padding: theme.spacing.xl,
-      }}
-    >
+    <SafeAreaView style={styles.safeAreaView}>
       <Logo />
 
       <Heading type="h2" style={styles.h2}>
-        If you have been given access to our closed beta, enter your email and
-        you'll get a link that will sign you in.
+        Enter your closed beta email and we'll send you a sign in link.
       </Heading>
 
       <View style={styles.inputContainer}>
@@ -71,25 +64,44 @@ export function ClosedBetaAuthScreen() {
       </View>
 
       <Button
-        variant="1"
+        variant="2"
         title="Send link"
         onPress={handleSubmit(sendLink)}
         style={styles.button}
+        icon={
+          <Icon
+            type="material-community"
+            name="link-variant"
+            size={25}
+            style={styles.buttonIcon}
+          />
+        }
       />
     </SafeAreaView>
   );
 }
 
 const useStyles = makeStyles((theme) => ({
+  safeAreaView: {
+    flex: 1,
+    backgroundColor: theme.colors.background,
+    padding: theme.spacing.xl,
+  },
+
   h2: {
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.xl,
+    textAlign: "center",
   },
 
   inputContainer: {
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.xl,
   },
 
   button: {
-    marginTop: theme.spacing.lg,
+    marginTop: theme.spacing.xl,
+  },
+
+  buttonIcon: {
+    marginRight: theme.spacing.lg,
   },
 }));

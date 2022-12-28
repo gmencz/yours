@@ -46,8 +46,8 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: props.hasIcon ? undefined : "center",
-    paddingLeft: props.hasIcon ? 25 : undefined,
+    justifyContent: "center",
+    paddingRight: props.hasIcon ? theme.spacing.xl : undefined,
     backgroundColor:
       props.variant === "1" ? theme.colors.black : theme.colors.grey5,
   },

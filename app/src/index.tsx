@@ -21,21 +21,22 @@ import {
   CompletedProfileStackParamList,
   UnauthorizedStackParamList,
   UncompletedProfileStackParamList,
-} from "./typings";
-import { theme } from "./theme";
-import { useProfileQuery } from "./hooks/useProfileQuery";
-import { supabase } from "./supabase";
-import { useTdeeEstimationMutation } from "./hooks/useTdeeEstimationMutation";
-import { HomeScreen } from "./screens/Home";
-import { BottomTabBar } from "./components/BottomTabBar";
-import { InsightsScreen } from "./screens/Insights";
-import { StrategyScreen } from "./screens/Strategy";
-import { ProfileScreen } from "./screens/Profile";
-import { ProfileStepOneScreen } from "./screens/ProfileStepOne";
-import { ProfileStepTwoScreen } from "./screens/ProfileStepTwo";
-import { ClosedBetaAuthScreen } from "./screens/ClosedBetaAuth";
-import { useToastConfig } from "./hooks/useToastConfig";
-import { SENTRY_DSN } from "./constants";
+} from "~/typings";
+import { theme } from "~/theme";
+import { useProfileQuery } from "~/hooks/useProfileQuery";
+import { supabase } from "~/supabase";
+import { useTdeeEstimationMutation } from "~/hooks/useTdeeEstimationMutation";
+import { HomeScreen } from "~/screens/Home";
+import { BottomTabBar } from "~/components/BottomTabBar";
+import { InsightsScreen } from "~/screens/Insights";
+import { StrategyScreen } from "~/screens/Strategy";
+import { ProfileScreen } from "~/screens/Profile";
+import { ProfileStepOneScreen } from "~/screens/ProfileStepOne";
+import { ProfileStepTwoScreen } from "~/screens/ProfileStepTwo";
+import { ClosedBetaAuthScreen } from "~/screens/ClosedBetaAuth";
+import { useToastConfig } from "~/hooks/useToastConfig";
+import { SENTRY_DSN } from "~/constants";
+import { SessionContext } from "~/context/session";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -172,7 +173,7 @@ function Screens() {
   }
 
   return (
-    <>
+    <SessionContext.Provider value={{ session, setSession }}>
       <NavigationContainer onReady={onLayoutRootView}>
         <StatusBar
           backgroundColor="transparent"
@@ -259,6 +260,6 @@ function Screens() {
       </NavigationContainer>
 
       <Toast config={toastConfig} />
-    </>
+    </SessionContext.Provider>
   );
 }
