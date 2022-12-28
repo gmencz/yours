@@ -15,9 +15,7 @@ export function useClosedBetaAuthMutation() {
       const { error } = await supabase.auth.signInWithOtp({
         email: email!,
         options: {
-          emailRedirectTo: makeRedirectUri({
-            path: "/auth/callback",
-          }),
+          emailRedirectTo: makeRedirectUri({ path: "auth/callback" }),
           shouldCreateUser: false,
         },
       });
