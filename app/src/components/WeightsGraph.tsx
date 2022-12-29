@@ -39,7 +39,9 @@ function getGraphLabels(weights: WeightsQueryData) {
   labels[lastIndex] = formatCreatedAt(weights[weights.length - 1].created_at);
 
   // Calculate the distance between the items to be preserved
-  const interval = Math.floor(weights.length / 3);
+  const interval = Math.floor(
+    weights.length % 3 === 0 ? (weights.length - 1) / 3 : weights.length / 3
+  );
 
   // Set the items in between the first and last to their original values
   for (let i = interval; i < weights.length - interval; i += interval) {

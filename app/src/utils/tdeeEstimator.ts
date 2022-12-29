@@ -125,7 +125,10 @@ export async function runTdeeEstimator({
       const { error: profileGoalError } = await supabase
         .from("profiles_goals")
         .update({
-          weekly_weight_change: weeklyWeightChange,
+          weekly_weight_change:
+            profile.preferedMeasurementSystem === "imperial"
+              ? weeklyWeightChange.lbs
+              : weeklyWeightChange.kgs,
         })
         .eq("id", profile.goalId);
 
@@ -211,7 +214,10 @@ export async function runTdeeEstimator({
         const { error: profileGoalError } = await supabase
           .from("profiles_goals")
           .update({
-            weekly_weight_change: weeklyWeightChange,
+            weekly_weight_change:
+              profile.preferedMeasurementSystem === "imperial"
+                ? weeklyWeightChange.lbs
+                : weeklyWeightChange.kgs,
           })
           .eq("id", profile.goalId);
 
@@ -280,7 +286,10 @@ export async function runTdeeEstimator({
         const { error: profileGoalError } = await supabase
           .from("profiles_goals")
           .update({
-            weekly_weight_change: weeklyWeightChange,
+            weekly_weight_change:
+              profile.preferedMeasurementSystem === "imperial"
+                ? weeklyWeightChange.lbs
+                : weeklyWeightChange.kgs,
           })
           .eq("id", profile.goalId);
 
