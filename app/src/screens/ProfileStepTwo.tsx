@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Icon, makeStyles, Text, useTheme } from "@rneui/themed";
+import { Icon, makeStyles, Text } from "@rneui/themed";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { ScrollView, TouchableOpacity, View } from "react-native";
@@ -41,7 +41,6 @@ type Props = NativeStackScreenProps<
 >;
 
 export function ProfileStepTwoScreen({ navigation }: Props) {
-  const { theme } = useTheme();
   const { data: profile } = useProfileQuery();
 
   const {
@@ -66,12 +65,12 @@ export function ProfileStepTwoScreen({ navigation }: Props) {
 
     setValue(
       "weeklyWeightChange",
-      // @ts-expect-error
+      // @ts-expect-error because the schema says it's a number and not a string
       profile?.prefered_measurement_system === "imperial"
         ? formatDecimal(recommendedWeeklyLbsChange).toString()
         : formatDecimal(recommendedWeeklyKgsChange).toString()
     );
-  }, [profile, approach]);
+  }, [profile, approach, setValue]);
 
   useEffect(() => {
     if (goal === "build-muscle") {

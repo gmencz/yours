@@ -1,14 +1,18 @@
 import "react-native-url-polyfill/auto";
 import { Buffer } from "buffer";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { ThemeProvider, useTheme, useThemeMode } from "@rneui/themed";
+import {
+  ThemeMode,
+  ThemeProvider,
+  useTheme,
+  useThemeMode,
+} from "@rneui/themed";
 import {
   QueryClient,
   QueryClientProvider,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useCallback, useEffect, useState } from "react";
-import { Session } from "@supabase/supabase-js";
+import { useCallback, useEffect } from "react";
 import { useFonts } from "expo-font";
 import { StatusBar, useColorScheme } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
@@ -36,7 +40,8 @@ import { ProfileStepTwoScreen } from "~/screens/ProfileStepTwo";
 import { ClosedBetaAuthScreen } from "~/screens/ClosedBetaAuth";
 import { useToastConfig } from "~/hooks/useToastConfig";
 import { SENTRY_DSN } from "~/constants";
-import { SessionContext } from "~/context/session";
+import { useSessionQuery } from "./hooks/useSessionQuery";
+import { SplashScreenEmulator } from "./components/SplashScreenEmulator";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -81,7 +86,6 @@ export default function AppWithTheme() {
 }
 
 function Screens() {
-  const [session, setSession] = useState<Session | null>(null);
   const [fontsLoaded] = useFonts({
     InterBlack: require("../assets/fonts/Inter/Inter-Black.ttf"),
     InterBold: require("../assets/fonts/Inter/Inter-Bold.ttf"),
@@ -96,35 +100,26 @@ function Screens() {
 
   const colorMode = useColorScheme();
   const { setMode, mode } = useThemeMode();
-  const [fetchingSession, setFetchingSession] = useState(true);
   const queryClient = useQueryClient();
-  const { data: profile, isSuccess: hasLoadedProfile } = useProfileQuery({
-    enabled: !!session,
+  const { data: session, isSuccess: fetchedSession } = useSessionQuery();
+  const isLoggedIn = !!session?.user;
+  const { data: profile, isSuccess: fetchedProfile } = useProfileQuery({
+    enabled: isLoggedIn,
   });
 
   useEffect(() => {
-    setMode(colorMode as "light" | "dark");
+    setMode(colorMode as ThemeMode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [colorMode]);
 
   useEffect(() => {
-    supabase.auth
-      .getSession()
-      .then(({ data: { session } }) => {
-        setSession(session);
-      })
-      .finally(() => {
-        setFetchingSession(false);
-      });
-
     supabase.auth.onAuthStateChange((event, session) => {
-      setSession(session);
+      queryClient.setQueryData(["session"], session);
       if (event === "SIGNED_OUT") {
         queryClient.clear();
       }
     });
-  }, []);
-
-  const isLoggedIn = !!session?.user;
+  }, [queryClient]);
 
   const hasCompletedProfile =
     !!profile?.preferedMeasurementSystem &&
@@ -142,19 +137,19 @@ function Screens() {
       // on app load to make sure we don't miss any data.
       tdeeEstimationMutation.mutate({ profile });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasCompletedProfile, isLoggedIn]);
 
   let appIsReady = false;
-  if (isLoggedIn) {
-    appIsReady =
-      !fetchingSession &&
-      fontsLoaded &&
-      hasLoadedProfile &&
-      (hasCompletedProfile && isLoggedIn
-        ? !tdeeEstimationMutation.isLoading
-        : true);
-  } else {
-    appIsReady = !fetchingSession && fontsLoaded;
+  if (fetchedSession) {
+    if (isLoggedIn) {
+      appIsReady =
+        fontsLoaded &&
+        fetchedProfile &&
+        (hasCompletedProfile ? tdeeEstimationMutation.isSuccess : true);
+    } else {
+      appIsReady = fontsLoaded;
+    }
   }
 
   const onLayoutRootView = useCallback(async () => {
@@ -169,16 +164,16 @@ function Screens() {
   }, [appIsReady]);
 
   if (!appIsReady) {
-    return null;
+    return <SplashScreenEmulator />;
   }
 
   return (
-    <SessionContext.Provider value={{ session, setSession }}>
+    <>
       <NavigationContainer onReady={onLayoutRootView}>
         <StatusBar
           backgroundColor="transparent"
           barStyle={mode === "light" ? "dark-content" : "light-content"}
-          translucent={true}
+          translucent
         />
 
         {isLoggedIn ? (
@@ -260,6 +255,6 @@ function Screens() {
       </NavigationContainer>
 
       <Toast config={toastConfig} />
-    </SessionContext.Provider>
+    </>
   );
 }

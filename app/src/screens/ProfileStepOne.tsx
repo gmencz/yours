@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { makeStyles, Text, useTheme } from "@rneui/themed";
+import { makeStyles, Text } from "@rneui/themed";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -97,25 +97,23 @@ const trainingActivityToReadable = {
 };
 
 export function ProfileStepOneScreen({ navigation }: Props) {
-  const { theme } = useTheme();
   const { data: profile } = useProfileQuery();
 
   const {
     handleSubmit: manualHandleSubmit,
     control: manualControl,
     watch: manualWatch,
-    setValue: manualSetValue,
     formState: { errors: manualErrors },
   } = useForm<ManualSchema>({
     resolver: yupResolver(manualSchema),
     defaultValues: {
       gender: profile?.gender || "male",
       preferedMeasurementSystem: profile?.preferedMeasurementSystem || "metric",
-      // @ts-expect-error
+      // @ts-expect-error because the schema says it's a number and not a string
       weight: profile?.initialWeight
         ? profile.initialWeight.toString()
         : undefined,
-      // @ts-expect-error
+      // @ts-expect-error because the schema says it's a number and not a string
       tdee: profile?.initialTdeeEstimation
         ? Math.round(profile.initialTdeeEstimation).toString()
         : undefined,
@@ -126,13 +124,12 @@ export function ProfileStepOneScreen({ navigation }: Props) {
     handleSubmit: estimatorHandleSubmit,
     control: estimatorControl,
     watch: estimatorWatch,
-    setValue: estimatorSetValue,
     formState: { errors: estimatorErrors },
   } = useForm<EstimatorSchema>({
     resolver: yupResolver(estimatorSchema),
     defaultValues: {
       preferedMeasurementSystem: profile?.preferedMeasurementSystem || "metric",
-      // @ts-expect-error
+      // @ts-expect-error because the schema says it's a number and not a string
       weight: profile?.initialWeight
         ? profile.initialWeight.toString()
         : undefined,

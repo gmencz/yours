@@ -4,6 +4,7 @@ import { Control, Controller, Noop } from "react-hook-form";
 import { TextInput, View, TextInputProps } from "react-native";
 
 interface InputProps extends TextInputProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   name: string;
   label?: string;

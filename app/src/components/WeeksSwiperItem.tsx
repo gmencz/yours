@@ -73,7 +73,6 @@ export function WeeksSwiperItem({
           endOfWeekDate={endOfWeekDate}
           isThisWeek={isThisWeek}
           profile={profile}
-          shouldLoad={shouldLoad}
           startOfWeekDate={startOfWeekDate}
           todayDate={todayDate}
           isLoading={isLoading}

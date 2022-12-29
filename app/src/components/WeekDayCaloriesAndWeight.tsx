@@ -1,5 +1,5 @@
 import { makeStyles, Skeleton, Text, useTheme } from "@rneui/themed";
-import { QueryKey, useQueryClient } from "@tanstack/react-query";
+import { QueryKey } from "@tanstack/react-query";
 import { getDay, isToday, setDay } from "date-fns";
 import { useEffect, useMemo, useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
@@ -34,7 +34,6 @@ export function WeekDayCaloriesAndWeight({
   isLoading,
 }: WeekDayCaloriesAndWeightProps) {
   const { theme } = useTheme();
-  const queryClient = useQueryClient();
   const weekDayName = weekDaysWithNames[day];
   const savedCaloriesAndWeight = useMemo(
     () =>
@@ -44,7 +43,7 @@ export function WeekDayCaloriesAndWeight({
         }
       }),
 
-    [weekCaloriesAndWeights]
+    [day, weekCaloriesAndWeights]
   );
 
   const [calories, setCalories] = useState<string>();
@@ -63,7 +62,7 @@ export function WeekDayCaloriesAndWeight({
     }
   }, [savedCaloriesAndWeight]);
 
-  let createdAtDate = useMemo(() => {
+  const createdAtDate = useMemo(() => {
     if (savedCaloriesAndWeight?.created_at) {
       return new Date(savedCaloriesAndWeight.created_at);
     } else {

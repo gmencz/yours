@@ -124,11 +124,7 @@ export function BottomTabBar({
   );
 }
 
-interface UseStylesProps {
-  isFocused: boolean;
-}
-
-const useStyles = makeStyles((theme, props: UseStylesProps) => ({
+const useStyles = makeStyles((theme) => ({
   container: {
     flexDirection: "row",
     backgroundColor: theme.colors.background,

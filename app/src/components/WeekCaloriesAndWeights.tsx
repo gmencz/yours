@@ -8,7 +8,6 @@ import { WeekDayCaloriesAndWeight } from "./WeekDayCaloriesAndWeight";
 
 interface WeekCaloriesAndWeightsProps {
   isThisWeek: boolean;
-  shouldLoad: boolean;
   profile: Profile;
   startOfWeekDate: Date;
   endOfWeekDate: Date;
@@ -19,7 +18,6 @@ interface WeekCaloriesAndWeightsProps {
 }
 
 export function WeekCaloriesAndWeights({
-  shouldLoad,
   profile,
   startOfWeekDate,
   endOfWeekDate,

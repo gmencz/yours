@@ -1,6 +1,7 @@
 import { makeStyles, Text } from "@rneui/themed";
 import { TouchableOpacity, View, ViewProps } from "react-native";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface RadioButtonProps<Value = any> extends ViewProps {
   value: Value;
   label: string;

@@ -49,12 +49,12 @@ export function ClosedBetaAuthScreen() {
       <Heading type="h1">The Yours closed beta</Heading>
 
       <Image
-        source={require("../../assets/closed-beta-auth-hero.png")}
+        source={require("../../assets/images/closed-beta-auth-hero.png")}
         style={styles.heroImage}
       />
 
       <Heading type="h2" style={styles.h2}>
-        You'll receive an email with a link that will sign you in.
+        You&apos;ll receive an email with a link that will sign you in.
       </Heading>
 
       <View style={styles.inputContainer}>

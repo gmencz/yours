@@ -21,7 +21,7 @@ export function WeeksSwiper() {
     if (isSuccessWeeksDates) {
       setLoadedIndexes((prev) => new Set(prev).add(weeksDates.length - 1));
     }
-  }, [isSuccessWeeksDates]);
+  }, [isSuccessWeeksDates, weeksDates?.length]);
 
   const styles = useStyles();
 

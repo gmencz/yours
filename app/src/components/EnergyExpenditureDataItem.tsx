@@ -56,7 +56,7 @@ export function ExpenditureDataItem({
 
         return prevConfidence;
       }, confidences[0]),
-    [estimation, estimations]
+    [estimation.estimation, estimations, index]
   );
 
   const styles = useStyles({ confidence });

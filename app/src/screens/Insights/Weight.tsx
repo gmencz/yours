@@ -98,6 +98,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   h2Skeleton: {
-    marginTop: theme.spacing.md,
+    marginTop: theme.spacing.lg,
   },
 }));

@@ -6,7 +6,7 @@
  * @returns `boolean`
  */
 export function isClose(num1: number, num2: number, tolerance: number) {
-  let difference = Math.abs(num1 - num2);
+  const difference = Math.abs(num1 - num2);
   if (difference <= tolerance) {
     return true;
   }

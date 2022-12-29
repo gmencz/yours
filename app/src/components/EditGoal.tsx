@@ -58,7 +58,7 @@ export function EditGoal({
     defaultValues: {
       goal: goalQueryData.goal,
       approach: goalQueryData.approach,
-      // @ts-expect-error
+      // @ts-expect-error because the schema says it's a number and not a string
       weeklyWeightChange: goalQueryData.weekly_weight_change.toString(),
     },
   });
@@ -85,7 +85,7 @@ export function EditGoal({
 
       setValue(
         "weeklyWeightChange",
-        // @ts-expect-error
+        // @ts-expect-error because the schema says it's a number and not a string
         profile?.prefered_measurement_system === "imperial"
           ? formatDecimal(recommendedWeeklyLbsChange).toString()
           : formatDecimal(recommendedWeeklyKgsChange).toString()
@@ -97,6 +97,7 @@ export function EditGoal({
     touchedFields.approach,
     touchedFields.goal,
     latestTdeeEstimation,
+    setValue,
   ]);
 
   useEffect(() => {

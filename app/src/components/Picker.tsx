@@ -8,6 +8,7 @@ import { Control, Controller } from "react-hook-form";
 import { Pressable, View } from "react-native";
 
 interface PickerProps extends RNPickerProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   name: string;
   value?: string;
