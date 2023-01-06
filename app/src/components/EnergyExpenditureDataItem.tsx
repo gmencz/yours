@@ -43,13 +43,11 @@ export function ExpenditureDataItem({
   const confidence = useMemo(
     () =>
       [1, 2, 3].reduce((prevConfidence, confidenceIndex) => {
+        const previousEstimation = estimations[index + confidenceIndex];
+
         if (
-          estimations[index - confidenceIndex] &&
-          isClose(
-            estimation.estimation,
-            estimations[index - confidenceIndex].estimation,
-            50
-          )
+          previousEstimation &&
+          isClose(estimation.estimation, previousEstimation.estimation, 50)
         ) {
           return confidences[confidenceIndex];
         }
