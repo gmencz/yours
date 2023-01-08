@@ -37,11 +37,11 @@ import { StrategyScreen } from "~/screens/Strategy";
 import { ProfileScreen } from "~/screens/Profile";
 import { ProfileStepOneScreen } from "~/screens/ProfileStepOne";
 import { ProfileStepTwoScreen } from "~/screens/ProfileStepTwo";
-import { ClosedBetaAuthScreen } from "~/screens/ClosedBetaAuth";
 import { useToastConfig } from "~/hooks/useToastConfig";
 import { SENTRY_DSN } from "~/constants";
 import { useSessionQuery } from "./hooks/useSessionQuery";
 import { SplashScreenEmulator } from "./components/SplashScreenEmulator";
+import { StarterScreen } from "./screens/Starter";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -87,15 +87,14 @@ export default function AppWithTheme() {
 
 function Screens() {
   const [fontsLoaded] = useFonts({
-    InterBlack: require("../assets/fonts/Inter/Inter-Black.ttf"),
-    InterBold: require("../assets/fonts/Inter/Inter-Bold.ttf"),
-    InterExtraBold: require("../assets/fonts/Inter/Inter-ExtraBold.ttf"),
-    InterExtraLight: require("../assets/fonts/Inter/Inter-ExtraLight.ttf"),
-    InterLight: require("../assets/fonts/Inter/Inter-Light.ttf"),
-    InterMedium: require("../assets/fonts/Inter/Inter-Medium.ttf"),
-    InterRegular: require("../assets/fonts/Inter/Inter-Regular.ttf"),
-    InterSemiBold: require("../assets/fonts/Inter/Inter-SemiBold.ttf"),
-    InterThin: require("../assets/fonts/Inter/Inter-Thin.ttf"),
+    SoraBold: require("../assets/fonts/Sora/Sora-Bold.ttf"),
+    SoraExtraBold: require("../assets/fonts/Sora/Sora-ExtraBold.ttf"),
+    SoraExtraLight: require("../assets/fonts/Sora/Sora-ExtraLight.ttf"),
+    SoraLight: require("../assets/fonts/Sora/Sora-Light.ttf"),
+    SoraMedium: require("../assets/fonts/Sora/Sora-Medium.ttf"),
+    SoraRegular: require("../assets/fonts/Sora/Sora-Regular.ttf"),
+    SoraSemiBold: require("../assets/fonts/Sora/Sora-SemiBold.ttf"),
+    SoraThin: require("../assets/fonts/Sora/Sora-Thin.ttf"),
   });
 
   const colorMode = useColorScheme();
@@ -242,10 +241,10 @@ function Screens() {
             </UncompletedProfileStack.Navigator>
           )
         ) : (
-          <UnauthorizedStack.Navigator initialRouteName="ClosedBetaAuth">
+          <UnauthorizedStack.Navigator initialRouteName="Starter">
             <UnauthorizedStack.Screen
-              name="ClosedBetaAuth"
-              component={ClosedBetaAuthScreen}
+              name="Starter"
+              component={StarterScreen}
               options={{
                 headerShown: false,
               }}

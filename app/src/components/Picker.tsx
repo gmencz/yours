@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
   label: {
     marginBottom: 7,
     fontSize: 13,
-    fontFamily: "InterMedium",
+    fontFamily: "SoraMedium",
   },
 
   pressable: {
@@ -92,10 +92,10 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
     color: theme.colors.background,
     backgroundColor: theme.colors.background,
     flex: 1,
-    fontFamily: "InterRegular",
+    fontFamily: "SoraRegular",
   },
 
   pickerItem: {
-    fontFamily: "InterRegular",
+    fontFamily: "SoraRegular",
   },
 }));

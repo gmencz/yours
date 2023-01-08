@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
 
   label: {
     marginLeft: theme.spacing.md,
-    fontFamily: "InterMedium",
+    fontFamily: "SoraMedium",
   },
 
   labelDescription: {

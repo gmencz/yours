@@ -1,7 +1,7 @@
 import { Colors, createTheme } from "@rneui/themed";
 
 const sharedColors: Partial<Colors> = {
-  primary: "#8A54E2",
+  primary: "#EEECA4",
   secondary: "#ED44BC",
   secondary2: "#FF5C8D",
   secondary3: "#FF9065",
@@ -14,7 +14,7 @@ export const theme = createTheme({
   components: {
     Text: {
       style: {
-        fontFamily: "InterRegular",
+        fontFamily: "SoraRegular",
       },
     },
   },

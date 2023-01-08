@@ -14,10 +14,12 @@ export function useToastConfig() {
         }}
         text2NumberOfLines={2}
         text1Style={{
+          fontFamily: "SoraRegular",
           color: theme.colors.black,
           fontSize: 14,
         }}
         text2Style={{
+          fontFamily: "SoraRegular",
           color: theme.colors.grey1,
           fontSize: 14,
         }}
@@ -33,10 +35,12 @@ export function useToastConfig() {
         }}
         text2NumberOfLines={2}
         text1Style={{
+          fontFamily: "SoraRegular",
           color: theme.colors.black,
           fontSize: 14,
         }}
         text2Style={{
+          fontFamily: "SoraRegular",
           color: theme.colors.grey1,
           fontSize: 14,
         }}

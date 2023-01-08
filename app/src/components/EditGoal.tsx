@@ -138,17 +138,17 @@ export function EditGoal({
         <RNPicker.Item
           label="Build muscle"
           value="build-muscle"
-          style={{ fontFamily: "InterRegular" }}
+          style={{ fontFamily: "SoraRegular" }}
         />
         <RNPicker.Item
           label="Lose fat"
           value="lose-fat"
-          style={{ fontFamily: "InterRegular" }}
+          style={{ fontFamily: "SoraRegular" }}
         />
         <RNPicker.Item
           label="Maintain"
           value="maintain"
-          style={{ fontFamily: "InterRegular" }}
+          style={{ fontFamily: "SoraRegular" }}
         />
       </Picker>
 
@@ -170,19 +170,19 @@ export function EditGoal({
             <RNPicker.Item
               label="Bulk (caloric surplus)"
               value="bulk"
-              style={{ fontFamily: "InterRegular" }}
+              style={{ fontFamily: "SoraRegular" }}
             />
           ) : approach === "cut" ? (
             <RNPicker.Item
               label="Cut (caloric deficit)"
               value="cut"
-              style={{ fontFamily: "InterRegular" }}
+              style={{ fontFamily: "SoraRegular" }}
             />
           ) : (
             <RNPicker.Item
               label="Maintain (caloric maintenance)"
               value="maintain"
-              style={{ fontFamily: "InterRegular" }}
+              style={{ fontFamily: "SoraRegular" }}
             />
           )}
         </Picker>

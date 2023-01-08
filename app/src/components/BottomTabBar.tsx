@@ -143,14 +143,14 @@ const useStyles = makeStyles((theme) => ({
   tabText: {
     fontSize: 12,
     marginTop: 5,
-    fontFamily: "InterMedium",
+    fontFamily: "SoraMedium",
     color: theme.colors.grey4,
   },
 
   focusedTabText: {
     fontSize: 12,
     marginTop: 5,
-    fontFamily: "InterSemiBold",
+    fontFamily: "SoraSemiBold",
     color: theme.colors.black,
   },
 }));

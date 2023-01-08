@@ -508,7 +508,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   stepNameText: {
-    fontFamily: "InterBold",
+    fontFamily: "SoraBold",
     fontSize: 18,
   },
 
@@ -520,7 +520,7 @@ const useStyles = makeStyles((theme) => ({
 
   stepDescriptionTextBold: {
     color: theme.colors.grey0,
-    fontFamily: "InterBold",
+    fontFamily: "SoraBold",
   },
 
   inputContainer: {
@@ -528,7 +528,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   pickerItem: {
-    fontFamily: "InterRegular",
+    fontFamily: "SoraRegular",
   },
 
   nextStepButton: {

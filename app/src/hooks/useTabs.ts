@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 13,
     marginLeft: 7,
     color: theme.colors.grey4,
-    fontFamily: "InterBold",
+    fontFamily: "SoraBold",
   },
 
   selectedText: {

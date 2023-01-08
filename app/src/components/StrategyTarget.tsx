@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
   },
 
   amount: {
-    fontFamily: "InterBold",
+    fontFamily: "SoraBold",
     fontSize: 16,
   },
 

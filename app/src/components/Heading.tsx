@@ -14,7 +14,7 @@ export function Heading({ style, type, ...props }: HeadingProps) {
 const useStyles = makeStyles((theme) => ({
   h1: {
     fontSize: 16,
-    fontFamily: "InterBold",
+    fontFamily: "SoraBold",
   },
 
   h2: {

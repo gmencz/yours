@@ -11,6 +11,7 @@ declare module "@rneui/themed" {
 }
 
 export type UnauthorizedStackParamList = {
+  Starter: undefined;
   ClosedBetaAuth: undefined;
 };
 

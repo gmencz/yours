@@ -78,23 +78,23 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
   label: {
     marginBottom: 7,
     fontSize: 13,
-    fontFamily: "InterMedium",
+    fontFamily: "SoraMedium",
   },
 
   container: {
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: props.isFocused ? theme.colors.grey1 : theme.colors.grey4,
+    borderColor: props.isFocused ? theme.colors.grey1 : theme.colors.grey3,
     paddingHorizontal: 15,
     paddingVertical: 15,
-    borderRadius: 5,
+    borderRadius: 10,
   },
 
   input: {
     color: theme.colors.black,
     flex: 1,
-    fontFamily: "InterRegular",
+    fontFamily: "SoraRegular",
     marginLeft: props.hasIcon ? theme.spacing.md : undefined,
   },
 

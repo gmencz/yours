@@ -55,6 +55,6 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
   text: {
     color: props.variant === "1" ? theme.colors.white : theme.colors.black,
     fontSize: props.small ? 12 : 14,
-    fontFamily: "InterBold",
+    fontFamily: "SoraBold",
   },
 }));

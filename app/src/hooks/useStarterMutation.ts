@@ -9,7 +9,7 @@ interface Variables {
   email: string;
 }
 
-export function useClosedBetaAuthMutation() {
+export function useStarterMutation() {
   return useMutation<boolean, AuthApiError | AuthError, Variables>({
     mutationFn: async ({ email }) => {
       const { error } = await supabase.auth.signInWithOtp({
@@ -36,7 +36,7 @@ export function useClosedBetaAuthMutation() {
       if (error.message === "Signups not allowed for otp") {
         Toast.show({
           type: "error",
-          text2: "That email is not registered for our closed beta.",
+          text2: "That email is not registered for our early access.",
         });
       } else {
         Sentry.Native.captureException(error, { extra: { variables } });
