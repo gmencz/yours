@@ -76,8 +76,7 @@ export function WeeksSwiper() {
 
 const useStyles = makeStyles((theme) => ({
   container: {
-    paddingHorizontal: theme.spacing.xl,
-    paddingVertical: 30,
+    padding: theme.spacing.xl,
   },
 
   error: {
