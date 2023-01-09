@@ -3,14 +3,23 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Sentry from "sentry-expo";
 import { supabase } from "../supabase";
-import { MeasurementSystem, UncompletedProfileStackParamList } from "~/typings";
+import {
+  Activity,
+  MeasurementSystem,
+  Sex,
+  TrainingActivity,
+  UncompletedProfileStackParamList,
+} from "~/typings";
 import { Profile } from "./useProfileQuery";
 
 interface Variables {
-  tdee: number;
-  preferedMeasurementSystem: string;
+  preferedMeasurementSystem: MeasurementSystem;
   weight: number;
-  gender: string;
+  sex: Sex;
+  activity: Activity;
+  trainingActivity: TrainingActivity;
+  age: number;
+  height: number;
 }
 
 interface UseProfileStepOneMutation {
@@ -29,14 +38,25 @@ export function useProfileStepOneMutation({
   const queryClient = useQueryClient();
 
   return useMutation<unknown, PostgrestError, Variables>({
-    mutationFn: async ({ tdee, preferedMeasurementSystem, weight, gender }) => {
+    mutationFn: async ({
+      preferedMeasurementSystem,
+      weight,
+      sex,
+      activity,
+      age,
+      height,
+      trainingActivity,
+    }) => {
       const { error } = await supabase
         .from("profiles")
         .update({
-          initial_tdee_estimation: tdee,
           prefered_measurement_system: preferedMeasurementSystem,
           initial_weight: weight,
-          gender,
+          sex,
+          day_to_day_activity: activity,
+          age,
+          height,
+          training_activity: trainingActivity,
         })
         .eq("id", profile.id);
 
@@ -47,14 +67,28 @@ export function useProfileStepOneMutation({
       return true;
     },
 
-    onSuccess: (_data, { tdee, preferedMeasurementSystem, weight, gender }) => {
+    onSuccess: (
+      _data,
+      {
+        activity,
+        age,
+        height,
+        trainingActivity,
+        preferedMeasurementSystem,
+        weight,
+        sex,
+      }
+    ) => {
       const queryData = queryClient.getQueryData<Profile>(["profile"]);
       if (queryData) {
         queryClient.setQueryData<Profile>(["profile"], {
           ...queryData,
-          initialTdeeEstimation: tdee,
+          age,
+          height,
           initialWeight: weight,
-          gender,
+          sex,
+          activity,
+          trainingActivity,
           preferedMeasurementSystem:
             preferedMeasurementSystem as MeasurementSystem,
         });

@@ -61,7 +61,7 @@ export function Picker({ name, label, control, children, value }: PickerProps) {
           size={24}
           name="chevron-down"
           type="entypo"
-          color={theme.colors.grey1}
+          color={isFocused ? theme.colors.grey1 : theme.colors.grey2}
         />
       </Pressable>
     </View>
@@ -75,14 +75,13 @@ interface UseStylesProps {
 const useStyles = makeStyles((theme, props: UseStylesProps) => ({
   label: {
     marginBottom: 7,
-    fontSize: 13,
     fontFamily: "SoraMedium",
   },
 
   pressable: {
     borderWidth: 1,
     paddingHorizontal: 15,
-    borderColor: props.isFocused ? theme.colors.grey1 : theme.colors.grey4,
+    borderColor: props.isFocused ? theme.colors.grey1 : theme.colors.grey3,
     borderRadius: 5,
     flexDirection: "row",
     alignItems: "center",

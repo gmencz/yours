@@ -1,7 +1,9 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Sentry from "sentry-expo";
 import { supabase } from "~/supabase";
+import { UncompletedProfileStackParamList } from "~/typings";
 import { Profile } from "./useProfileQuery";
 
 interface ProfileGoalSelect {
@@ -10,6 +12,11 @@ interface ProfileGoalSelect {
 
 interface UseProfileStepTwoMutation {
   profile: Profile;
+  navigation: NativeStackNavigationProp<
+    UncompletedProfileStackParamList,
+    "StepTwo",
+    undefined
+  >;
 }
 
 interface Variables {
@@ -20,6 +27,7 @@ interface Variables {
 
 export function useProfileStepTwoMutation({
   profile,
+  navigation,
 }: UseProfileStepTwoMutation) {
   const queryClient = useQueryClient();
 
@@ -59,6 +67,8 @@ export function useProfileStepTwoMutation({
           goalId: data.id,
         });
       }
+
+      navigation.navigate("StepThree");
     },
 
     onError(error, variables) {

@@ -1,13 +1,8 @@
-import {
-  Activity,
-  Gender,
-  MeasurementSystem,
-  TrainingActivity,
-} from "~/typings";
+import { Activity, Sex, MeasurementSystem, TrainingActivity } from "~/typings";
 
 interface EstimateTdeeParams {
   preferedMeasurementSystem: MeasurementSystem;
-  gender: Gender;
+  sex: Sex;
   activity: Activity;
   trainingActivity: TrainingActivity;
   weight: number;
@@ -17,7 +12,7 @@ interface EstimateTdeeParams {
 
 export function estimateTdee({
   preferedMeasurementSystem,
-  gender,
+  sex,
   activity,
   trainingActivity,
   weight,
@@ -27,7 +22,7 @@ export function estimateTdee({
   let estimatedTdee: number;
   const tdeeMultiplier = activity + trainingActivity;
   if (preferedMeasurementSystem === "metric") {
-    if (gender === "male") {
+    if (sex === "male") {
       estimatedTdee =
         (66.5 + 13.75 * weight! + 5.003 * height! - 6.775 * age!) *
         tdeeMultiplier;
@@ -37,7 +32,7 @@ export function estimateTdee({
         tdeeMultiplier;
     }
   } else {
-    if (gender === "male") {
+    if (sex === "male") {
       estimatedTdee =
         (66 + 6.2 * weight! + 12.7 * height! - 6.76 * age!) * tdeeMultiplier;
     } else {

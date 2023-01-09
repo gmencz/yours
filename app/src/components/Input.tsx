@@ -22,11 +22,12 @@ export function Input({
   suffix,
   helperText,
   errorMessage,
+  editable,
   ...inputProps
 }: InputProps) {
   const { theme } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
-  const styles = useStyles({ hasIcon: !!icon, isFocused });
+  const styles = useStyles({ hasIcon: !!icon, isFocused, editable });
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -72,12 +73,12 @@ export function Input({
 interface UseStylesProps {
   isFocused: boolean;
   hasIcon: boolean;
+  editable?: boolean;
 }
 
 const useStyles = makeStyles((theme, props: UseStylesProps) => ({
   label: {
     marginBottom: 7,
-    fontSize: 13,
     fontFamily: "SoraMedium",
   },
 
@@ -85,14 +86,18 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: props.isFocused ? theme.colors.grey1 : theme.colors.grey3,
+    borderColor: props.isFocused
+      ? theme.colors.grey1
+      : props.editable === false
+      ? theme.colors.grey5
+      : theme.colors.grey3,
     paddingHorizontal: 15,
     paddingVertical: 15,
     borderRadius: 10,
   },
 
   input: {
-    color: theme.colors.black,
+    color: props.editable === false ? theme.colors.grey3 : theme.colors.black,
     flex: 1,
     fontFamily: "SoraRegular",
     marginLeft: props.hasIcon ? theme.spacing.md : undefined,

@@ -27,6 +27,7 @@ export type CompletedProfileStackParamList = {
 export type UncompletedProfileStackParamList = {
   StepOne: undefined;
   StepTwo: undefined;
+  StepThree: undefined;
 };
 
 export type InsightsStackParamList = {
@@ -68,4 +69,4 @@ export enum TrainingActivity {
 }
 
 export type MeasurementSystem = "metric" | "imperial";
-export type Gender = "male" | "female";
+export type Sex = "male" | "female";

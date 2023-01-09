@@ -42,6 +42,7 @@ import { SENTRY_DSN } from "~/constants";
 import { useSessionQuery } from "./hooks/useSessionQuery";
 import { SplashScreenEmulator } from "./components/SplashScreenEmulator";
 import { StarterScreen } from "./screens/Starter";
+import { ProfileStepThreeScreen } from "./screens/ProfileStepThree";
 
 global.Buffer = global.Buffer || Buffer;
 
@@ -120,11 +121,22 @@ function Screens() {
     });
   }, [queryClient]);
 
-  const hasCompletedProfile =
+  const hasCompletedProfileStepOne =
     !!profile?.preferedMeasurementSystem &&
-    !!profile.initialTdeeEstimation &&
-    !!profile.gender &&
-    !!profile.goalId;
+    !!profile.sex &&
+    !!profile.age &&
+    !!profile.height &&
+    !!profile.activity &&
+    !!profile.initialWeight &&
+    !!profile.trainingActivity;
+
+  const hasCompletedProfileStepTwo = !!profile?.goalId;
+  const hasCompletedProfileStepThree = !!profile?.initialTdeeEstimation;
+
+  const hasCompletedProfile =
+    hasCompletedProfileStepOne &&
+    hasCompletedProfileStepTwo &&
+    hasCompletedProfileStepThree;
 
   const tdeeEstimationMutation = useTdeeEstimationMutation();
   const toastConfig = useToastConfig();
@@ -216,11 +228,12 @@ function Screens() {
           ) : (
             <UncompletedProfileStack.Navigator
               initialRouteName={
-                profile?.preferedMeasurementSystem &&
-                profile.initialTdeeEstimation &&
-                profile.initialWeight &&
-                profile.gender
+                !hasCompletedProfileStepOne
+                  ? "StepOne"
+                  : !hasCompletedProfileStepTwo
                   ? "StepTwo"
+                  : !hasCompletedProfileStepThree
+                  ? "StepThree"
                   : "StepOne"
               }
             >
@@ -234,6 +247,13 @@ function Screens() {
               <UncompletedProfileStack.Screen
                 name="StepTwo"
                 component={ProfileStepTwoScreen}
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <UncompletedProfileStack.Screen
+                name="StepThree"
+                component={ProfileStepThreeScreen}
                 options={{
                   headerShown: false,
                 }}
