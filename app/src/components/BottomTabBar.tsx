@@ -149,13 +149,6 @@ export function BottomTabBar({
     <View style={styles.container}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-            ? options.title
-            : route.name;
-
         const isFocused = state.index === index;
 
         const onPress = () => {
@@ -194,10 +187,6 @@ export function BottomTabBar({
             style={styles.tabTouchable}
           >
             {icon}
-
-            {/* <Text style={isFocused ? styles.focusedTabText : styles.tabText}>
-              {label as string}
-            </Text> */}
           </TouchableOpacity>
         );
       })}
@@ -208,24 +197,20 @@ export function BottomTabBar({
 const useStyles = makeStyles((theme) => ({
   container: {
     flexDirection: "row",
-    backgroundColor: theme.colors.background,
     justifyContent: "space-evenly",
+    backgroundColor: theme.colors.background,
     alignItems: "center",
   },
-
   tabTouchable: {
-    paddingTop: 20,
-    paddingBottom: 30,
+    paddingVertical: 20,
     alignItems: "center",
   },
-
   tabText: {
     fontSize: 12,
     marginTop: 5,
     fontFamily: "SoraMedium",
     color: theme.colors.grey4,
   },
-
   focusedTabText: {
     fontSize: 12,
     marginTop: 5,

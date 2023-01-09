@@ -2,8 +2,8 @@ import { Colors, createTheme } from "@rneui/themed";
 
 const sharedColors: Partial<Colors> = {
   primary: "#EEECA4",
-  secondary: "#ED44BC",
-  secondary2: "#FF5C8D",
+  secondary: "#6860A4",
+  secondary2: "#7C7987",
   secondary3: "#FF9065",
   secondary4: "#FFC755",
   secondary5: "#F9F871",

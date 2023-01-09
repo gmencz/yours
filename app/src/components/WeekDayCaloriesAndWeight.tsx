@@ -103,7 +103,7 @@ export function WeekDayCaloriesAndWeight({
       <Text style={styles.dayLetter}>{weekDayName[0]}</Text>
 
       {isLoading ? (
-        <Skeleton style={styles.caloriesSkeleton} height={42.5} />
+        <Skeleton style={styles.caloriesSkeleton} height={55} />
       ) : editingCalories ? (
         <TextInput
           autoFocus
@@ -139,7 +139,7 @@ export function WeekDayCaloriesAndWeight({
             flex: 1,
             borderRadius: 5,
           }}
-          height={42.5}
+          height={55}
         />
       ) : editingWeight ? (
         <TextInput
@@ -189,7 +189,7 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
     borderColor: theme.colors.black,
     paddingVertical: 10,
     paddingHorizontal: props.isThisWeek ? 10 : 0,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: "center",
   },
 
@@ -199,28 +199,30 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
 
   dayLetter: {
     width: theme.spacing.xl,
+    fontFamily: "SoraBold",
+    marginRight: theme.spacing.sm,
   },
 
   caloriesSkeleton: {
-    backgroundColor: theme.colors.grey5,
+    backgroundColor: props.isDisabled ? theme.colors.grey4 : theme.colors.grey5,
     flex: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     marginRight: theme.spacing.lg,
   },
 
   weightSkeleton: {
-    backgroundColor: theme.colors.grey5,
+    backgroundColor: props.isDisabled ? theme.colors.grey4 : theme.colors.grey5,
     flex: 1,
-    borderRadius: 5,
+    borderRadius: 10,
   },
 
   inputOrPressable: {
     backgroundColor: props.isDisabled ? theme.colors.grey4 : theme.colors.grey5,
     flex: 1,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    height: 42.5,
+    height: 55,
     flexDirection: "row",
     textAlign: "center",
     color: theme.colors.black,

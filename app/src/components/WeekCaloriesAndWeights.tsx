@@ -1,4 +1,4 @@
-import { makeStyles, Text } from "@rneui/themed";
+import { makeStyles } from "@rneui/themed";
 import { QueryKey } from "@tanstack/react-query";
 import { View } from "react-native";
 import { Profile } from "~/hooks/useProfileQuery";
@@ -57,18 +57,6 @@ export function WeekCaloriesAndWeights({
           isLoading={isLoading}
         />
       ))}
-
-      <View style={styles.labelsContainer}>
-        <View style={styles.labelsSpacer} />
-
-        <View style={styles.caloriesLabel}>
-          <Text style={styles.labelText}>Calories (kcal)</Text>
-        </View>
-
-        <View style={styles.weightLabel}>
-          <Text style={styles.labelText}>Weight ({weightUnit})</Text>
-        </View>
-      </View>
     </View>
   );
 }

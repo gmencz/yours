@@ -33,13 +33,13 @@ export function WeeksSwiper() {
         <Skeleton width={150} height={20} style={styles.lgSpacing} />
 
         {/* Week days */}
-        <Skeleton height={42.5} style={styles.xlSpacing} />
-        <Skeleton height={42.5} style={styles.skeleton} />
-        <Skeleton height={42.5} style={styles.skeleton} />
-        <Skeleton height={42.5} style={styles.skeleton} />
-        <Skeleton height={42.5} style={styles.skeleton} />
-        <Skeleton height={42.5} style={styles.skeleton} />
-        <Skeleton height={42.5} style={styles.skeleton} />
+        <Skeleton height={55} style={styles.xlSpacing} />
+        <Skeleton height={55} style={styles.skeleton} />
+        <Skeleton height={55} style={styles.skeleton} />
+        <Skeleton height={55} style={styles.skeleton} />
+        <Skeleton height={55} style={styles.skeleton} />
+        <Skeleton height={55} style={styles.skeleton} />
+        <Skeleton height={55} style={styles.skeleton} />
       </ScrollView>
     );
   }
