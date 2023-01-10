@@ -205,16 +205,4 @@ const useStyles = makeStyles((theme) => ({
     paddingVertical: 20,
     alignItems: "center",
   },
-  tabText: {
-    fontSize: 12,
-    marginTop: 5,
-    fontFamily: "SoraMedium",
-    color: theme.colors.grey4,
-  },
-  focusedTabText: {
-    fontSize: 12,
-    marginTop: 5,
-    fontFamily: "SoraSemiBold",
-    color: theme.colors.black,
-  },
 }));

@@ -441,7 +441,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing.md,
   },
   stepDescription: {
-    color: theme.colors.grey0,
+    color: theme.colors.grey1,
     marginBottom: theme.spacing.xl,
   },
   shapesContainer: {

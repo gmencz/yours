@@ -103,7 +103,7 @@ export function WeekDayCaloriesAndWeight({
       <Text style={styles.dayLetter}>{weekDayName[0]}</Text>
 
       {isLoading ? (
-        <Skeleton style={styles.caloriesSkeleton} height={55} />
+        <Skeleton style={styles.caloriesSkeleton} height={50} />
       ) : editingCalories ? (
         <TextInput
           autoFocus
@@ -128,7 +128,7 @@ export function WeekDayCaloriesAndWeight({
             setEditingCalories(true);
           }}
         >
-          {calories ? <Text style={styles.text}>{calories} kcal</Text> : null}
+          {isDisabled ? null : <Text style={styles.text}>{calories} kcal</Text>}
         </TouchableOpacity>
       )}
 
@@ -139,7 +139,7 @@ export function WeekDayCaloriesAndWeight({
             flex: 1,
             borderRadius: 5,
           }}
-          height={55}
+          height={50}
         />
       ) : editingWeight ? (
         <TextInput
@@ -165,11 +165,11 @@ export function WeekDayCaloriesAndWeight({
             setEditingWeight(true);
           }}
         >
-          {weight ? (
+          {isDisabled ? null : (
             <Text style={styles.text}>
               {weight} {weightUnit}
             </Text>
-          ) : null}
+          )}
         </TouchableOpacity>
       )}
     </View>
@@ -222,7 +222,7 @@ const useStyles = makeStyles((theme, props: UseStylesProps) => ({
     borderRadius: 10,
     alignItems: "center",
     justifyContent: "center",
-    height: 55,
+    height: 50,
     flexDirection: "row",
     textAlign: "center",
     color: theme.colors.black,

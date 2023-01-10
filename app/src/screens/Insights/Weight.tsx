@@ -27,14 +27,14 @@ export function WeightScreen() {
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.headingsContainer}>
-        <Heading type="h1">Weight Trend & Scale Weight</Heading>
+        <Heading type="h1">Weight</Heading>
         {isLoading ? (
           <Skeleton height={20} style={styles.h2Skeleton} />
         ) : (
           <Heading type="h2" style={styles.h2}>
             {showGraph
-              ? "Graph based on daily weigh-ins over time."
-              : "There aren't enough daily weigh-ins to show you accurate insights about your weight yet."}
+              ? "Graph based on weigh-ins over time."
+              : "There aren't enough weigh-ins to show you accurate insights about your weight yet."}
           </Heading>
         )}
       </View>

@@ -14,11 +14,11 @@ export function Heading({ style, type, ...props }: HeadingProps) {
 const useStyles = makeStyles((theme) => ({
   h1: {
     fontFamily: "SoraBold",
-    fontSize: 24,
+    fontSize: 20,
   },
 
   h2: {
-    fontSize: 18,
+    fontSize: 14,
     color: theme.colors.grey1,
   },
 }));

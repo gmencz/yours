@@ -61,7 +61,7 @@ export function WeeksSwiperItem({
   const styles = useStyles();
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={styles.safeAreaView}>
       <ScrollView style={styles.container}>
         <View style={styles.headingContainer}>
           <Heading type="h1">Home</Heading>
@@ -90,6 +90,9 @@ export function WeeksSwiperItem({
 }
 
 const useStyles = makeStyles((theme) => ({
+  safeAreaView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: theme.spacing.xl,

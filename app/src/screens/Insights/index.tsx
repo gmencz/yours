@@ -45,7 +45,7 @@ export function InsightsScreen({ route, navigation }: Props) {
           <Icon
             type="material-community"
             name="fire"
-            size={25}
+            size={27.5}
             color={energyExpenditureStyles.iconColor}
           />
           <Text style={energyExpenditureStyles.text}>Expenditure</Text>
@@ -60,7 +60,7 @@ export function InsightsScreen({ route, navigation }: Props) {
           <Icon
             type="font-awesome-5"
             name="weight"
-            size={20}
+            size={22.5}
             color={weightStyles.iconColor}
             style={{ marginRight: 5 }}
           />

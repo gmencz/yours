@@ -43,8 +43,8 @@ interface UseStylesProps {
 
 const useStyles = makeStyles((theme, props: UseStylesProps) => ({
   container: {
-    paddingVertical: 15,
-    paddingHorizontal: 30,
+    paddingVertical: props.small ? 10 : 15,
+    paddingHorizontal: props.small ? 15 : 30,
     borderRadius: 10,
     display: "flex",
     flexDirection: "row",

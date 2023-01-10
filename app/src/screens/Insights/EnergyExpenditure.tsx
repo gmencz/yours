@@ -24,8 +24,7 @@ export function EnergyExpenditureScreen() {
       <Heading type="h1">Energy Expenditure</Heading>
       <Heading type="h2" style={styles.h2}>
         The brighter the yellow is, the greater confidence we have in our
-        estimate of your daily energy needs. New estimates are calculated every
-        7 days of recorded calories and weight.
+        estimate of your daily energy expenditure. Updates weekly.
       </Heading>
 
       <View style={styles.skeletonsContainer}>

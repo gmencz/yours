@@ -96,6 +96,8 @@ function Screens() {
     SoraRegular: require("../assets/fonts/Sora/Sora-Regular.ttf"),
     SoraSemiBold: require("../assets/fonts/Sora/Sora-SemiBold.ttf"),
     SoraThin: require("../assets/fonts/Sora/Sora-Thin.ttf"),
+
+    MontserratBold: require("../assets/fonts/Montserrat/Montserrat-Bold.ttf"),
   });
 
   const colorMode = useColorScheme();

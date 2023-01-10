@@ -1,9 +1,12 @@
 import { makeStyles, Skeleton, Text } from "@rneui/themed";
 import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Swiper from "react-native-swiper";
 import { useProfileQuery } from "~/hooks/useProfileQuery";
 import { useWeeksDatesQuery } from "~/hooks/useWeeksDatesQuery";
+import { GenericError } from "./GenericError";
+import { Heading } from "./Heading";
 import { WeeksSwiperItem } from "./WeeksSwiperItem";
 
 export function WeeksSwiper() {
@@ -27,28 +30,31 @@ export function WeeksSwiper() {
 
   if (isLoadingWeeksDates) {
     return (
-      <ScrollView style={styles.container}>
-        <Skeleton width={60} height={10} />
-        <Skeleton width={120} height={25} style={styles.mdSpacing} />
-        <Skeleton width={150} height={20} style={styles.lgSpacing} />
+      <SafeAreaView style={styles.safeAreaView}>
+        <ScrollView style={styles.container}>
+          <Skeleton width={120} height={30} style={styles.mdSpacing} />
+          <Skeleton width={150} height={25} style={styles.lgSpacing} />
 
-        {/* Week days */}
-        <Skeleton height={55} style={styles.xlSpacing} />
-        <Skeleton height={55} style={styles.skeleton} />
-        <Skeleton height={55} style={styles.skeleton} />
-        <Skeleton height={55} style={styles.skeleton} />
-        <Skeleton height={55} style={styles.skeleton} />
-        <Skeleton height={55} style={styles.skeleton} />
-        <Skeleton height={55} style={styles.skeleton} />
-      </ScrollView>
+          {/* Week days */}
+          <Skeleton height={50} style={[styles.skeleton, styles.xlSpacing]} />
+          <Skeleton height={50} style={styles.skeleton} />
+          <Skeleton height={50} style={styles.skeleton} />
+          <Skeleton height={50} style={styles.skeleton} />
+          <Skeleton height={50} style={styles.skeleton} />
+          <Skeleton height={50} style={styles.skeleton} />
+          <Skeleton height={50} style={styles.skeleton} />
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 
   if (isErrorWeeksDates) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.error}>Something went wrong, try again later</Text>
-      </View>
+      <SafeAreaView style={styles.safeAreaView}>
+        <View style={styles.container}>
+          <GenericError />
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -76,9 +82,12 @@ export function WeeksSwiper() {
 
 const useStyles = makeStyles((theme) => ({
   container: {
+    flex: 1,
     padding: theme.spacing.xl,
   },
-
+  safeAreaView: {
+    flex: 1,
+  },
   error: {
     color: theme.colors.error,
   },
@@ -97,5 +106,6 @@ const useStyles = makeStyles((theme) => ({
 
   skeleton: {
     marginTop: 20,
+    borderRadius: 10,
   },
 }));

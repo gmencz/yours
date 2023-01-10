@@ -86,7 +86,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             {
               data: scaleWeights,
               strokeWidth: 2,
-              color: () => hexToRgba(theme.colors.secondary2, 1),
+              color: () => hexToRgba(theme.colors.secondary, 1),
             },
           ],
         }}
@@ -95,12 +95,14 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
         withDots={false}
         withShadow={false}
         transparent
-        yAxisInterval={3}
         bezier
         formatYLabel={(value) => formatDecimal(Number(value))}
         chartConfig={{
           color: (opacity = 1) => hexToRgba(theme.colors.black, opacity),
           decimalPlaces: 1,
+          propsForLabels: {
+            fontFamily: "SoraRegular",
+          },
         }}
       />
 
@@ -112,7 +114,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             setPeriod("1W");
           }}
           variant={period === "1W" ? "1" : "2"}
-          style={[styles.button, { marginRight: theme.spacing.lg }]}
+          style={[{ marginRight: theme.spacing.lg }]}
         />
         <Button
           small
@@ -121,7 +123,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             setPeriod("1M");
           }}
           variant={period === "1M" ? "1" : "2"}
-          style={[styles.button, { marginRight: theme.spacing.lg }]}
+          style={[{ marginRight: theme.spacing.lg }]}
         />
         <Button
           small
@@ -130,7 +132,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             setPeriod("3M");
           }}
           variant={period === "3M" ? "1" : "2"}
-          style={[styles.button, { marginRight: theme.spacing.lg }]}
+          style={[{ marginRight: theme.spacing.lg }]}
         />
         <Button
           small
@@ -139,7 +141,7 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             setPeriod("6M");
           }}
           variant={period === "6M" ? "1" : "2"}
-          style={[styles.button, { marginRight: theme.spacing.lg }]}
+          style={[{ marginRight: theme.spacing.lg }]}
         />
         <Button
           small
@@ -148,7 +150,6 @@ export function WeightsGraph({ weights, period, setPeriod }: GraphProps) {
             setPeriod("1Y");
           }}
           variant={period === "1Y" ? "1" : "2"}
-          style={styles.button}
         />
       </View>
     </>
@@ -196,7 +197,7 @@ const useStyles = makeStyles((theme) => ({
   scaleLegendRect: {
     width: 40,
     height: 10,
-    backgroundColor: theme.colors.secondary2,
+    backgroundColor: theme.colors.secondary,
     borderRadius: 10,
     marginRight: theme.spacing.md,
   },
@@ -209,10 +210,5 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-
-  button: {
-    width: 50,
-    borderRadius: 30,
   },
 }));
